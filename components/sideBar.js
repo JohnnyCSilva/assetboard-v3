@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react'
 
+import { signOut } from 'firebase/auth';
 import { useAuthValue } from '../config/AuthContext'
+import { auth } from '../config/Firebase'
+
 
 function sideBar() {
 
@@ -16,12 +19,14 @@ function sideBar() {
 
     }
 
-    function redirect (){
-        location.href = "/login";
-    }
-
     const {currentUser} = useAuthValue()
     const delay = ms => new Promise(res => setTimeout(res, ms));   
+
+    function SignOutUser() {
+        signOut(auth);
+        delay(3000);
+        window.location = '/';
+    }
 
   return (
 
@@ -82,14 +87,13 @@ function sideBar() {
                 </li>
             </ul>
         </div>
-        <div className="footer-sidebar" id="footer-sidebar" onClick={() => redirect()}>
+        <div className="footer-sidebar" id="footer-sidebar">
             <img src="/user.jpg" alt="" />
             <div className="user-role">
                 {currentUser && ( <h2>{currentUser?.displayName}</h2>)}
-                {!currentUser && (<h2>FilhodaPuta</h2>)}
                 <p>Administrator</p>
             </div>
-            <i className='pi pi-sign-out' id="log_out" ></i>
+            <i className='pi pi-sign-out' id="log_out" onClick={() => SignOutUser()} ></i>
         </div>
 
 
