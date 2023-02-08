@@ -1,0 +1,302 @@
+.sidebar{
+    position: fixed;
+    background-color: #695CFE;
+    height: 100%;
+    width: 78px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    
+    transition: 0.2s ease-in-out;
+}
+.header-sidebar{
+    height: 50px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    margin: 15px 15px;
+}
+.header-sidebar > i {
+    margin: 0px 15px;
+    font-size: 17px;
+    color: white;
+    line-height: 50px;
+}
+.header-sidebar > h1{
+    color: white;
+    font-size: 20px;
+    display: none;
+}
+
+.container-sidebar{
+    width: 100%;
+    padding: 10px 15px;
+}
+.container-sidebar > .menu-list{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;    
+    justify-content: flex-start;
+    cursor: pointer;
+}
+.container-sidebar > .menu-list > li{
+    margin: 10px 0;
+    width: 100%;
+    height: 100%;
+    list-style: none;
+    background-color: transparent;
+    border-radius: 12px;
+    position: relative;
+
+    transition: 0.2s ease-in-out;
+}
+.container-sidebar > .menu-list > li > a {
+    margin: 0px 15px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+.container-sidebar > .menu-list > li:hover{
+    background-color: white;
+}
+.container-sidebar > .menu-list > li > a > i{
+    font-size: 17px;
+    color: white;
+    line-height: 50px;
+
+    transition: 0.2s ease-in-out;
+}
+.container-sidebar > .menu-list > li:hover > a > i,
+.container-sidebar > .menu-list > li:hover > a > p{
+    color: #695CFE;
+}
+.container-sidebar > .menu-list > li > a > .links_name {
+    font-size: 16px;
+    color: white;
+    display: none;
+    margin-left: 15px;
+}
+.container-sidebar > .menu-list >  li > .tooltip{
+    position: absolute;
+    top: -20px;
+    left: calc(100% + 10px);
+    z-index: 3;
+    background: #fff;
+    box-shadow: 0 3px 10px rgba(74, 74, 74, 0.01);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 15px;
+    opacity: 0;
+    font-weight: 400;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: 0s;
+}
+.container-sidebar > .menu-list >  li:hover > .tooltip{
+    opacity: 1;
+    pointer-events: auto;
+    transition: all 0.2s ease;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.footer-sidebar{
+    padding: 10px 15px;
+    height: 80px;
+    width: 78px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: #4137ae;
+    cursor: pointer;
+
+    transition: 0.2s ease-in-out;
+}
+.footer-sidebar > img{
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50px;
+}
+.footer-sidebar > .user-role{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    display: none;
+    margin-left: 15px;
+}
+.footer-sidebar > .user-role > h2, .footer-sidebar > .user-role > p{
+    font-size: 14px;
+    font-weight: 400;
+    color: white;
+}
+.footer-sidebar > .user-role > p {
+    font-size: 12px;
+}
+.footer-sidebar > i {
+    font-size: 17px;
+    color: white;
+    line-height: 50px;
+    display: none;
+    margin-left: 50px;
+}
+
+/* classe open for more details */
+
+.sidebar.open{
+    width: 250px;
+}
+.sidebar.open > .footer-sidebar{
+    width: 250px;
+}
+.sidebar.open > .header-sidebar > h1,
+.sidebar.open > .container-sidebar > .menu-list > li > a > .links_name,
+.sidebar.open > .footer-sidebar > .user-role,
+.sidebar.open > .footer-sidebar > i{
+    display: block;
+}
+.sidebar.open > .header-sidebar,
+.sidebar.open > .container-sidebar > .menu-list > li > a,
+.sidebar.open > .footer-sidebar{
+    justify-content: left;
+    margin: 0px 15px;
+}
+.sidebar.open > .header-sidebar{
+    margin: 15px 15px;
+}
+.sidebar.open > .container-sidebar > .menu-list >  li > .tooltip{
+    display: none;
+}
+
+/* media queries */
+
+
+
+/* NAVBAR */
+
+.navbar{
+    z-index: 999;
+    display: none;
+    position: fixed;
+    background-color: #695CFE;
+    height: 80px;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    
+    transition: 0.2s ease-in-out;
+}
+.header-navbar{
+    height: 50px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    margin: 15px 15px;
+}
+.header-navbar > i {
+    font-size: 17px;
+    color: white;
+    line-height: 50px;
+}
+.header-navbar > h1{
+    color: white;
+    font-size: 20px;
+}
+.header-navbar > img{
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50px;
+    cursor: pointer;
+}
+.container-navbar{
+    width: 100%;
+    padding: 10px 15px;
+    display: none;
+}
+.container-navbar > .list-menu{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;    
+    justify-content: flex-start;
+    cursor: pointer;
+}
+.container-navbar > .list-menu > li{
+    margin: 10px 0;
+    width: 100%;
+    height: 100%;
+    list-style: none;
+    background-color: transparent;
+    border-radius: 12px;
+    position: relative;
+
+    transition: 0.2s ease-in-out;
+}
+.container-navbar > .list-menu > li > a {
+    margin: 0px 15px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+.container-navbar > .list-menu > li:hover{
+    background-color: white;
+}
+.container-navbar > .list-menu > li > a > i{
+    font-size: 17px;
+    color: white;
+    line-height: 50px;
+
+    transition: 0.2s ease-in-out;
+}
+.container-navbar > .list-menu > li:hover > a > i,
+.container-navbar > .list-menu > li:hover > a > p{
+    color: #695CFE;
+}
+.container-navbar > .list-menu > li > a > .name-link {
+    font-size: 16px;
+    color: white;
+    margin-left: 15px;
+}
+.container-navbar > .list-menu > li > .userField > img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50px;
+}
+.container-navbar > .list-menu > li > .userField > p{
+    font-size: 14px;
+    font-weight: 400;
+    color: white;
+    margin-left: 15px;
+}
+.container-navbar > .list-menu > li > .userField > i{
+    font-size: 17px;
+    color: white;
+    line-height: 50px;
+    margin-left: 50px;
+}
+
+/* open navbar */
+
+.navbar.show{
+    height: 520px;
+}
+.navbar.show > .container-navbar {
+    display: flex;
+}
+
+
+
+@media screen and (max-width: 768px){
+    .sidebar{
+        display: none;
+    }
+    .navbar{
+        display: flex;
+    }
+}
