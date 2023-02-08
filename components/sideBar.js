@@ -1,4 +1,6 @@
-import React from 'react'
+import React, { useState, useRef, useEffect } from 'react'
+
+import { useAuthValue } from '../config/AuthContext'
 
 function sideBar() {
 
@@ -17,6 +19,9 @@ function sideBar() {
     function redirect (){
         location.href = "/login";
     }
+
+    const {currentUser} = useAuthValue()
+    const delay = ms => new Promise(res => setTimeout(res, ms));   
 
   return (
 
@@ -80,7 +85,8 @@ function sideBar() {
         <div className="footer-sidebar" id="footer-sidebar" onClick={() => redirect()}>
             <img src="/user.jpg" alt="" />
             <div className="user-role">
-                <h2>Admin</h2>
+                {currentUser && ( <h2>{currentUser?.displayName}</h2>)}
+                {!currentUser && (<h2>FilhodaPuta</h2>)}
                 <p>Administrator</p>
             </div>
             <i className='pi pi-sign-out' id="log_out" ></i>
