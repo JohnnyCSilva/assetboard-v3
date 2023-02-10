@@ -1,56 +1,100 @@
-import React from 'react'
+import React, { useEffect} from 'react'
+import { googleSignIn } from '../config/Firebase'
 
 function signUp() {
+
+    useEffect(() => { 
+        const container = document.getElementById('container');
+    }, [])
+
+    function toggleForms() {
+        container.classList.toggle("sign-up-mode");
+    }
+
     
   return (
-    <div className='loginformcontainer'>
-    <div class="container" id="container">
-        <div class="form-container sign-up-container">
-            <form action="">
-                <h1>Create Account</h1>
-                <div class="social-container">
-                    <a href="#" class="social"><i class="fa fa-facebook"></i></a>
-                    <a href="#" class="social"><i class="fa fa-google"></i></a>
-                    <a href="#" class="social"><i class="fa fa-linkedin"></i></a>
+    <div className='login-form'>
+        <div class="container" id="container">
+            <div class="forms-container">
+                <div class="signin-signup">
+                    <form action="#" class="sign-in-form">
+                        <h2 class="title">Sign in</h2>
+                        <div class="input-field">
+                            <i class="pi pi-user"></i>
+                            <input type="text" placeholder="Username" />
+                        </div>
+                        <div class="input-field">
+                        <i class="pi pi-lock"></i>
+                            <input type="password" placeholder="Password" />
+                        </div>
+                        <input type="submit" value="Login" class="btn solid" />
+                        <p class="social-text">Or Sign in with social platforms</p>
+                        <div class="social-media">
+                        <a href="#" class="social-icon">
+                            <i class="pi pi-facebook"></i>
+                        </a>
+                        <a href="#" class="social-icon" onClick={() => googleSignIn()}>
+                            <i class="pi pi-google"></i>
+                        </a>
+                        </div>
+                    </form>
+                    <form action="#" class="sign-up-form">
+                        <h2 class="title">Sign up</h2>
+                            <div class="input-field">
+                                <i class="pi pi-user"></i>
+                                <input type="text" placeholder="Username" />
+                            </div>
+                            <div class="input-field">
+                                <i class="pi pi-envelope"></i>
+                                <input type="email" placeholder="Email" />
+                            </div>
+                            <div class="input-field">
+                                <i class="pi pi-lock"></i>
+                                <input type="password" placeholder="Password" />
+                            </div>
+                            <input type="submit" class="btn" value="Sign up" />
+                            <p class="social-text">Or Sign up with social platforms</p>
+                            <div class="social-media">
+                            <a href="#" class="social-icon">
+                                <i class="pi pi-facebook"></i>
+                            </a>
+                            <a href="#" class="social-icon" onClick={() => googleSignIn()}>
+                                <i class="pi pi-google"></i>
+                            </a>
+                        </div>
+                    </form>
                 </div>
-                <span>or use your email for registration</span>
-                <input type="text" name="name" placeholder="Name"/>
-                <input type="email" name="email" placeholder="Email"/>
-                <input type="password" name="password" placeholder="Password"/>
-                <button>SignUp</button>
-            </form>
-        </div>
-        <div class="form-container sign-in-container">
-            <form action="#">
-                <h1>Sign In</h1>
-                    <div class="social-container">
-                    <a href="#" class="social"><i class="fa fa-facebook"></i></a>
-                    <a href="#" class="social"><i class="fa fa-google"></i></a>
-                    <a href="#" class="social"><i class="fa fa-linkedin"></i></a>
+            </div>
+
+            <div class="panels-container">
+                <div class="panel left-panel">
+                    <div class="content">
+                        <h3>New here ?</h3>
+                        <p>
+                        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Debitis,
+                        ex ratione. Aliquid!
+                        </p>
+                        <button class="btn transparent" id="sign-up-btn" onClick={() => toggleForms()}>
+                        Sign up
+                        </button>
+                    </div>
+                    <img src="img/log.svg" class="image" alt="" />
                 </div>
-                <span>or use your account</span>
-                <input type="email" name="email" placeholder="Email"/>
-                <input type="password" name="password" placeholder="Password"/>
-                <a href="#">Forgot Your Password</a>
-        
-                <button>Sign In</button>
-            </form>
-        </div>
-        <div class="overlay-container">
-            <div class="overlay">
-                <div class="overlay-panel overlay-left">
-                    <h1>Welcome Back!</h1>
-                    <p>To keep connected with us please login with your personal info</p>
-                    <button class="ghost" id="signIn">Sign In</button>
-                </div>
-                <div class="overlay-panel overlay-right">
-                    <h1>Hello, Friend!</h1>
-                    <p>Enter your details and start journey with us</p>
-                    <button class="ghost" id="signUp">Sign Up</button>
+                <div class="panel right-panel">
+                    <div class="content">
+                        <h3>One of us ?</h3>
+                        <p>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum
+                        laboriosam ad deleniti.
+                        </p>
+                        <button class="btn transparent" id="sign-in-btn" onClick={() => toggleForms()}>
+                        Sign in
+                        </button>
+                    </div>
+                    <img src="img/register.svg" class="image" alt="" />
                 </div>
             </div>
         </div>
-    </div>
     </div>
   )
 }

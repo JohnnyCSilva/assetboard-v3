@@ -12,6 +12,7 @@ body{
   background-color: var(--body-color);
   min-height: 100vh;
 }
+
 body.dark{
   --body-color: #18191a;
   --sidebar-color: #242526;
