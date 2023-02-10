@@ -11,7 +11,6 @@ import Navbar from '../components/navBar.js';
 import SignUp from '@/components/signUp.js';
 
 import { AuthProvider } from '../config/AuthContext'
-import { googleSignIn } from '../config/Firebase'
 import { useState, useEffect} from 'react'
 import { auth } from '../config/Firebase'
 import { onAuthStateChanged } from 'firebase/auth'

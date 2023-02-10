@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup  } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup, FacebookAuthProvider  } from 'firebase/auth';
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -16,13 +16,25 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
 
-export const provider = new GoogleAuthProvider();
+export const google = new GoogleAuthProvider();
+export const facebook = new FacebookAuthProvider();
 
 export const googleSignIn = () => {
 
-  signInWithPopup(auth, provider)
+  signInWithPopup(auth, google)
     .then((result) => {
 
+      console.log(" name: " + result.user.displayName + " email: " + result.user.email + " photoURL " + result.user.photoURL);
+      window.location = '/';
+    }).catch((error) => {
+      console.log(error);
+    });
+}
+export const facebookSignIn = () => {
+
+  signInWithPopup(auth, facebook)
+    .then((result) => {
+      console.log(result)
       console.log(" name: " + result.user.displayName + " email: " + result.user.email + " photoURL " + result.user.photoURL);
       window.location = '/';
     }).catch((error) => {
