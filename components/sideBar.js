@@ -1,11 +1,19 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 import { signOut } from 'firebase/auth';
 import { useAuthValue } from '../config/AuthContext'
 import { auth } from '../config/Firebase'
 
+import { Toast } from 'primereact/toast';
+
 
 function sideBar() {
+
+    const toast = useRef(null);
+
+    const showToast = () => {
+        toast.current.show({ severity: 'warn', summary: 'Sessão Encerrada', detail: 'A terminar sessão...' });
+    };
 
     function toggleSidebar() {
 
@@ -20,17 +28,24 @@ function sideBar() {
     }
 
     const {currentUser} = useAuthValue()
-    const delay = ms => new Promise(res => setTimeout(res, ms));   
+    const delay = ms => new Promise(res => setTimeout(res, ms));
 
-    function SignOutUser() {
+
+    async function SignOutUser() {
+
+        showToast();
+        
+        await delay(2000);
+
         signOut(auth);
-        delay(3000);
-        window.location = '/';
+        window.location = "/";
     }
 
   return (
 
     <nav className='sidebar' id="sidebar">
+
+    <Toast ref={toast} />
 
         <div className="header-sidebar">
             <i className='pi pi-bars' id="menu" onClick={() => toggleSidebar()}></i>

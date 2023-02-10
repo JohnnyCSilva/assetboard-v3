@@ -11,45 +11,49 @@ import Navbar from '../components/navBar.js';
 import SignUp from '@/components/signUp.js';
 
 import { AuthProvider } from '../config/AuthContext'
-import { useState, useEffect} from 'react'
+import { useState } from 'react'
 import { auth, db } from '../config/Firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 
-import { addDoc, collection, query, where } from "firebase/firestore";
+import { addDoc, collection, query, where, getDocs } from "firebase/firestore";
 
+function App({ Component, pageProps }) {
 
- function App({ Component, pageProps }) {
+  const [currentUser, setCurrentUser] = useState(null);
 
-  const [currentUser, setCurrentUser] = useState()
+  let authFlag = false;
 
-  useEffect(() => {
-    
-    onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
+  onAuthStateChanged(auth, async (user) => {
 
-      console.log(1)
-      
-      if (!user == ""){
+    if (user !== null && user !== undefined) {
 
-        //const getUserFromDB = query(collection(db, "users", where ("userID", "==", user.uid)))
+      if (authFlag === false) {
+        authFlag = true;
 
-        //if ( getUserFromDB != null)
-        addDoc(collection(db, "users"),{
-          userId: user.uid,
-          nome: user.displayName,
-          email: user.email
-        });
+        const q = query(collection(db, "users"), where("email", "==", user.email));
+        console.log("teste")
+        const querySnapshot = await getDocs(q)
+          
+        if (querySnapshot.empty) {
+          await addDoc(collection(db, "users"), {
+            email: user.email,
+            name: user.displayName,
+            photo: user.photoURL,
+            uid: user.uid,
+          });
+        }
+          setCurrentUser(user);
+        }         
+      } else {
+        console.log("No user is signed in.");
       }
-
-    })
-     
-  }, [onAuthStateChanged])
+    });
 
   return (
     <div>
-      { !currentUser ? (
+      {!currentUser ? (
         <>
-          <SignUp />   a       
+          <SignUp />      
         </>
         
       ):( 
