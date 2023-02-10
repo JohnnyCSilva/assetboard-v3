@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, FacebookAuthProvider  } from 'firebase/auth';
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, addDoc, collection } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -23,9 +23,8 @@ export const googleSignIn = () => {
 
   signInWithPopup(auth, google)
     .then((result) => {
-
       console.log(" name: " + result.user.displayName + " email: " + result.user.email + " photoURL " + result.user.photoURL);
-      window.location = '/';
+      window.location = '/Dashboard';
     }).catch((error) => {
       console.log(error);
     });
@@ -36,7 +35,7 @@ export const facebookSignIn = () => {
     .then((result) => {
       console.log(result)
       console.log(" name: " + result.user.displayName + " email: " + result.user.email + " photoURL " + result.user.photoURL);
-      window.location = '/';
+      window.location = '/Dashboard';
     }).catch((error) => {
       console.log(error);
     });

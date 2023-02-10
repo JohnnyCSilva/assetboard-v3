@@ -12,8 +12,11 @@ import SignUp from '@/components/signUp.js';
 
 import { AuthProvider } from '../config/AuthContext'
 import { useState, useEffect} from 'react'
-import { auth } from '../config/Firebase'
+import { auth, db } from '../config/Firebase'
 import { onAuthStateChanged } from 'firebase/auth'
+
+import { addDoc, collection, query, where } from "firebase/firestore";
+
 
  function App({ Component, pageProps }) {
 
@@ -23,16 +26,30 @@ import { onAuthStateChanged } from 'firebase/auth'
     
     onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
-      console.log(currentUser);
+
+      console.log(1)
+      
+      if (!user == ""){
+
+        //const getUserFromDB = query(collection(db, "users", where ("userID", "==", user.uid)))
+
+        //if ( getUserFromDB != null)
+        addDoc(collection(db, "users"),{
+          userId: user.uid,
+          nome: user.displayName,
+          email: user.email
+        });
+      }
+
     })
      
-  }, [])
+  }, [onAuthStateChanged])
 
   return (
     <div>
       { !currentUser ? (
         <>
-          <SignUp />          
+          <SignUp />   a       
         </>
         
       ):( 

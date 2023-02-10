@@ -88,7 +88,7 @@ function sideBar() {
             </ul>
         </div>
         <div className="footer-sidebar" id="footer-sidebar">
-            <img src="/user.jpg" alt="" />
+            <img src={currentUser?.photoURL} alt="" />
             <div className="user-role">
                 {currentUser && ( <h2>{currentUser?.displayName}</h2>)}
                 <p>Administrator</p>
