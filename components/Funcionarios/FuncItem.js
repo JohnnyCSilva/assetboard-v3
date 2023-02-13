@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { useAuthValue } from '../../config/AuthContext'
 import { db } from '../../config/Firebase'
 
-import { collection, query, where, getDocs,  } from "firebase/firestore";
+import { collection, query, where, getDocs, deleteDoc, doc } from "firebase/firestore";
 
 function FuncItem(props) {
 
   const [admin, setAdmin] = useState(false);
   const [userPermitions, setUserPermitions] = useState(false);
+  const [funcionarios, setFuncionarios] = useState([]);
 
   //get the current route path and pass it to the funcionario_edit component
   const routeChange = () => {
@@ -26,6 +27,10 @@ function FuncItem(props) {
         if (doc.data().userRole === "admin") {
           setAdmin(true);
         }
+
+        //push data into array
+         setFuncionarios(funcionarios => [...funcionarios, doc.data()]);
+
       });
     });
 
@@ -37,6 +42,24 @@ function FuncItem(props) {
       setUserPermitions(true);
     }
   }, [currentUser.uid, props.funcionarios.uid]);
+
+
+      //delete funcionario from users list where uid is equal to funcionario.uid
+
+      const deleteFuncionario = () => {
+        const q = query(collection(db, "users"), where("uid", "==", props.funcionarios.uid));
+        getDocs(q).then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            deleteDoc(doc.ref);
+          });
+        });
+
+        //add confirmation popup
+
+        
+      }
+
+
 
   return (
     <tr>
@@ -57,7 +80,7 @@ function FuncItem(props) {
         {admin && ( 
           <div className='table-td-actions'>
             <i className='pi pi-pencil editar' onClick={(e) => routeChange(e)}/>
-            <i className='pi pi-trash excluir'/>
+            <i className='pi pi-trash excluir' onClick={(e) => deleteFuncionario(e)}/>
           </div>
         ) || (userPermitions && <div className='table-td-actions'><i className='pi pi-file-edit editar' onClick={(e) => routeChange(e)}/></div>)}
       </td>
