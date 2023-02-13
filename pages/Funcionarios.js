@@ -1,41 +1,57 @@
 import React, { useEffect, useState } from 'react'
 
 import { db } from '../config/Firebase'
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, getDocs } from "firebase/firestore";
 
 import FuncList from '../components/Funcionarios/FuncList'
 
 function Funcionarios() {
 
   const [funcionarios, setFuncionarios] = useState([]);
+
+
     
   useEffect(() => {
 
-    // get users from firebase and set it to customers
     const q = query(collection(db, "users"));
     const querySnapshot = getDocs(q).then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         setFuncionarios(funcionarios => [...funcionarios, doc.data()]);
-        //console.log(doc.data());
-
       });
     }
     )
 
   }, [])
 
-  const nameImageTemplate = (rowData) => {
-    return (
-        <React.Fragment>
-            <img src={`${rowData.photo}`} width={30} style={{ verticalAlign: 'middle', borderRadius: '50px', marginRight: "10px" }} />
-            <span className="vertical-align-middle ml-2">{rowData.name}</span>
-        </React.Fragment>
-    );
+  // get number of users in database
+  const numFuncionarios = funcionarios.length;
+
+  //function to export data to excel
+  const exportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(funcionarios);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Funcionários");
+    XLSX.writeFile(wb, "Funcionários.xlsx");
+  }
+
+  //function to add new user
+  const addNewUser = () => {
+    console.log('add new user')
   }
 
   return (
     <div>
-      <h1> Funcionários </h1>
+      <div className='main-title-page'>
+        <div className='title-left-side'>
+          <h1>Funcionários </h1>
+          <span>{numFuncionarios} Funcionários</span>
+        </div>
+
+        <div className='title-right-side'>
+          <button className='btn-add'><i className='pi pi-plus-circle'></i>Adicionar</button>
+          <button className='btn-export' onClick={exportToExcel}><i className='pi pi-file-excel'></i>Exportar</button>
+        </div>
+      </div>
 
       <FuncList funcionarios={funcionarios}/>
 

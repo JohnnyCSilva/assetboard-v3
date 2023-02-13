@@ -29,32 +29,35 @@ function FuncItem(props) {
       });
     });
 
-  }, [currentUser.email]);
+  }, [currentUser.uid]);
 
   //if currentuser.uid is equal to funcionario.id, set userPermitions to true and show the edit button
   useEffect(() => {
     if (currentUser.uid === props.funcionarios.uid) {
       setUserPermitions(true);
     }
-  }
-  , [currentUser.uid, props.funcionarios.uid]);
+  }, [currentUser.uid, props.funcionarios.uid]);
 
   return (
     <tr>
-      <td>
+      <td width="20%">
         <div className='image-text'>
           <img src={`${props.funcionarios.photo}`} alt=""/>
-          <p>{props.funcionarios.name}</p>
+          <div className='image-text-name'>
+            <p className='name'>{props.funcionarios.name}</p>
+            <p className='email'>{props.funcionarios.email}</p>
+          </div>
         </div>
       </td>
-      <td>{props.funcionarios.email}</td>
-      <td>{props.funcionarios.cargo}</td>
-      <td>{props.funcionarios.contacto}</td>
-      <td>
+      <td width="15%" className='table-col-userRole'><p>{props.funcionarios.userRole}</p></td>
+      <td width="15%">{props.funcionarios.area}</td>
+      <td width="15%">+351 91x xxx xxx{props.funcionarios.contacto}</td>
+      <td width="15%">PT50 5000 1234 1234 12{props.funcionarios.iban}</td>
+      <td width="10%">
         {admin && ( 
           <div className='table-td-actions'>
-            <i className='pi pi-file-edit editar' onClick={(e) => routeChange(e)}/>
-            <i className='pi pi-times-circle excluir'/>
+            <i className='pi pi-pencil editar' onClick={(e) => routeChange(e)}/>
+            <i className='pi pi-trash excluir'/>
           </div>
         ) || (userPermitions && <div className='table-td-actions'><i className='pi pi-file-edit editar' onClick={(e) => routeChange(e)}/></div>)}
       </td>

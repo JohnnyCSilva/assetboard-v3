@@ -1,7 +1,7 @@
 import '@/styles/global.css'
 import '@/styles/navigation.css'
 import '@/styles/signUp.css'
-import '@/styles/Funcionario.css'
+import '@/styles/funcionario.css'
 
 import "primeicons/primeicons.css";
 import "primereact/resources/primereact.min.css"; 

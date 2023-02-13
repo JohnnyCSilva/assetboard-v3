@@ -6,20 +6,23 @@ function FuncList(props) {
   return (
     <div className="funcionario_container">
       <table className='funcionario_table_row'>
-        <tr>
-          <th>Nome</th>
-          <th>Email</th>
-          <th>Cargo</th>
-          <th>Contacto</th>
-          <th>Ações</th>
-        </tr>
-
-      {props.funcionarios.map(funcionarios => {
-        return (
-          <FuncItem funcionarios={funcionarios} />
-        )
-      })}
-
+        <thead className='tablehead-funcionarios'>
+          <tr>
+            <th>Nome</th>
+            <th>Função</th>
+            <th>Área</th>
+            <th>Contacto</th>
+            <th>IBAN</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody className='tablebody-funcionarios'>
+          {props.funcionarios.map(funcionarios => {
+            return (
+              <FuncItem funcionarios={funcionarios} key={funcionarios.uid}/>
+            )
+          })}
+          </tbody>
       </table>
     </div>
   )
