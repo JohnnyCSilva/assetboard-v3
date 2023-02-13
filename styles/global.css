@@ -32,7 +32,7 @@ body.dark{
   top: 0;
   left: 78px;
   width: calc(100% - 78px);
-  z-index: 2;
+  z-index: 1;
   padding: 25px;
   transition: 0.2s ease-in-out;
   
@@ -50,8 +50,8 @@ body.dark{
     top: 100px;
     left: 0px;
     width: 100%;
-    z-index: 2;
-    padding: 25px;
+    z-index: 1;
+    padding: 20px;
   }
 
   .navbar.open ~ .home-section{

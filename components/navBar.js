@@ -42,7 +42,7 @@ function navBar() {
                 </li>
 
                 <li>
-                    <a href='#'>
+                    <a href='/Funcionarios'>
                         <i className='pi pi-users'></i>
                         <p className="name-link">Funcionários</p>
                     </a>

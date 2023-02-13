@@ -27,7 +27,8 @@ function sideBar() {
 
     }
 
-    const {currentUser} = useAuthValue()
+    const {currentUser} = useAuthValue();
+
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
 
@@ -70,7 +71,7 @@ function sideBar() {
                 </li>
 
                 <li>
-                    <a href='#'>
+                    <a href='/Funcionarios'>
                         <i className='pi pi-users'></i>
                         <p className="links_name">Funcionários</p>
                     </a>

@@ -1,6 +1,7 @@
 import '@/styles/global.css'
 import '@/styles/navigation.css'
 import '@/styles/signUp.css'
+import '@/styles/Funcionario.css'
 
 import "primeicons/primeicons.css";
 import "primereact/resources/primereact.min.css"; 
@@ -49,27 +50,30 @@ function App({ Component, pageProps }) {
       }
     });
 
-  return (
-    <div>
-      {!currentUser ? (
-        <>
-          <SignUp />      
-        </>
-        
-      ):( 
+
+
+    // if user no logged in, show sign up page
+    // if user logged in, show the rest of the app
+    if (currentUser === null) {
+
+      return (
         <AuthProvider value={{currentUser}}>
-
-          <Sidebar/>
+          <SignUp />
+        </AuthProvider>
+      )
+    } else {
+      return (
+        <AuthProvider value={{currentUser}}>
           <Navbar />
-
-          <div className="home-section">
+          <Sidebar />
+          <div className='home-section'>
             <Component {...pageProps} />
           </div>
-
         </AuthProvider>
-      )}
-      
-    </div>
-)}
+      )
+    }
+}
+
+
 
 export default App;
