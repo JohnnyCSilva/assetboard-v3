@@ -2,6 +2,7 @@ import '@/styles/global.css'
 import '@/styles/navigation.css'
 import '@/styles/signUp.css'
 import '@/styles/funcionario.css'
+import '@/styles/userDash.css'
 
 import "primeicons/primeicons.css";
 import "primereact/resources/primereact.min.css"; 
@@ -42,6 +43,9 @@ function App({ Component, pageProps }) {
             uid: user.uid,
             userRole: "funcionario",
             precoHora: "0",
+            nascimento: "",
+            niss: "",
+            codPostal: "",
             contacto: "",
             area: "",
             iban: "",
@@ -61,7 +65,7 @@ function App({ Component, pageProps }) {
 
     // if user no logged in, show sign up page
     // if user logged in, show the rest of the app
-    if (currentUser === null) {
+    if (currentUser === null || currentUser === undefined) {
 
       return (
         <AuthProvider value={{currentUser}}>

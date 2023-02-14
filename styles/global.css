@@ -29,6 +29,13 @@ table{
   border-collapse: collapse; 
 }
 
+.button-uploadFile{
+  font-size: 15px;
+  font-weight: normal;
+  padding: 7px 0px 7px 10px;
+  border-radius: 50px !important;
+}
+
 .home-section{
   position: relative;
   min-height: 100vh;

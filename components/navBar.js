@@ -14,16 +14,12 @@ function navBar() {
 
     }
 
-    function redirect (){
-        location.href = "/login";
-    }
-
   return (
     <nav className='navbar' id="navbar">
         <div className='header-navbar'>
             <i className='pi pi-bars' id="menu_show" onClick={() => toggleNavbar()}></i>
             <h1>AssetBoard</h1>
-            <img src="/user.jpg" alt="" onClick={() => redirect()}/>
+            <img src="/user.jpg" alt="" onClick={() => window.location = "/UserDash"}/>
         </div>
         <div className='container-navbar'>
             <ul className="list-menu">

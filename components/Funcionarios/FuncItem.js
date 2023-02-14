@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useAuthValue } from '../../config/AuthContext'
 import { db } from '../../config/Firebase'
 import { Dialog } from 'primereact/dialog';
-import { useRouter } from 'next/router'
 
 import { collection, query, where, getDocs, deleteDoc, updateDoc } from "firebase/firestore";
 
@@ -23,8 +22,6 @@ function FuncItem(props) {
   const [precohora, setPrecohora] = useState("");
   const [userRole, setUserRole] = useState("");
   const [morada, setMorada] = useState("");
-
-  const router = useRouter()
 
   useEffect(() => {
     const q = query(collection(db, "users"), where("uid", "==", currentUser.uid));

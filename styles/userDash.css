@@ -1,0 +1,141 @@
+.user-profile{
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.user-profile-left{
+    width: 70%;
+    height: 100%;
+    background-color: white;
+    padding: 30px;
+    margin-top: 20px;
+    border-radius: 10px;
+}
+
+.user-profile-right{
+    width: 30%;
+    height: auto;
+    padding: 20px;
+}
+
+.user-profile-left > h2,
+.user-profile-right > h2{
+    margin-bottom: 20px;
+}
+
+.user-profile-changes > form {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    
+}
+
+.user-profile-changes > form > .form-flex{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-profile-changes > form > .form-flex > .form-group{
+    width: 100%;
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-profile-changes > form > .form-flex > .form-group > .avatar{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 5px;
+}
+
+.user-profile-changes > form > .form-flex > .form-group > .avatar > img{
+    padding: 5px;
+    width: 100px;
+    border: 2px dashed #695cfe;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+
+
+.user-profile-changes > form > .form-flex > .form-group > label{
+    font-size: 15px;
+    margin-bottom: 5px;
+    color: #9e9e9e;
+    vertical-align: middle;
+}
+
+.user-profile-changes > form > .form-flex > .form-group > .inputText{
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    width: 100%;
+    height: 50px;
+    padding: 10px;
+    border: 1px solid #f5f7fc;
+    border-radius: 5px;
+}
+
+.user-profile-changes > form > .form-flex > .form-group > .inputText:hover{
+    border: 1px solid #695cfe;
+}
+
+.user-profile-changes > form > .form-flex-buttons{
+    width: 100%;
+    height: 100px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.user-profile-changes > form > .form-flex-buttons > .form-buttons{
+    width: 30%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.user-profile-changes > form > .form-flex-buttons > .form-buttons > .button{
+    min-width: 50px;
+    height: 50px;
+    border: none;
+    background-color: #695cfe;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+
+    transition: all 0.3s ease-in-out;
+}
+.user-profile-changes > form > .form-flex-buttons > .form-buttons > .button-save{
+    margin: 0 5px 0 10px;
+    background-color: #4CAF50;
+}
+
+.user-profile-changes > form > .form-flex-buttons > .form-buttons > .button-cancel{
+    background-color: #ff0000;
+}
+
+.user-profile-changes > form > .form-flex-buttons > .form-buttons > .button:hover{
+    opacity: 0.8;
+}
+
+.user-profile-notices{
+    padding: 30px;
+    border-radius: 10px;
+    background-color: white;
+}
