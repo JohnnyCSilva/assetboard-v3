@@ -32,7 +32,6 @@ function App({ Component, pageProps }) {
         authFlag = true;
 
         const q = query(collection(db, "users"), where("email", "==", user.email));
-        console.log("teste")
         const querySnapshot = await getDocs(q)
           
         if (querySnapshot.empty) {
@@ -41,6 +40,14 @@ function App({ Component, pageProps }) {
             name: user.displayName,
             photo: user.photoURL,
             uid: user.uid,
+            userRole: "funcionario",
+            precoHora: "0",
+            contacto: "",
+            area: "",
+            iban: "",
+            nif: "",
+            morada: "",
+
           });
         }
           setCurrentUser(user);

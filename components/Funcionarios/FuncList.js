@@ -9,7 +9,7 @@ function FuncList(props) {
         <thead className='tablehead-funcionarios'>
           <tr>
             <th>Nome</th>
-            <th>Função</th>
+            <th>Cargo</th>
             <th>Área</th>
             <th>Contacto</th>
             <th>IBAN</th>

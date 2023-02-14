@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react'
 
 import { db } from '../config/Firebase'
 import { collection, query, getDocs } from "firebase/firestore";
+import XLSX from "xlsx";
 
 import FuncList from '../components/Funcionarios/FuncList'
 
 function Funcionarios() {
 
   const [funcionarios, setFuncionarios] = useState([]);
-
-
+  
     
   useEffect(() => {
 
@@ -23,20 +23,33 @@ function Funcionarios() {
 
   }, [])
 
+  // search funcionarios by name, if name is not found, show all funcionarios
+  const searchFuncionarios = (e) => {
+    const searchValue = e.target.value.toLowerCase();
+    const filteredFuncionarios = funcionarios.filter(funcionarios => {
+      return (
+        funcionarios.name.toLowerCase().includes(searchValue)
+      )
+    })
+    setFuncionarios(filteredFuncionarios);
+
+    // if funcionarios is empty, show all funcionarios
+    if (filteredFuncionarios.length === 0 || searchValue === '') {
+      setFuncionarios(funcionarios);
+    }
+
+  }
+
+
   // get number of users in database
   const numFuncionarios = funcionarios.length;
 
-  //function to export data to excel
+  //function to export Funcionarios to excel
   const exportToExcel = () => {
     const ws = XLSX.utils.json_to_sheet(funcionarios);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Funcionários");
-    XLSX.writeFile(wb, "Funcionários.xlsx");
-  }
-
-  //function to add new user
-  const addNewUser = () => {
-    console.log('add new user')
+    XLSX.utils.book_append_sheet(wb, ws, "Funcionarios");
+    XLSX.writeFile(wb, "Funcionarios.xlsx");
   }
 
   return (
@@ -46,9 +59,10 @@ function Funcionarios() {
           <h1>Funcionários </h1>
           <span>{numFuncionarios} Funcionários</span>
         </div>
-
+    
         <div className='title-right-side'>
-          <button className='btn-add'><i className='pi pi-plus-circle'></i>Adicionar</button>
+          <input type='text' placeholder='Pesquisar Funcionário' onChange={searchFuncionarios}/>
+          
           <button className='btn-export' onClick={exportToExcel}><i className='pi pi-file-excel'></i>Exportar</button>
         </div>
       </div>
