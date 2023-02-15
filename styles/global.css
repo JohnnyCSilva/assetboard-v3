@@ -29,10 +29,32 @@ table{
   border-collapse: collapse; 
 }
 
-.button-uploadFile{
+.button{
+  width: auto;
+  padding: 10px 20px;
+  height: 50px;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
   font-size: 15px;
-  font-weight: normal;
-  padding: 7px 0px 7px 10px;
+  font-weight: 500;
+  cursor: pointer;
+
+  transition: all 0.3s ease-in-out;
+}
+
+.button > i {
+  margin-right: 10px;
+}
+
+.button:hover{
+  opacity: 0.8;
+}
+
+.button-uploadFile{
+  font-size: 15px !important;
+  font-weight: normal !important;
+  padding: 7px 0px 7px 10px !important;
   border-radius: 50px !important;
 }
 

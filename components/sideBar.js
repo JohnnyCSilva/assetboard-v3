@@ -59,7 +59,28 @@ function sideBar() {
         window.location = "/";
     }   
 
+    //get all faltas from database and count them
 
+    const [faltas, setFaltas] = useState([]);
+    const [countFaltas, setCountFaltas] = useState(0);
+
+    //get all faltas from database
+    useEffect(() => {
+
+        setCountFaltas(0);  
+        setFaltas([]);
+
+        const q = query(collection(db, "faltas"));
+        const querySnapshot = getDocs(q).then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                setFaltas(faltas => [...faltas, doc.data()]);
+            });
+        })
+
+        setCountFaltas(faltas.length)
+        
+
+    }, [])
 
     //if currentUser role is admin, show admin sidebar
     if (role === 'admin') {
@@ -114,7 +135,7 @@ function sideBar() {
                         <li>
                             <a href='#'>
                                 <i className='pi pi-bell'></i>
-                                <p className="links_name">Pedidos <Badge value="2" severity="danger"></Badge></p>
+                                <p className="links_name">Pedidos &nbsp; <Badge value={countFaltas} severity="danger"></Badge></p>
                             </a>
                             <span className="tooltip">Pedidos</span>
                         </li>

@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react'
 import { db } from '../config/Firebase'
-import { collection, query, getDocs, updateDoc, where } from "firebase/firestore";
+import { collection, query, getDocs, updateDoc, where, addDoc } from "firebase/firestore";
 import { useAuthValue } from '../config/AuthContext'
 
 import { InputText } from "primereact/inputtext";
@@ -8,12 +8,20 @@ import { InputMask } from "primereact/inputmask";
 import { Calendar } from "primereact/calendar";
 import { FileUpload } from 'primereact/fileupload';
 import { Toast } from 'primereact/toast';
+import { Dialog } from 'primereact/dialog';
+import { RadioButton } from 'primereact/radiobutton';
+import { InputTextarea } from 'primereact/inputtextarea';
+import { DataTable, Column } from 'primereact/datatable';
+
+import FaltasList from '../components/UserConfig/FaltasList'
 
 
 function UserDash() {
 
     const {currentUser} = useAuthValue();
     const toast = useRef(null);
+    const [visible, setVisible] = useState(false);
+
 
     //get currentUser data from database
     const [userData, setUserData] = useState([]);
@@ -25,6 +33,22 @@ function UserDash() {
     const [contacto , setContacto] = useState('');
     const [nif , setNif] = useState('');
     const [niss , setNiss] = useState('');
+    const [nascimento , setNascimento] = useState(null);
+
+    const [motivo, setMotivo] = useState('');
+    const [diasFalta, setDiasFalta] = useState(null);
+    const [obs, setObs] = useState('');
+
+    const [faltas, setFaltas] = useState([]);
+
+
+
+    useEffect(() => {
+        getFaltas();
+
+        console.log(faltas);
+        
+    }, [])
 
     useEffect(() => {
         const q = query(collection(db, "users"));
@@ -35,13 +59,27 @@ function UserDash() {
                 }
             });
         })
+        
     }, [])
+
+    async function getFaltas() {
+
+        setFaltas([]);
+
+        //get faltas from database where uid is equal to currentUser uid
+        const q = query(collection(db, "faltas"), where("uid", "==", currentUser.uid));
+        const querySnapshot = await getDocs(q).then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                setFaltas(faltas => [...faltas, doc.data()]);
+            });
+        })
+
+}
 
     const chooseOptions = { icon: 'pi pi-cog', iconOnly: true,  className: 'button-uploadFile' };
 
     //on submit form changes to database and update user data
     const handleSubmit = () => {
-        alert(date);
         const q = query(collection(db, "users"), where("uid", "==", currentUser.uid));
         const querySnapshot = getDocs(q).then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
@@ -51,7 +89,7 @@ function UserDash() {
                     date: date,
                     morada: morada,
                     nacionalidade: nacionalidade,
-                    nascimento: date,
+                    nascimento: nascimento,
                     contacto: contacto,
                     nif: nif,
                     niss: niss,
@@ -63,6 +101,26 @@ function UserDash() {
 
     }
 
+    const registerFalta = () => {
+
+        addDoc(collection(db, "faltas"), {
+            motivo: motivo,
+            diasFalta: diasFalta,
+            obs: obs,
+            uid: currentUser.uid,
+            email: currentUser.email,
+            name: currentUser.displayName,
+            data: new Date(),
+            estado: "Pendente",
+        }).then(() => {
+            toast.current.show({severity:'success', summary: 'Registado', detail:'Falta registada com sucesso.', life: 3000});
+            setVisible(false);
+        });
+
+        setFaltas([]);
+        //run getFaltas function to update faltas state
+        getFaltas();
+    }
 
   return (
     <div>
@@ -73,7 +131,43 @@ function UserDash() {
                 <h1>Perfil</h1>
             </div>
             <div className='title-right-side'>
-
+                <button className='button button-vaccation' onClick={() => setVisible(true)}><i className='pi pi-calendar'></i>Registar Faltas</button>
+                <Dialog header="Registar Faltas" visible={visible} className='dialog-faltas' onHide={() => setVisible(false)}>
+                    <form className='form-dialog'>
+                        <label>Motivo</label>
+                        <div className='form-flex'>
+                            <div className='form-group-radio'>
+                                <RadioButton inputId="motivo1" name="motivo" value="Ferias" onChange={(e) => setMotivo(e.value)} checked={motivo === 'Ferias'} />
+                                <p htmlFor="motivo1">Férias</p>
+                            </div>
+                            <div className='form-group-radio'>
+                                <RadioButton inputId="motivo2" name="motivo" value="Doenca" onChange={(e) => setMotivo(e.value)} checked={motivo === 'Doenca'} />
+                                <p htmlFor="motivo2">Doença</p>
+                            </div>
+                            <div className='form-group-radio'>
+                                <RadioButton inputId="motivo3" name="motivo" value="Outro" onChange={(e) => setMotivo(e.value)} checked={motivo === 'Outro'} />
+                                <p htmlFor="motivo3">Outro</p>
+                            </div>
+                        </div>
+                        <div className='form-flex'>
+                            <div className='form-group'>
+                                <label htmlFor='date'>Dias</label>
+                                <Calendar value={diasFalta} dateFormat="dd/mm/yy" onChange={(e) => setDiasFalta(e.value)} showIcon />
+                            </div>
+                        </div>
+                        <div className='form-flex'>
+                            <div className='form-group'>
+                                <label htmlFor='obs'>Observações</label>
+                                <InputTextarea autoResize  value={obs} onChange={(e) => setObs(e.target.value)} rows={5} cols={30} />
+                            </div>
+                        </div>
+                        <div className='form-flex-buttons'>
+                            <div className="form-buttons">
+                                <button type="button" className='button button-save' onClick={registerFalta}><i className='pi pi-calendar-plus'></i>Registar</button>
+                            </div>
+                       </div>
+                    </form>
+                </Dialog>
             </div>
         </div>
         <div className='user-profile'>
@@ -102,7 +196,6 @@ function UserDash() {
                                 <InputText id='email' type='email' className="inputText" defaultValue={userData.email} disabled/>
                             </div>
                         </div>
-
                         <div className='form-flex'>
                             <div className='form-group morada'>
                                 <label htmlFor='morada'>Morada</label>
@@ -120,7 +213,7 @@ function UserDash() {
                             </div>
                             <div className='form-group morada'>
                                 <label htmlFor='nascimento'>Data de Nascimento</label>
-                                <Calendar value={date} dateFormat="dd/MM/yy" onChange={(e) => setDate(e.value)} defaultValue={userData.nascimento} showIcon />
+                                <Calendar value={date} dateFormat="dd/mm/yy" onChange={(e) => setNascimento(e.value)} showIcon />                                
                             </div>
                         </div>
 
@@ -131,7 +224,7 @@ function UserDash() {
                             </div>
                             <div className='form-group'>
                                 <label htmlFor='iban'>IBAN</label>
-                                <InputMask value={iban} className="inputText" onChange={(e) => setIban(e.target.value)} defaultValue={userData.iban} mask="PT50-9999-9999-9999-9999-9999-9" />
+                                <InputMask value={userData.iban} className="inputText" onChange={(e) => setIban(e.target.value)} defaultValue={userData.iban} mask="PT50-9999-9999-9999-9999-9999-9" />
                             </div>
                         </div>
 
@@ -148,18 +241,19 @@ function UserDash() {
 
                         <div className='form-flex-buttons'>
                             <div className="form-buttons">
-                                <button type="button" className='button button-save' onClick={handleSubmit}><i className='pi pi-save'></i></button>
-                                <button type="button" className='button button-cancel'><i className='pi pi-times'></i></button>
+                                <button type="button" className='button button-save' onClick={handleSubmit}><i className='pi pi-save'></i>Guardar</button>
                             </div>
                        </div>
                     </form>
                 </div>
             </div>
             <div className='user-profile-right'>
-                <div className='user-profile-notices'>
-                    <h2>Notificações</h2>
-                </div>
-            </div>  
+                <h2>Registo de Faltas</h2>
+                <div className='user-profile-faltas'>
+                    
+                    <FaltasList faltas={faltas} />
+                </div>  
+            </div>
         </div>
   </div>
   )

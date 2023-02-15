@@ -13,12 +13,17 @@
     padding: 30px;
     margin-top: 20px;
     border-radius: 10px;
+    margin-right: 10px;
 }
 
 .user-profile-right{
+    margin-left: 10px;
     width: 30%;
-    height: auto;
-    padding: 20px;
+    height: 100%;
+    background-color: white;
+    padding: 30px;
+    margin-top: 20px;
+    border-radius: 10px;
 }
 
 .user-profile-left > h2,
@@ -108,34 +113,128 @@
     justify-content: flex-start;
 }
 
-.user-profile-changes > form > .form-flex-buttons > .form-buttons > .button{
-    min-width: 50px;
-    height: 50px;
-    border: none;
-    background-color: #695cfe;
-    border-radius: 5px;
-    color: #fff;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-
-    transition: all 0.3s ease-in-out;
-}
 .user-profile-changes > form > .form-flex-buttons > .form-buttons > .button-save{
     margin: 0 5px 0 10px;
     background-color: #4CAF50;
-}
-
-.user-profile-changes > form > .form-flex-buttons > .form-buttons > .button-cancel{
-    background-color: #ff0000;
-}
-
-.user-profile-changes > form > .form-flex-buttons > .form-buttons > .button:hover{
-    opacity: 0.8;
 }
 
 .user-profile-notices{
     padding: 30px;
     border-radius: 10px;
     background-color: white;
+}
+
+@media screen and (max-width: 768px) {
+    .user-profile{
+        flex-direction: column;
+    }
+    
+    .user-profile-left{
+        width: 100%;
+    }
+    
+    .user-profile-right{
+        width: 100%;
+    }
+    .user-profile-changes > form > .form-flex,
+    .user-profile-changes > form > .form-flex-buttons > .form-buttons,
+    .user-profile-changes > form > .form-flex-buttons{
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .user-profile-changes > form > .form-flex-buttons > .form-buttons > .button-save{
+        width: 100%;
+    }
+}
+
+.page-title{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.title-right-side > .button-vaccation{
+    background-color: #e6be1a;
+    color: white;
+}
+
+.dialog-faltas{
+    width: 40%;
+}
+
+.form-dialog{
+    display: block;
+    padding: 0px;
+    border-radius: 10px;
+    background-color: white;
+}
+
+.form-dialog > label{
+    font-size: 15px;
+    margin-bottom: 5px;
+    margin-left: 10px;
+    color: #9e9e9e;
+    vertical-align: middle;
+}
+
+.form-dialog > .form-flex{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.form-dialog > .form-flex > .form-group-radio{
+    width: 15%;
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+}
+
+.form-dialog > .form-flex > .form-group-radio > p{
+    font-size: 15px;
+    margin-left: 5px;
+    color: black;
+    vertical-align: middle;
+}
+
+.form-dialog > .form-flex > .form-group{
+    width: 100%;
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-dialog > .form-flex > .form-group > label{
+    font-size: 15px;
+    margin-bottom: 5px;
+    color: #9e9e9e;
+    vertical-align: middle;
+}
+
+.form-dialog > .form-flex-buttons {
+    width: 100%;
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.form-dialog > .form-flex-buttons > .form-buttons{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.form-dialog > .form-flex-buttons > .form-buttons > .button-save{
+    background-color: #4CAF50;
 }
