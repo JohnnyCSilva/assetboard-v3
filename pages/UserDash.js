@@ -185,7 +185,7 @@ function UserDash() {
                                 <label htmlFor='avatar'>Avatar</label>
                                 <div className='avatar'>
                                     <img src={userData.photo} alt='avatar'/>
-                                    <FileUpload name="avatar"  mode="basic" accept="image/*" maxFileSize={1000000} onUpload={onUpload}/>
+                                    <FileUpload name="avatar"  mode="basic" accept="image/*" maxFileSize={1000000} />
                                 </div>
                             </div>
                         </div>
