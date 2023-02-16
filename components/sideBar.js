@@ -33,7 +33,6 @@ function sideBar() {
             });
         }
         )
-        console.log("role" + role);
     }, [])
 
     const showToast = () => {

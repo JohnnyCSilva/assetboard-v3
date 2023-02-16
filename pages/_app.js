@@ -43,15 +43,6 @@ function App({ Component, pageProps }) {
             uid: user.uid,
             userRole: "funcionario",
             precoHora: "0",
-            nascimento: "",
-            niss: "",
-            codPostal: "",
-            contacto: "",
-            area: "",
-            iban: "",
-            nif: "",
-            morada: "",
-
           });
         }
           setCurrentUser(user);

@@ -185,7 +185,7 @@
     width: 100%;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     
     transition: 0.2s ease-in-out;
 }
@@ -195,8 +195,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 15px;
-    margin: 15px 15px;
+    padding: 30px;
+    margin: 15px;
 }
 .header-navbar > i {
     font-size: 17px;
@@ -220,6 +220,7 @@
     display: none;
 }
 .container-navbar > .list-menu{
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;    
@@ -284,13 +285,16 @@
 /* open navbar */
 
 .navbar.show{
-    height: 520px;
+    height: auto;
 }
 .navbar.show > .container-navbar {
+    width: 100%;
+    padding-bottom: 20px;
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
 }
-
-
 
 @media screen and (max-width: 768px){
     .sidebar{

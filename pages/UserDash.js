@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react'
 import { db } from '../config/Firebase'
-import { collection, query, getDocs, updateDoc, where, addDoc } from "firebase/firestore";
+import { collection, query, getDocs, updateDoc, where, addDoc, orderBy } from "firebase/firestore";
 import { useAuthValue } from '../config/AuthContext'
 
 import { InputText } from "primereact/inputtext";
@@ -11,7 +11,6 @@ import { Toast } from 'primereact/toast';
 import { Dialog } from 'primereact/dialog';
 import { RadioButton } from 'primereact/radiobutton';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { DataTable, Column } from 'primereact/datatable';
 
 import FaltasList from '../components/UserConfig/FaltasList'
 
@@ -37,6 +36,7 @@ function UserDash() {
 
     const [motivo, setMotivo] = useState('');
     const [diasFalta, setDiasFalta] = useState(null);
+    const [diasFaltaFim, setDiasFaltaFim] = useState(null);
     const [obs, setObs] = useState('');
 
     const [faltas, setFaltas] = useState([]);
@@ -44,10 +44,7 @@ function UserDash() {
 
 
     useEffect(() => {
-        getFaltas();
-
-        console.log(faltas);
-        
+        getFaltas();        
     }, [])
 
     useEffect(() => {
@@ -66,17 +63,16 @@ function UserDash() {
 
         setFaltas([]);
 
-        //get faltas from database where uid is equal to currentUser uid
-        const q = query(collection(db, "faltas"), where("uid", "==", currentUser.uid));
-        const querySnapshot = await getDocs(q).then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                setFaltas(faltas => [...faltas, doc.data()]);
-            });
-        })
-
-}
+        //get faltas from database where uid is equal to currentUser uid order by diasFalta
+        const q = query(collection(db, "faltas"), where("uid", "==", currentUser.uid), orderBy("diasFalta", "desc"));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            setFaltas(faltas => [...faltas, doc.data()]);
+        });
+    }
 
     const chooseOptions = { icon: 'pi pi-cog', iconOnly: true,  className: 'button-uploadFile' };
+    const uploadOptions = { icon: 'pi pi-fw pi-cloud-upload', iconOnly: true, label: 'Enviar', className: 'button-uploadFile' };
 
     //on submit form changes to database and update user data
     const handleSubmit = () => {
@@ -86,7 +82,6 @@ function UserDash() {
                 updateDoc(doc.ref, {
                     codPostal: codPostal,
                     iban: iban,
-                    date: date,
                     morada: morada,
                     nacionalidade: nacionalidade,
                     nascimento: nascimento,
@@ -101,16 +96,19 @@ function UserDash() {
 
     }
 
-    const registerFalta = () => {
+    //set minDate to diasFalta 
+    const minDate = new Date(diasFalta);
 
+    const registerFalta = () => {
         addDoc(collection(db, "faltas"), {
+            key: Math.random().toString(36),
             motivo: motivo,
             diasFalta: diasFalta,
+            diasFaltaFim: diasFaltaFim,
             obs: obs,
             uid: currentUser.uid,
             email: currentUser.email,
             name: currentUser.displayName,
-            data: new Date(),
             estado: "Pendente",
         }).then(() => {
             toast.current.show({severity:'success', summary: 'Registado', detail:'Falta registada com sucesso.', life: 3000});
@@ -121,6 +119,8 @@ function UserDash() {
         //run getFaltas function to update faltas state
         getFaltas();
     }
+
+    //on file upload change user photo in database  
 
   return (
     <div>
@@ -151,8 +151,12 @@ function UserDash() {
                         </div>
                         <div className='form-flex'>
                             <div className='form-group'>
-                                <label htmlFor='date'>Dias</label>
+                                <label htmlFor='date'>Inicio</label>
                                 <Calendar value={diasFalta} dateFormat="dd/mm/yy" onChange={(e) => setDiasFalta(e.value)} showIcon />
+                            </div>
+                            <div className='form-group'>
+                                <label htmlFor='date'>Fim</label>
+                                <Calendar value={diasFaltaFim} minDate={minDate} dateFormat="dd/mm/yy" onChange={(e) => setDiasFaltaFim(e.value)} showIcon />
                             </div>
                         </div>
                         <div className='form-flex'>
@@ -181,7 +185,7 @@ function UserDash() {
                                 <label htmlFor='avatar'>Avatar</label>
                                 <div className='avatar'>
                                     <img src={userData.photo} alt='avatar'/>
-                                    <FileUpload chooseOptions={chooseOptions} mode="basic" name="demo[]" url="/api/upload" accept="image/*" maxFileSize={1000000}/>
+                                    <FileUpload name="avatar"  mode="basic" accept="image/*" maxFileSize={1000000} onUpload={onUpload}/>
                                 </div>
                             </div>
                         </div>
