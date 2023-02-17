@@ -11,6 +11,8 @@ import { collection, query, getDocs } from "firebase/firestore";
 
 import { Badge } from 'primereact/badge';
 
+import Link from 'next/link';
+
 
 
 function SideBar() {
@@ -58,27 +60,23 @@ function SideBar() {
         window.location = "/";
     }   
 
-    //get all faltas from database and count them
-
-    const [faltas, setFaltas] = useState([]);
+    //get faltas from database and show in badge
+    const [faltas, setFaltas] = useState(0);
     const [countFaltas, setCountFaltas] = useState(0);
 
-    //get all faltas from database
+    //get faltas from every user in database and count them
     useEffect(() => {
-
-        setCountFaltas(0);  
-        setFaltas([]);
-
-        const q = query(collection(db, "faltas"));
+        const q = query(collection(db, "users"));
         const querySnapshot = getDocs(q).then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
-                setFaltas(faltas => [...faltas, doc.data()]);
+                if (doc.data().faltas) {
+                    setFaltas(faltas + doc.data().faltas);
+                }
             });
-        })
-
-        setCountFaltas(faltas.length)
-        
-
+            //count faltas and display in variable
+            setCountFaltas(faltas.lenght);
+        }
+        )
     }, [])
 
     //if currentUser role is admin, show admin sidebar
@@ -97,65 +95,65 @@ function SideBar() {
                 <div className="container-sidebar" id="container-sidebar">
                     <ul className="menu-list">
                         <li>
-                            <Link href='#'>
-                                <a>
-                                <i className='pi pi-th-large'></i>
-                                <p className="links_name">Dashboard</p>
-                                </a>
+                            <Link href="/dashboard" >
+                                
+                                    <i className='pi pi-home'></i>
+                                    <p className="links_name">Dashboard</p>
+                                
                             </Link>
+                            
                             <span className="tooltip">Dashboard</span>
                         </li>
                         <li>
-                            <Link href='#'>
-                                <a>
+                            <Link href="/" >
+                                
                                 <i className='pi pi-folder-open'></i>
                                 <p className="links_name">Projetos</p>
-                                </a>
+                                
                             </Link>
                             <span className="tooltip">Projetos</span>
                         </li>
                         <li>
-                            <Link href='/Funcionarios'>
-                                <a>
+                            <Link href='/funcionarios' >
+                                
                                 <i className='pi pi-users'></i>
                                 <p className="links_name">Funcionários</p>
-                                </a>
+                                
                             </Link>
                             <span className="tooltip">Funcionários</span>
                         </li>
                         <li>
-                            <Link href='#'>
-                                <a>
+                            <Link href="/" >
+                                
                                 <i className='pi pi-calculator'></i>
                                 <p className="links_name">Despesas</p>
-                                </a>
+                                
                             </Link>
                             <span className="tooltip">Despesas</span>
                         </li>
                         <li>
-                            <Link href='#'>
-                                <a>
+                            <Link href="/" >
+                                
                                 <i className='pi pi-users'></i>
                                 <p className="links_name">Clientes</p>
-                                </a>
+                                
                             </Link>
                             <span className="tooltip">Clientes</span>
                         </li>
                         <li>
-                            <Link href='#'>
-                                <a>
+                            <Link href="/" >
+                                
                                 <i className='pi pi-bell'></i>
                                 <p className="links_name">Pedidos &nbsp; <Badge value={countFaltas} severity="danger"></Badge></p>
-                                </a>
+                                
                             </Link>
                             <span className="tooltip">Pedidos</span>
                         </li>
                     </ul>
                 </div>
-                <div className="footer-sidebar" id="footer-sidebar">
-                    <Link href='/UserDash'>
-                    <a>
-                        <img src={currentUser.photoURL} alt="" onClick={() => window.location = "/UserDash"}/>
+                <div className="footer-sidebar" id="footer-sidebar">    
+                    
+                        <img src={currentUser.photoURL} alt="" onClick={() => window.location = "/userDash"}/>
                         <div className="user-role">
                             {currentUser && ( <>
                                 <h2>{currentUser.displayName}</h2>
@@ -163,8 +161,7 @@ function SideBar() {
                             </>
                             )}
                         </div>
-                    </a>
-                    </Link>
+                    
                     <i className='pi pi-sign-out' id="log_out" onClick={() => SignOutUser()} ></i>
                 </div>
         
@@ -184,47 +181,46 @@ function SideBar() {
                 <div className="container-sidebar" id="container-sidebar">
                     <ul className="menu-list">
                         <li>
-                            <Link href='#'>
-                                <a>
+                            <Link href="/" >
+                                
                                 <i className='pi pi-th-large'></i>
                                 <p className="links_name">Dashboard</p>
-                                </a>
+                                
                             </Link>
                             <span className="tooltip">Dashboard</span>
                         </li>
                         <li>
-                            <Link href='#'>
-                                <a>
+                            <Link href="/" >
+                                
                                 <i className='pi pi-folder-open'></i>
                                 <p className="links_name">Projetos</p>
-                                </a>
+                                
                             </Link>
                             <span className="tooltip">Projetos</span>
                         </li>
                         <li>
-                            <Link href='/Funcionarios'>
-                                <a>
+                            <Link href='/' >
+                                
                                 <i className='pi pi-calendar-times'></i>
                                 <p className="links_name">Tarefas</p>
-                                </a>
+                                
                             </Link>
                             <span className="tooltip">Tarefas</span>
                         </li>
                         <li>
-                            <Link href='#'>
-                                <a>
+                            <Link href="/" >
+                                
                                 <i className='pi pi-calculator'></i>
                                 <p className="links_name">Despesas</p>
-                                </a>
+                                
                             </Link>
                             <span className="tooltip">Despesas</span>
                         </li>
                     </ul>
                 </div>
                 <div className="footer-sidebar" id="footer-sidebar" >
-                    <Link href='/UserDash'>
-                        <a>
-                    <img src={currentUser.photoURL} alt="" onClick={() => window.location = "/UserDash"}/>
+                        
+                    <img src={currentUser.photoURL} alt="" onClick={() => window.location = "/userDash"}/>
                     <div className="user-role">
                         {currentUser && ( <>
                             <h2>{currentUser.displayName}</h2>
@@ -232,8 +228,7 @@ function SideBar() {
                         </>
                         )}
                     </div>
-                    </a>
-                    </Link>
+                    
                     <i className='pi pi-sign-out' id="log_out" onClick={() => SignOutUser()} ></i>
                 </div>
             </nav>

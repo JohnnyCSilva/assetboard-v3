@@ -60,70 +60,68 @@ function Navbar() {
                 <div className='header-navbar'>
                     <i className='pi pi-bars' id="menu_show" onClick={() => toggleNavbar()}></i>
                     <h1>AssetBoard</h1>
-                    <img src={currentUser.photoURL} alt="" onClick={() => window.location = "/UserDash"}/>
+                    <img src={currentUser.photoURL} alt="" onClick={() => window.location = "/userDash"}/>
                 </div>
                 <div className='container-navbar'>
                     <ul className="list-menu">
                         <li>
-                            <Link href="#">
-                                <a>
+                            <Link href="/dashboard" >
+                                
                                     <i className='pi pi-th-large'></i>
                                     <p className="name-link">Dashboard</p>
-                                </a>
+                                
                             </Link>
                         </li>
 
                         <li>
-                            <Link href='#'>
-                                <a>
+                            <Link href="/">
+                                
                                     <i className='pi pi-folder-open'></i>
                                     <p className="name-link">Projetos</p>
-                                </a>
+                                
                             </Link>
                         </li>
 
                         <li>
-                            <Link href='/Funcionarios'>
-                                <a>
+                            <Link href="/funcionarios">
+                                
                                     <i className='pi pi-users'></i>
                                     <p className="name-link">Funcionários</p>
-                                </a>
+                                
                             </Link>
                         </li>
 
                         <li>
-                            <Link href='#'>
-                                <a>
+                            <Link href="/">
+                                
                                     <i className='pi pi-calculator'></i>
                                     <p className="name-link">Despesas</p>
-                                </a>
+                                
                             </Link>
                         </li>
 
                         <li>
-                            <Link href='#'>
-                                <a>
+                            <Link href="/">
+                                
                                 <i className='pi pi-users'></i>
                                 <p className="name-link">Clientes</p>
-                                </a>
+                                
                             </Link>
                         </li>
 
                         <li>
-                            <Link href='#'>
-                                <a>
+                            <Link href="/">
+                                
                                 <i className='pi pi-bell'></i>
                                 <p className="name-link">Pedidos</p>
-                                </a>
+                                
                             </Link>
                         </li>
 
                         <li>
                             <Link onClick={SignOutUser}>
-                                <a>
                                 <i className='pi pi-sign-out'></i>
                                 <p className="name-link">Sair da Conta</p>
-                                </a>
                             </Link>
                         </li>
                     </ul>
@@ -139,52 +137,52 @@ function Navbar() {
                 <div className='header-navbar'>
                     <i className='pi pi-bars' id="menu_show" onClick={() => toggleNavbar()}></i>
                     <h1>AssetBoard</h1>
-                    <img src={currentUser.photoURL} alt="" onClick={() => window.location = "/UserDash"}/>
+                    <img src={currentUser.photoURL} alt="" onClick={() => window.location = "/userDash"}/>
                 </div>
                 <div className='container-navbar'>
                     <ul className="list-menu">
                         <li>
-                            <Link href="#">
-                                <a>
+                            <Link href="/dashboard" >
+                                
                                 <i className='pi pi-th-large'></i>
                                 <p className="name-link">Dashboard</p>
-                                </a>
+                                
                             </Link>
                         </li>
 
                         <li>
-                            <Link href='#'>
-                                <a>
+                            <Link href="/">
+                                
                                 <i className='pi pi-folder-open'></i>
                                 <p className="name-link">Projetos</p>
-                                </a>
+                                
                             </Link>
                         </li>
 
                         <li>
-                            <Link href='#'>
-                                <a>
+                            <Link href="/">
+                                
                                 <i className='pi pi-calendar-times'></i>
                                 <p className="name-link">Tarefas</p>
-                                </a>
+                                
                             </Link>
                         </li>
 
                         <li>
-                            <Link href='#'>
-                                <a>
+                            <Link href="/">
+                                
                                 <i className='pi pi-calculator'></i>
                                 <p className="name-link">Despesas</p>
-                                </a>
+                                
                             </Link>
                         </li>
 
                         <li>
-                            <Link onClick={SignOutUser}>
-                                <a>
+                            <Link onClick={SignOutUser} >
+                                
                                 <i className='pi pi-sign-out'></i>
                                 <p className="name-link">Sair da Conta</p>
-                                </a>
+                                
                             </Link>
                         </li>
                     </ul>

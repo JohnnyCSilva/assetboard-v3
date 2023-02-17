@@ -6,7 +6,7 @@ import XLSX from "xlsx";
 
 import FuncList from '../components/Funcionarios/FuncList'
 
-function Funcionarios() {
+function funcionarios() {
 
   const [funcionarios, setFuncionarios] = useState([]);
   
@@ -73,4 +73,4 @@ function Funcionarios() {
   )
 }
 
-export default Funcionarios
+export default funcionarios

@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef, useContext} from 'react'
-import { db } from '../config/Database'
+import { db } from '../config/Firebase'
 import { collection, query, getDocs, updateDoc, where, addDoc, orderBy } from "firebase/firestore";
 import { AuthContext } from '../config/AuthContext';
 
@@ -14,7 +14,7 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import FaltasList from '../components/UserConfig/FaltasList'
 
 
-function UserDash() {
+function userDash() {
 
     const { currentUser } = useContext(AuthContext);
     const toast = useRef(null);
@@ -278,4 +278,4 @@ function UserDash() {
   )
 }
 
-export default UserDash
+export default userDash

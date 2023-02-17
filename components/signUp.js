@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { google, facebook, auth } from '../config/Firebase'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../config/Firebase';	
 
 
@@ -66,16 +66,22 @@ function signUp() {
 
       //function to add user to the database
         const addUser = async (user) => {
+
+            //check if user already exists in the database if not add it
             const userRef = collection(db, 'users');
-            const snapshot = await addDoc(userRef, {
-                displayName: user.displayName,
-                email: user.email,
-                uid: user.uid,
-                photoURL: user.photoURL,
-                createdAt: user.metadata.creationTime,
-                userRole: 'funcionario',
-            });
-            console.log('Document written with ID: ', snapshot.id);
+            const q = query(userRef, where("uid", "==", user.uid));
+            const querySnapshot = await getDocs(q);
+            if (querySnapshot.empty) {
+                await addDoc(userRef, {
+                    displayName: user.displayName,
+                    email: user.email,
+                    uid: user.uid,
+                    photoURL: user.photoURL,
+                    createdAt: user.metadata.creationTime,
+                    userRole: 'funcionario',
+                });
+            }
+           
         };
 
       const IniciarSessao = (event) => {

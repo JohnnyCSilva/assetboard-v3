@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { useAuthValue } from '../../config/AuthContext'
+import React, { useEffect, useState, useContext } from 'react'
+import { AuthContext } from '../../config/AuthContext';
 import { db } from '../../config/Firebase'
 import { Dialog } from 'primereact/dialog';
 
@@ -7,14 +7,14 @@ import { collection, query, where, getDocs, deleteDoc, updateDoc } from "firebas
 
 function FuncItem(props) {
 
+  const { currentUser } = useContext(AuthContext);
+  
   const [admin, setAdmin] = useState(false);
   const [userPermitions, setUserPermitions] = useState(false);
   const [funcionarios, setFuncionarios] = useState([]);
   const [visible, setVisible] = useState(false);
   const [visibleInfo, setVisibleInfo] = useState(false);
-  const {currentUser} = useAuthValue();
-
-
+  
   const [contacto, setContacto] = useState("");
   const [area, setArea] = useState("");
   const [iban, setIban] = useState("");

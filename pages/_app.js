@@ -42,10 +42,8 @@ function App({ Component, pageProps }) {
     <AuthContextProvider>
       {user ? (
         <>  
-          <button onClick={logout}>Logout</button>
-          <Navbar />
           <Sidebar />
-        
+          {/*<Navbar />*/}
           <div className='home-section'>
             <Component {...pageProps} />
           </div>
