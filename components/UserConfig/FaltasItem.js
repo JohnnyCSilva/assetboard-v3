@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import {Dialog} from 'primereact/dialog'
 
 function FaltasItem(props) {
@@ -10,23 +10,27 @@ function FaltasItem(props) {
   const [visibleInfo, setVisibleInfo] = useState(false);
 
   //change faltas-item__estado color depending on the state 
+  const estadoRef = useRef(null);
+
   useEffect(() => {
-    const estado = document.querySelector('.faltas-item__estado');
-    if (estado.textContent === 'Pendente') {
-      estado.style.color = '#FFC107';
-    } else if (estado.textContent === 'Aprovado') {
-      estado.style.color = '#28A745';
-    } else if (estado.textContent === 'Rejeitado') {
-      estado.style.color = '#DC3545';
+    if (estadoRef.current) {
+      const estado = estadoRef.current;
+      if (estado.textContent === 'Pendente') {
+        estado.classList.add('estado-pendente');
+      } else if (estado.textContent === 'Aprovado') {
+        estado.classList.add('estado-aprovado');
+      } else if (estado.textContent === 'Rejeitado') {
+        estado.classList.add('estado-rejeitado');
+      }
     }
-  }, [])
+  }, []);
 
 
   return (
     <tr>
       <td>{props.faltas.motivo}</td>
       <td>{dateInicio}</td>
-      <td className="faltas-item__estado">{props.faltas.estado}</td>
+      <td ref={estadoRef} className="faltas-item__estado"><span className='chip-text'>{props.faltas.estado}</span></td>
       <td style={{ "width":"10%"}}><i className='pi pi-info-circle info'onClick={() => setVisibleInfo(true)}/></td>
       <Dialog className='dialog-box-info-falta' header={"Informação"}  visible={visibleInfo} onHide={() => setVisibleInfo(false)} draggable={false}>
         <div className='dialog-box-info-content'>

@@ -313,15 +313,32 @@ table.faltas-table-row > tbody > tr > td > i:hover{
     margin-top: 5px;
 }
 
-table.faltas-table-row > tbody > tr > td.pendente{
-    color: #f78e10;
+table.faltas-table-row > tbody > tr > .estado-pendente{
+    color: #a05b07;
 }
-table.faltas-table-row > tbody > tr > td.aceite{
-    color: #4CAF50;
+table.faltas-table-row > tbody > tr > .estado-aprovado{
+    color: darkgreen;
 }
-table.faltas-table-row > tbody > tr > td.recusado{
-    color: red;
+table.faltas-table-row > tbody > tr > .estado-rejeitado{
+    color: darkred;
 }
+
+.chip-text {
+    display: inline-block;
+    background-color: #eee;
+    border-radius: 50px;
+    padding: 5px 15px;
+  }
+
+  table.faltas-table-row > tbody > tr > .estado-pendente > .chip-text{
+    background-color: #fcb864;
+  }
+  table.faltas-table-row > tbody > tr > .estado-aprovado > .chip-text{
+    background-color: lightgreen;
+  }
+  table.faltas-table-row > tbody > tr > .estado-rejeitado > .chip-text{
+    background-color: lightcoral;
+  }
 
 @media screen and (max-width: 768px) {
     .dialog-faltas{

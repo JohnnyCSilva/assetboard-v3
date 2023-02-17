@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react'
 import { db } from '../config/Firebase'
-import { collection, query, getDocs, updateDoc, where, addDoc, orderBy } from "firebase/firestore";
+import { collection, query, getDocs, updateDoc, where, addDoc, orderBy, getFirestore, doc } from "firebase/firestore";
 import { useAuthValue } from '../config/AuthContext'
 
 import { InputText } from "primereact/inputtext";
@@ -42,7 +42,6 @@ function UserDash() {
     const [faltas, setFaltas] = useState([]);
 
 
-
     useEffect(() => {
         getFaltas();        
     }, [])
@@ -71,11 +70,38 @@ function UserDash() {
         });
     }
 
-    const chooseOptions = { icon: 'pi pi-cog', iconOnly: true,  className: 'button-uploadFile' };
-    const uploadOptions = { icon: 'pi pi-fw pi-cloud-upload', iconOnly: true, label: 'Enviar', className: 'button-uploadFile' };
-
-    //on submit form changes to database and update user data
+    // on handleSubmit update user data in database and show toast message
     const handleSubmit = () => {
+        alert('codigo postal inserir: ' + userData.codPostal)
+        //if field is empty set value to default value
+        if (codPostal === '' || codPostal === null || codPostal === undefined)  { 
+            setCodPostal(userData.codPostal);
+        }
+        if (iban === '' || iban === null || iban === undefined) {
+            setIban(userData.iban);
+        }
+        if (morada === '' || morada === null || morada === undefined) {
+            setMorada(userData.morada);
+        }
+        if (nacionalidade === '' || nacionalidade === null || nacionalidade === undefined) {
+            setNacionalidade(userData.nacionalidade);
+        }
+        if (contacto === '' || contacto === null || contacto === undefined) {
+            setContacto(userData.contacto);
+        }
+        if (nif === '' || nif === null || nif === undefined) {
+            setNif(userData.nif);
+        }
+        if (niss === '' || niss === null || niss === undefined) {
+            setNiss(userData.niss);
+        }
+        if (nascimento === null || nascimento === undefined) {
+            setNascimento(userData.nascimento);
+        }       
+
+        alert('codigo postal: ' + userData.codPostal + 'codigo Postal 2: ' + codPostal);
+
+
         const q = query(collection(db, "users"), where("uid", "==", currentUser.uid));
         const querySnapshot = getDocs(q).then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
@@ -95,6 +121,7 @@ function UserDash() {
         })
 
     }
+
 
     //set minDate to diasFalta 
     const minDate = new Date(diasFalta);
@@ -119,8 +146,7 @@ function UserDash() {
         //run getFaltas function to update faltas state
         getFaltas();
     }
-
-    //on file upload change user photo in database  
+    
 
   return (
     <div>
@@ -177,19 +203,9 @@ function UserDash() {
         <div className='user-profile'>
             <div className='user-profile-left'>
                 <h2>Editar Perfil</h2>
+                <span>*Caso necessite de reeditar o perfil, por favor coloque todos os campos novamente</span>
                 <div className='user-profile-changes'>
                     <form>
-
-                        <div className='form-flex'>
-                            <div className='form-group'>
-                                <label htmlFor='avatar'>Avatar</label>
-                                <div className='avatar'>
-                                    <img src={userData.photo} alt='avatar'/>
-                                    <FileUpload name="avatar"  mode="basic" accept="image/*" maxFileSize={1000000} />
-                                </div>
-                            </div>
-                        </div>
-
                         <div className='form-flex'>
                             <div className='form-group'>
                                 <label htmlFor='name'>Nome</label>
