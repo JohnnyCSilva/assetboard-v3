@@ -1,12 +1,11 @@
-import React, {useEffect, useState, useRef} from 'react'
-import { db } from '../config/Firebase'
-import { collection, query, getDocs, updateDoc, where, addDoc, orderBy, getFirestore, doc } from "firebase/firestore";
-import { useAuthValue } from '../config/AuthContext'
+import React, {useEffect, useState, useRef, useContext} from 'react'
+import { db } from '../config/Database'
+import { collection, query, getDocs, updateDoc, where, addDoc, orderBy } from "firebase/firestore";
+import { AuthContext } from '../config/AuthContext';
 
 import { InputText } from "primereact/inputtext";
 import { InputMask } from "primereact/inputmask";
 import { Calendar } from "primereact/calendar";
-import { FileUpload } from 'primereact/fileupload';
 import { Toast } from 'primereact/toast';
 import { Dialog } from 'primereact/dialog';
 import { RadioButton } from 'primereact/radiobutton';
@@ -17,7 +16,7 @@ import FaltasList from '../components/UserConfig/FaltasList'
 
 function UserDash() {
 
-    const {currentUser} = useAuthValue();
+    const { currentUser } = useContext(AuthContext);
     const toast = useRef(null);
     const [visible, setVisible] = useState(false);
 

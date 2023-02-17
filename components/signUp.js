@@ -1,8 +1,20 @@
-import React, { useEffect} from 'react'
-import { googleSignIn } from '../config/Firebase'
-import { facebookSignIn } from '../config/Firebase'
+import React, { useEffect, useState } from 'react'
+import { google, facebook, auth } from '../config/Firebase'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { addDoc, collection } from 'firebase/firestore';
+import { db } from '../config/Firebase';	
+
 
 function signUp() {
+
+    const [displayName, setDisplayName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [error, setError] = useState('');
+
+    const [loginEmail, setLoginEmail] = useState('');
+    const [loginPassword, setLoginPassword] = useState('');
 
     useEffect(() => { 
         const container = document.getElementById('container');
@@ -12,6 +24,75 @@ function signUp() {
         container.classList.toggle("sign-up-mode");
     }
 
+    //function to login with google and create a new user in the database
+    const loginWithGoogle = async () => {
+        alert('Login with Google');
+        const userCredential = await signInWithPopup(auth, google);
+        await addUser(userCredential.user);
+        //await signInWithEmailAndPassword(auth, userCredential.user.email, userCredential.user.uid);
+    };
+
+    //function to login with facebook and create a new user in the database
+    const loginWithFacebook = async () => {
+        alert('Login with Facebook');
+        const userCredential = await signInWithPopup(auth, facebook);
+        await addUser(userCredential.user);
+        //await signInWithEmailAndPassword(auth, userCredential.user.email, userCredential.user.uid);
+    };
+
+
+
+    const CreateAccount = async (e) => {
+        e.preventDefault();
+      
+        if (password !== confirmPassword) {
+          setError('Passwords do not match');
+          return;
+        }
+      
+        try {
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          console.log('User account created:', userCredential.user.uid);
+      
+          // Add a new user document to the Firestore "users" collection
+            await addUser(userCredential.user);
+      
+          // Automatically log in the new user
+          await signInWithEmailAndPassword(auth, email, password);
+        } catch (err) {
+          setError(err.message);
+        }
+      };
+
+      //function to add user to the database
+        const addUser = async (user) => {
+            const userRef = collection(db, 'users');
+            const snapshot = await addDoc(userRef, {
+                displayName: user.displayName,
+                email: user.email,
+                uid: user.uid,
+                photoURL: user.photoURL,
+                createdAt: user.metadata.creationTime,
+                userRole: 'funcionario',
+            });
+            console.log('Document written with ID: ', snapshot.id);
+        };
+
+      const IniciarSessao = (event) => {
+        event.preventDefault();
+        auth.signInWithEmailAndPassword(email, password)
+          .then((userCredential) => {
+            // Signed in
+            const user = userCredential.user;
+            console.log(user);
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode, errorMessage);
+          });
+      };
+        
     
   return (
     <div className='login-form'>
@@ -22,19 +103,19 @@ function signUp() {
                         <h2 className="title">Iniciar Sessão</h2>
                         <div className="input-field">
                             <i className="pi pi-user"></i>
-                            <input type="text" placeholder="Utilizador" />
+                            <input type="text" placeholder="Email" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)}  />
                         </div>
                         <div className="input-field">
                         <i className="pi pi-lock"></i>
-                            <input type="password" placeholder="Password" />
+                            <input type="password" placeholder="Password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} />
                         </div>
-                        <input type="submit" value="Login" className="btn solid" />
+                        <input type="submit" value="Iniciar Sessão" className="btn solid" onClick={IniciarSessao} />
                         <p className="social-text">Ou utilize as redes sociais para iniciar sessão.</p>
                         <div className="social-media">
-                        <a href="#" className="social-icon" onClick={() => facebookSignIn()}>
+                        <a href="#" className="social-icon" onClick={() => loginWithFacebook()}>
                             <i className="pi pi-facebook"></i>
                         </a>
-                        <a href="#" className="social-icon" onClick={() => googleSignIn()}>
+                        <a href="#" className="social-icon" onClick={() => loginWithGoogle()}>
                             <i className="pi pi-google"></i>
                         </a>
                         </div>
@@ -43,27 +124,27 @@ function signUp() {
                         <h2 className="title">Criar Conta</h2>
                             <div className="input-field">
                                 <i className="pi pi-user"></i>
-                                <input type="text" placeholder="Utilizador" required/>
+                                <input type="text" placeholder="Nome" value={displayName} onChange={(e) => setDisplayName(e.target.value)} required/>
                             </div>
                             <div className="input-field">
                                 <i className="pi pi-envelope"></i>
-                                <input type="email" placeholder="Email" required/>
+                                <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}  required/>
                             </div>
                             <div className="input-field">
                                 <i className="pi pi-lock"></i>
-                                <input type="password" placeholder="Password" required/>
+                                <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}  required/>
                             </div>
                             <div className="input-field">
                                 <i className="pi pi-lock"></i>
-                                <input type="password" placeholder="Confirme a password" required/>
+                                <input type="password" placeholder="Confirme a password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required/>
                             </div>
-                            <input type="submit" className="btn" value="Sign up" />
+                            <input type="submit" className="btn" value="Criar Conta" onClick={CreateAccount}/>
                             <p className="social-text">Ou crie conta através das redes sociais.</p>
                             <div className="social-media">
                             <a href="#" className="social-icon">
-                                <i className="pi pi-facebook" onClick={() => facebookSignIn()}></i>
+                                <i className="pi pi-facebook" onClick={() => loginWithFacebook()}></i>
                             </a>
-                            <a href="#" className="social-icon" onClick={() => googleSignIn()}>
+                            <a href="#" className="social-icon" onClick={() => loginWithGoogle()}>
                                 <i className="pi pi-google"></i>
                             </a>
                         </div>

@@ -1,18 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { useAuthValue } from '../config/AuthContext'
+import React, { useEffect, useRef, useState, useContext } from 'react'
+import { AuthContext } from '../config/AuthContext';
 import { signOut } from 'firebase/auth';
 import { auth } from '../config/Firebase'
 import { Toast } from 'primereact/toast';
-
+import Link from 'next/link';
 import { db } from '../config/Firebase'
 import { collection, query, getDocs } from "firebase/firestore";
 
-import { Badge } from 'primereact/badge';
-
-function navBar() {
+function Navbar() {
 
     const toast = useRef(null);
-    const {currentUser} = useAuthValue();
+    const { currentUser } = useContext(AuthContext);
     const delay = ms => new Promise(res => setTimeout(res, ms));
     const [role, setRole] = useState('');
     
@@ -67,52 +65,66 @@ function navBar() {
                 <div className='container-navbar'>
                     <ul className="list-menu">
                         <li>
-                            <a href="#">
-                            <i className='pi pi-th-large'></i>
-                                <p className="name-link">Dashboard</p>
-                            </a>
+                            <Link href="#">
+                                <a>
+                                    <i className='pi pi-th-large'></i>
+                                    <p className="name-link">Dashboard</p>
+                                </a>
+                            </Link>
                         </li>
 
                         <li>
-                            <a href='#'>
-                                <i className='pi pi-folder-open'></i>
-                                <p className="name-link">Projetos</p>
-                            </a>
+                            <Link href='#'>
+                                <a>
+                                    <i className='pi pi-folder-open'></i>
+                                    <p className="name-link">Projetos</p>
+                                </a>
+                            </Link>
                         </li>
 
                         <li>
-                            <a href='/Funcionarios'>
-                                <i className='pi pi-users'></i>
-                                <p className="name-link">Funcionários</p>
-                            </a>
+                            <Link href='/Funcionarios'>
+                                <a>
+                                    <i className='pi pi-users'></i>
+                                    <p className="name-link">Funcionários</p>
+                                </a>
+                            </Link>
                         </li>
 
                         <li>
-                            <a href='#'>
-                                <i className='pi pi-calculator'></i>
-                                <p className="name-link">Despesas</p>
-                            </a>
+                            <Link href='#'>
+                                <a>
+                                    <i className='pi pi-calculator'></i>
+                                    <p className="name-link">Despesas</p>
+                                </a>
+                            </Link>
                         </li>
 
                         <li>
-                            <a href='#'>
+                            <Link href='#'>
+                                <a>
                                 <i className='pi pi-users'></i>
                                 <p className="name-link">Clientes</p>
-                            </a>
+                                </a>
+                            </Link>
                         </li>
 
                         <li>
-                            <a href='#'>
+                            <Link href='#'>
+                                <a>
                                 <i className='pi pi-bell'></i>
                                 <p className="name-link">Pedidos</p>
-                            </a>
+                                </a>
+                            </Link>
                         </li>
 
                         <li>
-                            <a onClick={SignOutUser}>
+                            <Link onClick={SignOutUser}>
+                                <a>
                                 <i className='pi pi-sign-out'></i>
                                 <p className="name-link">Sair da Conta</p>
-                            </a>
+                                </a>
+                            </Link>
                         </li>
                     </ul>
                 </div>
@@ -132,38 +144,48 @@ function navBar() {
                 <div className='container-navbar'>
                     <ul className="list-menu">
                         <li>
-                            <a href="#">
-                            <i className='pi pi-th-large'></i>
+                            <Link href="#">
+                                <a>
+                                <i className='pi pi-th-large'></i>
                                 <p className="name-link">Dashboard</p>
-                            </a>
+                                </a>
+                            </Link>
                         </li>
 
                         <li>
-                            <a href='#'>
+                            <Link href='#'>
+                                <a>
                                 <i className='pi pi-folder-open'></i>
                                 <p className="name-link">Projetos</p>
-                            </a>
+                                </a>
+                            </Link>
                         </li>
 
                         <li>
-                            <a href='#'>
+                            <Link href='#'>
+                                <a>
                                 <i className='pi pi-calendar-times'></i>
                                 <p className="name-link">Tarefas</p>
-                            </a>
+                                </a>
+                            </Link>
                         </li>
 
                         <li>
-                            <a href='#'>
+                            <Link href='#'>
+                                <a>
                                 <i className='pi pi-calculator'></i>
                                 <p className="name-link">Despesas</p>
-                            </a>
+                                </a>
+                            </Link>
                         </li>
 
                         <li>
-                            <a onClick={SignOutUser}>
+                            <Link onClick={SignOutUser}>
+                                <a>
                                 <i className='pi pi-sign-out'></i>
                                 <p className="name-link">Sair da Conta</p>
-                            </a>
+                                </a>
+                            </Link>
                         </li>
                     </ul>
                 </div>
@@ -175,4 +197,4 @@ function navBar() {
     } 
 }
 
-export default navBar
+export default Navbar

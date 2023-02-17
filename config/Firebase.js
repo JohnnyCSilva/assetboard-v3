@@ -18,18 +18,7 @@ export const auth = getAuth(app);
 export const google = new GoogleAuthProvider();
 export const facebook = new FacebookAuthProvider();
 
-export const googleSignIn = () => {
 
-  signInWithPopup(auth, google).catch((error) => {
-      console.log(error);
-  });
-}
-export const facebookSignIn = () => {
-
-  signInWithPopup(auth, facebook).catch((error) => {
-      console.log(error);
-    });
-}
 
 
 

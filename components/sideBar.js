@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 
 import { signOut } from 'firebase/auth';
-import { useAuthValue } from '../config/AuthContext'
+import { AuthContext } from '../config/AuthContext';
 import { auth } from '../config/Firebase'
 
 import { Toast } from 'primereact/toast';
@@ -13,10 +13,10 @@ import { Badge } from 'primereact/badge';
 
 
 
-function sideBar() {
+function SideBar() {
 
     const toast = useRef(null);
-    const {currentUser} = useAuthValue();
+    const { currentUser } = useContext(AuthContext);
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
 
@@ -97,58 +97,74 @@ function sideBar() {
                 <div className="container-sidebar" id="container-sidebar">
                     <ul className="menu-list">
                         <li>
-                            <a href='#'>
+                            <Link href='#'>
+                                <a>
                                 <i className='pi pi-th-large'></i>
                                 <p className="links_name">Dashboard</p>
-                            </a>
+                                </a>
+                            </Link>
                             <span className="tooltip">Dashboard</span>
                         </li>
                         <li>
-                            <a href='#'>
+                            <Link href='#'>
+                                <a>
                                 <i className='pi pi-folder-open'></i>
                                 <p className="links_name">Projetos</p>
-                            </a>
+                                </a>
+                            </Link>
                             <span className="tooltip">Projetos</span>
                         </li>
                         <li>
-                            <a href='/Funcionarios'>
+                            <Link href='/Funcionarios'>
+                                <a>
                                 <i className='pi pi-users'></i>
                                 <p className="links_name">Funcionários</p>
-                            </a>
+                                </a>
+                            </Link>
                             <span className="tooltip">Funcionários</span>
                         </li>
                         <li>
-                            <a href='#'>
+                            <Link href='#'>
+                                <a>
                                 <i className='pi pi-calculator'></i>
                                 <p className="links_name">Despesas</p>
-                            </a>
+                                </a>
+                            </Link>
                             <span className="tooltip">Despesas</span>
                         </li>
                         <li>
-                            <a href='#'>
+                            <Link href='#'>
+                                <a>
                                 <i className='pi pi-users'></i>
                                 <p className="links_name">Clientes</p>
-                            </a>
+                                </a>
+                            </Link>
                             <span className="tooltip">Clientes</span>
                         </li>
                         <li>
-                            <a href='#'>
+                            <Link href='#'>
+                                <a>
                                 <i className='pi pi-bell'></i>
                                 <p className="links_name">Pedidos &nbsp; <Badge value={countFaltas} severity="danger"></Badge></p>
-                            </a>
+                                </a>
+                            </Link>
                             <span className="tooltip">Pedidos</span>
                         </li>
                     </ul>
                 </div>
-                <div className="footer-sidebar" id="footer-sidebar" >
-                    <img src={currentUser.photoURL} alt="" onClick={() => window.location = "/UserDash"}/>
-                    <div className="user-role">
-                        {currentUser && ( <>
-                            <h2>{currentUser.displayName}</h2>
-                            <p>{role}</p>
-                        </>
-                        )}
-                    </div>
+                <div className="footer-sidebar" id="footer-sidebar">
+                    <Link href='/UserDash'>
+                    <a>
+                        <img src={currentUser.photoURL} alt="" onClick={() => window.location = "/UserDash"}/>
+                        <div className="user-role">
+                            {currentUser && ( <>
+                                <h2>{currentUser.displayName}</h2>
+                                <p>{role}</p>
+                            </>
+                            )}
+                        </div>
+                    </a>
+                    </Link>
                     <i className='pi pi-sign-out' id="log_out" onClick={() => SignOutUser()} ></i>
                 </div>
         
@@ -168,36 +184,46 @@ function sideBar() {
                 <div className="container-sidebar" id="container-sidebar">
                     <ul className="menu-list">
                         <li>
-                            <a href='#'>
+                            <Link href='#'>
+                                <a>
                                 <i className='pi pi-th-large'></i>
                                 <p className="links_name">Dashboard</p>
-                            </a>
+                                </a>
+                            </Link>
                             <span className="tooltip">Dashboard</span>
                         </li>
                         <li>
-                            <a href='#'>
+                            <Link href='#'>
+                                <a>
                                 <i className='pi pi-folder-open'></i>
                                 <p className="links_name">Projetos</p>
-                            </a>
+                                </a>
+                            </Link>
                             <span className="tooltip">Projetos</span>
                         </li>
                         <li>
-                            <a href='/Funcionarios'>
+                            <Link href='/Funcionarios'>
+                                <a>
                                 <i className='pi pi-calendar-times'></i>
                                 <p className="links_name">Tarefas</p>
-                            </a>
+                                </a>
+                            </Link>
                             <span className="tooltip">Tarefas</span>
                         </li>
                         <li>
-                            <a href='#'>
+                            <Link href='#'>
+                                <a>
                                 <i className='pi pi-calculator'></i>
                                 <p className="links_name">Despesas</p>
-                            </a>
+                                </a>
+                            </Link>
                             <span className="tooltip">Despesas</span>
                         </li>
                     </ul>
                 </div>
                 <div className="footer-sidebar" id="footer-sidebar" >
+                    <Link href='/UserDash'>
+                        <a>
                     <img src={currentUser.photoURL} alt="" onClick={() => window.location = "/UserDash"}/>
                     <div className="user-role">
                         {currentUser && ( <>
@@ -206,6 +232,8 @@ function sideBar() {
                         </>
                         )}
                     </div>
+                    </a>
+                    </Link>
                     <i className='pi pi-sign-out' id="log_out" onClick={() => SignOutUser()} ></i>
                 </div>
             </nav>
@@ -218,4 +246,4 @@ function sideBar() {
 
 }
 
-export default sideBar
+export default SideBar
