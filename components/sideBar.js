@@ -64,22 +64,24 @@ function SideBar() {
     const [faltas, setFaltas] = useState(0);
     const [countFaltas, setCountFaltas] = useState(0);
 
-    //get faltas from every user in database and count them
+    //get all faltas from db faltas and count them to display in countFaltas
     useEffect(() => {
-        const q = query(collection(db, "users"));
+
+        setFaltas(0);
+
+        const q = query(collection(db, "faltas"));
         const querySnapshot = getDocs(q).then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
-                if (doc.data().faltas) {
-                    setFaltas(faltas + doc.data().faltas);
+                if (doc.data()) {
+                    setFaltas(faltas => faltas + 1);
                 }
             });
-            //count faltas and display in variable
-            setCountFaltas(faltas.lenght);
         }
         )
+        
     }, [])
 
-    //if currentUser role is admin, show admin sidebar
+
     if (role === 'admin') {
 
         return (
@@ -141,10 +143,10 @@ function SideBar() {
                             <span className="tooltip">Clientes</span>
                         </li>
                         <li>
-                            <Link href="/" >
+                            <Link href="/pedidos" >
                                 
                                 <i className='pi pi-bell'></i>
-                                <p className="links_name">Pedidos &nbsp; <Badge value={countFaltas} severity="danger"></Badge></p>
+                                <p className="links_name">Pedidos &nbsp;<Badge value={faltas} severity="danger"></Badge></p>
                                 
                             </Link>
                             <span className="tooltip">Pedidos</span>
@@ -152,7 +154,7 @@ function SideBar() {
                     </ul>
                 </div>
                 <div className="footer-sidebar" id="footer-sidebar">    
-                    
+                        
                         <img src={currentUser.photoURL} alt="" onClick={() => window.location = "/userDash"}/>
                         <div className="user-role">
                             {currentUser && ( <>

@@ -3,6 +3,7 @@ import '@/styles/navigation.css';
 import '@/styles/signUp.css';
 import '@/styles/funcionario.css';
 import '@/styles/userDash.css';
+import '@/styles/pedidos.css';
 
 import "primeicons/primeicons.css";
 import "primereact/resources/primereact.min.css"; 

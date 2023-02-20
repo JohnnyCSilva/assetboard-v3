@@ -136,6 +136,7 @@ function userDash() {
             email: currentUser.email,
             name: currentUser.displayName,
             estado: "Pendente",
+
         }).then(() => {
             toast.current.show({severity:'success', summary: 'Registado', detail:'Falta registada com sucesso.', life: 3000});
             setVisible(false);
