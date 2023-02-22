@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react'
+import React, { useEffect, useContext, useState, useRef } from 'react'
 import { collection, query, getDocs, updateDoc, where, addDoc, orderBy } from "firebase/firestore";
 import { FilterMatchMode, FilterOperator } from 'primereact/api'
 import { db } from '../config/Firebase'
@@ -32,6 +32,8 @@ function pedidos() {
     const [pedidoDialog, setPedidoDialog] = useState(false);
     const [pedido, setPedido] = useState(emptyPedido);
     const [selectedEstado, setSelectedEstado] = useState(null);
+
+    const dt = useRef(null);
 
     const estados = [
         { name: 'Aprovado', code: 'Aprovado' },
@@ -113,7 +115,6 @@ function pedidos() {
         return (
             <React.Fragment>
                 <button type='button' className='button button-edit' onClick={() => editProduct(rowData)}><i className='pi pi-pencil'></i></button>
-                <button type='button' className='button button-info' onClick={() => verPedido(rowData)}><i className='pi pi-info-circle'></i></button>
                 <button type='button' className='button button-delete' onClick={() => apagarPedido(rowData)}><i className='pi pi-trash'></i></button>
             </React.Fragment>
         );
@@ -122,6 +123,23 @@ function pedidos() {
     // get pedido clicked and open dialog
     const editProduct = (faltas) => {
         setPedido({ ...faltas });
+
+        // get diasFalta and diasFaltaFim and convert to date
+        let date = new Date(faltas.diasFalta.seconds * 1000);
+        let day = date.getDate();
+        let month = date.getMonth() + 1;
+        let year = date.getFullYear();
+        let dateFim = new Date(faltas.diasFaltaFim.seconds * 1000);
+        let dayFim = dateFim.getDate();
+        let monthFim = dateFim.getMonth() + 1;
+        let yearFim = dateFim.getFullYear();
+
+        // set pedido and open dialog
+        setPedido({
+            ...faltas,
+            diasFalta: day + '/' + month + '/' + year,
+            diasFaltaFim: dayFim + '/' + monthFim + '/' + yearFim,
+        });
         setPedidoDialog(true);
     };
 
@@ -144,35 +162,9 @@ function pedidos() {
     };
 
     
-    
-
+    // export to xlxs with custom fields
     const exportExcel = () => {
-        import('xlsx').then((xlsx) => {
-            const worksheet = xlsx.utils.json_to_sheet(faltas);
-            const workbook = { Sheets: { data: worksheet }, SheetNames: ['faltas'] };
-            const excelBuffer = xlsx.write(workbook, {
-                bookType: 'xlsx',
-                type: 'array'
-            });
-
-            saveAsExcelFile(excelBuffer, 'faltas');
-        });
-    };
-
-    
-
-    const saveAsExcelFile = (buffer, fileName) => {
-        import('file-saver').then((module) => {
-            if (module && module.default) {
-                let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-                let EXCEL_EXTENSION = '.xlsx';
-                const data = new Blob([buffer], {
-                    type: EXCEL_TYPE
-                });
-
-                module.default.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
-            }
-        });
+        dt.current.exportCSV();
     };
 
 
@@ -200,24 +192,26 @@ function pedidos() {
         </div>
         <div className='page-content'>
             <div className='page-content-table'>
-                <DataTable value={faltas} paginator rows={10} rowsPerPageOptions={[10, 20, 50]}
+                <DataTable 
+                ref={dt}
+                value={faltas} paginator rows={10} rowsPerPageOptions={[10, 20, 50]}
                 className="table-pedidos"
                 filters={filters}
                 responsiveLayout="scroll"
                 globalFilterFields={['name']}
                 emptyMessage="Nenhum pedido de falta encontrado">
-                    <Column field="name" header="Nome" sortable></Column>
+                    <Column field="name"  header="Nome" sortable></Column>
                     <Column field="diasFalta" header="Data Inicio" body={dateBodyTemplate} sortable></Column>
                     <Column field="diasFaltaFim" header="Data Fim" body={dateBodyTemplateFim} sortable></Column>
                     <Column field="motivo" header="Motivo" sortable></Column>
                     <Column field="estado" header="Estado" body={statusBodyTemplate} sortable></Column>
-                    <Column body={actionBodyTemplate} exportable={false} style={{ maxWidth: '8rem', minWidth: 'auto' }}></Column>
+                    <Column body={actionBodyTemplate} exportable={false} style={{ maxWidth: '5rem'}}></Column>
                 </DataTable>
             </div>    
         </div>
 
         {/* Dialog to Edit faltaRow */}
-        <Dialog visible={pedidoDialog} header="Detalhes da Falta" className='dialog-faltas' onHide={() => setPedidoDialog(false)}>
+        <Dialog  visible={pedidoDialog} header="Detalhes da Falta" className='dialog-faltas' onHide={() => setPedidoDialog(false)}>
                     <form className='form-dialog'>
                         <div className='form-flex'>
                             <div className='form-group'>

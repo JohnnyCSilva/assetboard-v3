@@ -15,7 +15,7 @@ import Link from 'next/link';
 
 
 
-function SideBar() {
+function Sidebar() {
 
     const toast = useRef(null);
     const { currentUser } = useContext(AuthContext);
@@ -243,4 +243,4 @@ function SideBar() {
 
 }
 
-export default SideBar
+export default Sidebar
