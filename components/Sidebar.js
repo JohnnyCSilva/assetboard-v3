@@ -243,8 +243,4 @@ function Sidebar() {
 
 }
 
-<<<<<<< HEAD:components/sideBar.js
 export default Sidebar
-=======
-export default SideBar
->>>>>>> 057b130944a375c53afab964ff90b5ff89b13be6:components/Sidebar.js
