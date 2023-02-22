@@ -1,24 +1,49 @@
 import React, { useEffect, useContext, useState } from 'react'
 import { collection, query, getDocs, updateDoc, where, addDoc, orderBy } from "firebase/firestore";
-import { FilterMatchMode, FilterOperator } from 'primereact/api';
-
+import { FilterMatchMode, FilterOperator } from 'primereact/api'
 import { db } from '../config/Firebase'
-import { AuthContext } from '../config/AuthContext';
+import { AuthContext } from '../config/AuthContext'
+
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Dialog } from 'primereact/dialog';
+import { InputText } from 'primereact/inputtext';
+import { Dropdown } from 'primereact/dropdown';
+import { InputTextarea } from 'primereact/inputtextarea';
+        
 
 function pedidos() {
 
+    let emptyPedido = {
+        key: null,
+        name: '',
+        estado: '',
+        diasFalta: '',
+        diasFaltaFim: '',
+        motivo: '',
+    };
+
     //get all faltas from database and order by date
     const { currentUser } = useContext(AuthContext);
-    const [faltaDialog, setFaltaDialog] = useState(false);
     const [faltas, setFaltas] = React.useState([]);
     const [filters, setFilters] = useState(null);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
 
+    const [pedidoDialog, setPedidoDialog] = useState(false);
+    const [pedido, setPedido] = useState(emptyPedido);
+    const [selectedEstado, setSelectedEstado] = useState(null);
+
+    const estados = [
+        { name: 'Aprovado', code: 'Aprovado' },
+        { name: 'Rejeitado', code: 'Rejeitado' },
+        { name: 'Pendente', code: 'Pendente' }
+    ];
   
     useEffect(() => {
+        getFaltas();
+    }, [])
+
+    const getFaltas = async () => {
         const q = query(collection(db, "faltas"));
         const querySnapshot = getDocs(q).then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
@@ -26,7 +51,7 @@ function pedidos() {
             });
         }
         )
-    }, [])
+    }
 
 
 
@@ -87,22 +112,44 @@ function pedidos() {
     const actionBodyTemplate = (rowData) => {
         return (
             <React.Fragment>
-                <button type='button' className='button button-edit' onClick={() => editarPedido(rowData)}><i className='pi pi-pencil'></i></button>
+                <button type='button' className='button button-edit' onClick={() => editProduct(rowData)}><i className='pi pi-pencil'></i></button>
                 <button type='button' className='button button-info' onClick={() => verPedido(rowData)}><i className='pi pi-info-circle'></i></button>
                 <button type='button' className='button button-delete' onClick={() => apagarPedido(rowData)}><i className='pi pi-trash'></i></button>
             </React.Fragment>
         );
     };
 
-    const editarPedido = (falta) => {
-        setFaltaDialog(true);
-        alert(faltaDialog);
+    // get pedido clicked and open dialog
+    const editProduct = (faltas) => {
+        setPedido({ ...faltas });
+        setPedidoDialog(true);
     };
+
+
+    // update falta in database with selected estado
+    const updatePedido = async () => {
+        const pedidoRef = collection(db, "faltas");
+        const q = query(pedidoRef, where("key", "==", pedido.key));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            updateDoc(doc.ref, {
+                estado: selectedEstado.name,
+            });
+        });
+        setPedidoDialog(false);
+        setPedido(emptyPedido);
+        setSelectedEstado(null);
+        setFaltas([]);
+        getFaltas();
+    };
+
+    
+    
 
     const exportExcel = () => {
         import('xlsx').then((xlsx) => {
             const worksheet = xlsx.utils.json_to_sheet(faltas);
-            const workbook = { Sheets: { data: worksheet }, SheetNames: ['pedidos'] };
+            const workbook = { Sheets: { data: worksheet }, SheetNames: ['faltas'] };
             const excelBuffer = xlsx.write(workbook, {
                 bookType: 'xlsx',
                 type: 'array'
@@ -111,6 +158,8 @@ function pedidos() {
             saveAsExcelFile(excelBuffer, 'faltas');
         });
     };
+
+    
 
     const saveAsExcelFile = (buffer, fileName) => {
         import('file-saver').then((module) => {
@@ -133,7 +182,7 @@ function pedidos() {
 
         <div className='page-title'>
             <div className='title-left-side'>
-                <h1>Pedidos</h1>
+                <h1>Pedidos de Ausência</h1>
             </div>
             <div className='title-right-side'>
                 <div className='input-group-search' id='search-box'>
@@ -145,7 +194,6 @@ function pedidos() {
                         <i className='pi pi-times'></i>
                     </div>
                 </div>
-                <button className='button button-pdf'><i className='pi pi-file-pdf'></i></button>
                 <button className='button button-excel'><i className='pi pi-file-excel' onClick={exportExcel}></i></button>
                 <button className='button button-vaccation'><i className='pi pi-calendar'></i>Adicionar Falta</button>
             </div>
@@ -168,17 +216,59 @@ function pedidos() {
             </div>    
         </div>
 
-        <Dialog visible={faltaDialog} 
-                style={{ width: '70%' }} 
-                breakpoints={{ '960px': '75vw', '641px': '90vw' }} 
-                header="Detalhes da Falta" 
-                modal
-                onHide={() => setFaltaDialog(false)}>
-                    <div className='dialog-content'>
-                        <input type='text' placeholder='Nome' value={falta.nome} />
-                    </div>
+        {/* Dialog to Edit faltaRow */}
+        <Dialog visible={pedidoDialog} header="Detalhes da Falta" className='dialog-faltas' onHide={() => setPedidoDialog(false)}>
+                    <form className='form-dialog'>
+                        <div className='form-flex'>
+                            <div className='form-group'>
+                                <label htmlFor="name">Nome do Funcionário</label>
+                                <InputText className="inputTextEdit" id="name" value={pedido.name} disabled />
+                            </div>
+                        </div>
+                        <div className='form-flex'>
+                            
+                        </div>
+                        <div className='form-flex'>
+                            <div className='form-group'>
+                                <label htmlFor="diasFalta">Data Inicio</label>
+                                <InputText className="inputTextEdit" id="diasFalta" value={pedido.diasFalta} disabled />
+                            </div>
+                            <div className='form-group'>
+                                <label htmlFor="diasFaltaFim">Data Fim</label>
+                                <InputText className="inputTextEdit" id="diasFaltaFim" value={pedido.diasFaltaFim} disabled />
+                            </div>
+                        </div>
+                        <div className='form-flex'>
+                            <div className='form-group'>
+                                <label htmlFor="observacoes">Observações</label>
+                                <InputTextarea className="inputTextEdit" id="observacoes" value={pedido.obs} disabled />
+                            </div>
+                        </div>
+                        <div className='form-flex'>
+                            <div className='form-group'>
+                                <label htmlFor="motivo">Motivo</label>
+                                <InputText className="inputTextEdit" id="motivo" value={pedido.motivo} disabled />
+                            </div>
+                        </div>
+                        <div className='form-flex'>
+                            <div className='form-group'>
+                                <label htmlFor="observacoes">Estado</label>
+                                <Dropdown 
+                                className="inputTextEdit" 
+                                value={selectedEstado} 
+                                optionLabel="name" 
+                                options={estados}
+                                placeholder="Alterar Estado"
+                                onChange={(e) => setSelectedEstado(e.value)} />
+                            </div>
+                        </div>
+                        <div className='form-flex-buttons'>
+                            <div className="form-buttons">
+                                <button type="button" className='button button-save' onClick={updatePedido}><i className='pi pi-calendar-plus'></i>Atualizar Falta</button>
+                            </div>
+                       </div>
+                    </form>
                 </Dialog>
-
     </div>
   )
 }
