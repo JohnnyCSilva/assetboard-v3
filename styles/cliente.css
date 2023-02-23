@@ -1,0 +1,62 @@
+.main-title-page{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.title-left-side{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.title-left-side > h1{
+    font-size: 30px;
+    margin: 0px;
+    padding: 0px;
+}
+.title-left-side > span{
+    font-size: 15px;
+    margin-left: 20px;
+    color: #9e9e9e;
+    vertical-align: middle;
+}
+
+.title-right-side{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.title-right-side > .btn-add, .title-right-side > .btn-export{
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    margin: 0 5px;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    transition: 0.3s ease-in-out;
+}
+
+.title-right-side > .btn-add > i , .title-right-side > .btn-export > i{
+    padding-right: 10px;
+}
+
+.title-right-side > .btn-add{
+    background-color: #4CAF50;
+}
+
+.title-right-side > .btn-export{
+    background-color: #2196F3;
+    
+}
+
+.title-right-side > .btn-add:hover, .title-right-side > .btn-export:hover{
+    opacity: 0.8;
+}
+
