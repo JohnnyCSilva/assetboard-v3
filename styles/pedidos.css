@@ -1,0 +1,187 @@
+.input-group-search {
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    transition: all 0.2s ease;
+    overflow: hidden;
+    margin:0 5px;
+}
+
+.input-group-search > .search-icon > i {
+    cursor: pointer;
+    color: #000;
+    padding: 17px;
+}
+
+.expand-search-box{
+    width: 325px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.input-group-search > .search-input{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.input-group-search > .search-input > input{
+    width: 250px;
+    height: 50px;
+    border-radius: 5px;
+    border: 0;
+    padding: 0px;
+    background-color: #fff;
+    transition: all 0.2s ease;
+}
+
+.input-group-search > .search-input > input:focus{
+    outline: none;
+}
+
+.input-group-search > .search-input > input::placeholder{
+    color: #909090;
+    font-size: 13px;
+
+}
+
+.input-group-search > .search-input > i{
+    color: #ddd;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.button-pdf{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    width: 50px;
+    border-radius: 5px;
+    margin-right: 5px;
+    background-color: #ff0000;
+}
+
+.button-excel{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    width: 50px;
+    border-radius: 5px;
+    margin-right: 5px;
+    background-color: #209e63;
+    
+}
+
+.button-pdf > i ,.button-excel > i{
+    padding: 0;
+    margin: 0;
+}
+
+.table-pedidos{
+    font-size: 14px !important;
+}
+
+.estado-aprovado-pedidos{
+    padding: 5px 15px;
+    border-radius: 50px;
+    color: darkgreen;
+    background-color: lightgreen;
+}
+
+.estado-rejeitado-pedidos{
+    padding: 5px 15px;
+    border-radius: 50px;
+    color: darkred;
+    background-color: lightcoral;
+}
+
+.estado-pendente-pedidos{
+    padding: 5px 15px;
+    border-radius: 50px;
+    color: #a05b07;
+    background-color: #fcb864;
+}
+
+.button-edit, .button-info, .button-delete{
+    background-color: transparent;
+    border-radius: 50px;
+    padding: 5px 17px;
+    color: #bfcad6;
+
+    transition: all 0.2s ease;
+}
+
+.button-edit > i, .button-info > i, .button-delete > i{
+    margin: 0;
+}
+
+.button-edit:hover, .button-info:hover, .button-delete:hover{
+    background-color: #e4e9f7;
+}
+
+.button-edit:hover > i {
+    color: #695cfe;
+}
+.button-delete:hover > i {
+    color: #ff0000;
+}
+.button-info:hover > i {
+    color: #f78e10;
+}
+
+.editPedidoDialog{
+    width: 30%;
+}
+
+form.form-dialog-edit{
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
+}
+
+.form-dialog-edit > .form-flex-edit{
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
+    margin-bottom: 10px;
+    padding: 0;
+}
+
+.form-dialog-edit > .form-flex-edit > .inputTextEdit{
+    width: 100%;
+}
+
+.form-dialog-edit > .form-flex-datas{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: row;
+    margin-bottom: 10px;
+}
+
+.form-dialog-edit > .form-flex-datas > .form-group > label,
+.form-dialog-edit > .form-flex-edit label{
+    font-size: 15px;
+    margin-bottom: 5px;
+    color: #9e9e9e;
+    vertical-align: middle;
+}
+
+.form-dialog-edit > .form-flex-datas > .inputTextEdi{
+    color: #000;
+}

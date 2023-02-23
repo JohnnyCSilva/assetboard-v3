@@ -151,8 +151,6 @@ table.funcionario_table_row th{
     transition: 0.3s ease-in-out;
 }
 
-
-
 .table-td-actions i:hover{
     background-color: #e4e9f7;
     color: #695cfe;

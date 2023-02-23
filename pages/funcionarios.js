@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 
 import { db } from '../config/Firebase'
 import { collection, query, getDocs } from "firebase/firestore";
-import XLSX from "xlsx";
+import { AuthContext } from '../config/AuthContext';
 
 import FuncList from '../components/Funcionarios/FuncList'
 
 function funcionarios() {
 
   const [funcionarios, setFuncionarios] = useState([]);
+  const { currentUser } = useContext(AuthContext);
   
     
   useEffect(() => {
