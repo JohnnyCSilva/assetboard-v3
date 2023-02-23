@@ -26,7 +26,7 @@ function signUp() {
 
     //function to login with google and create a new user in the database
     const loginWithGoogle = async () => {
-        alert('Login with Google');
+        //alert('Login with Google');
         const userCredential = await signInWithPopup(auth, google);
         await addUser(userCredential.user);
         //await signInWithEmailAndPassword(auth, userCredential.user.email, userCredential.user.uid);
@@ -34,7 +34,7 @@ function signUp() {
 
     //function to login with facebook and create a new user in the database
     const loginWithFacebook = async () => {
-        alert('Login with Facebook');
+        //alert('Login with Facebook');
         const userCredential = await signInWithPopup(auth, facebook);
         await addUser(userCredential.user);
         //await signInWithEmailAndPassword(auth, userCredential.user.email, userCredential.user.uid);

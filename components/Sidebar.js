@@ -167,7 +167,7 @@ function Sidebar() {
                             )}
                         </div>
                   
-        </Link>
+                    </Link>
                     <i className='pi pi-sign-out' id="log_out" onClick={() => SignOutUser()} ></i>
                 
           </div>
