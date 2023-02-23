@@ -157,7 +157,7 @@ function Sidebar() {
                     <Link href='/userDash'>
                       
                         
-                        <img src={currentUser.photoURL} alt="" onClick={() => window.location = "/userDash"}/>
+                        <img src={currentUser.photoURL} alt=""/>
 
                         <div className="user-role">
                             {currentUser && ( <>
