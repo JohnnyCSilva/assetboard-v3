@@ -72,7 +72,13 @@
     margin-right: 10px;
 }
 
-
+.user-profile-changes > form > .form-flex > .form-group > .avatar > img{
+    padding: 5px;
+    width: 100px;
+    border: 2px dashed #695cfe;
+    border-radius: 50%;
+    margin-right: 10px;
+}
 
 .user-profile-changes > form > .form-flex > .form-group > label{
     font-size: 15px;
@@ -381,3 +387,4 @@ table.faltas-table-row > tbody > tr > .estado-rejeitado{
     }
 
 }
+

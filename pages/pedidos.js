@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState, useRef } from 'react'
-import { collection, query, getDocs, updateDoc, where, addDoc, orderBy } from "firebase/firestore";
+import { collection, query, getDocs, updateDoc, where, addDoc, orderBy, deleteDoc } from "firebase/firestore";
 import { FilterMatchMode, FilterOperator } from 'primereact/api'
 import { db } from '../config/Firebase'
 import { AuthContext } from '../config/AuthContext'
@@ -10,7 +10,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { InputTextarea } from 'primereact/inputtextarea';
-        
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';        
 
 function pedidos() {
 
@@ -161,6 +161,35 @@ function pedidos() {
         getFaltas();
     };
 
+    // delete falta from database
+    const apagarPedido = async (faltas) => {
+
+        //show confirmation dialog
+        confirmDialog({
+            message: 'Tem a certeza que deseja apagar este pedido?',
+            header: 'Confirmação',
+            icon: 'pi pi-exclamation-triangle',
+            acceptClassName: 'p-button-danger',
+            accept: () => {
+                deletePedido(faltas);
+            },
+        });
+
+    };
+
+    const deletePedido = async (faltas) => {
+        const pedidoRef = collection(db, "faltas");
+        const q = query(pedidoRef, where("key", "==", faltas.key));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            deleteDoc(doc.ref);
+        });
+        setFaltas([]);
+
+        getFaltas();
+
+    };
+
     
     // export to xlxs with custom fields
     const exportExcel = () => {
@@ -174,7 +203,7 @@ function pedidos() {
 
         <div className='page-title'>
             <div className='title-left-side'>
-                <h1>Pedidos de Ausência</h1>
+                <h1>Pedidos de Ausência</h1>    
             </div>
             <div className='title-right-side'>
                 <div className='input-group-search' id='search-box'>
@@ -187,7 +216,7 @@ function pedidos() {
                     </div>
                 </div>
                 <button className='button button-excel'><i className='pi pi-file-excel' onClick={exportExcel}></i></button>
-                <button className='button button-vaccation'><i className='pi pi-calendar'></i>Adicionar Falta</button>
+                <button className='button button-vaccation'><i className='pi pi-calendar'></i><span>Adicionar Falta</span></button>
             </div>
         </div>
         <div className='page-content'>
@@ -209,6 +238,8 @@ function pedidos() {
                 </DataTable>
             </div>    
         </div>
+
+        <ConfirmDialog />
 
         {/* Dialog to Edit faltaRow */}
         <Dialog  visible={pedidoDialog} header="Detalhes da Falta" className='dialog-faltas' onHide={() => setPedidoDialog(false)}>
@@ -234,14 +265,14 @@ function pedidos() {
                         </div>
                         <div className='form-flex'>
                             <div className='form-group'>
-                                <label htmlFor="observacoes">Observações</label>
-                                <InputTextarea className="inputTextEdit" id="observacoes" value={pedido.obs} disabled />
+                                <label htmlFor="motivo">Motivo</label>
+                                <InputText className="inputTextEdit" id="motivo" value={pedido.motivo} disabled />
                             </div>
                         </div>
                         <div className='form-flex'>
                             <div className='form-group'>
-                                <label htmlFor="motivo">Motivo</label>
-                                <InputText className="inputTextEdit" id="motivo" value={pedido.motivo} disabled />
+                                <label htmlFor="observacoes">Observações</label>
+                                <InputTextarea className="inputTextEdit" id="observacoes" value={pedido.obs} disabled />
                             </div>
                         </div>
                         <div className='form-flex'>

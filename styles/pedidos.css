@@ -142,46 +142,15 @@
     width: 30%;
 }
 
-form.form-dialog-edit{
-    margin: 0;
-    padding: 0;
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
-    flex-direction: column;
-}
 
-.form-dialog-edit > .form-flex-edit{
-    width: 100%;
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
-    flex-direction: column;
-    margin-bottom: 10px;
-    padding: 0;
-}
-
-.form-dialog-edit > .form-flex-edit > .inputTextEdit{
-    width: 100%;
-}
-
-.form-dialog-edit > .form-flex-datas{
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    flex-direction: row;
-    margin-bottom: 10px;
-}
-
-.form-dialog-edit > .form-flex-datas > .form-group > label,
-.form-dialog-edit > .form-flex-edit label{
-    font-size: 15px;
-    margin-bottom: 5px;
-    color: #9e9e9e;
-    vertical-align: middle;
-}
-
-.form-dialog-edit > .form-flex-datas > .inputTextEdi{
-    color: #000;
+@media screen and (max-width: 768px) {
+    .title-right-side > .button-vaccation > span{
+        display: none;
+    }
+    .title-right-side > .button-vaccation > i{
+        margin: 0;
+    }
+    .expand-search-box{
+        width: 230px;
+    }
 }

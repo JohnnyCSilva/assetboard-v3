@@ -12,6 +12,7 @@ import { RadioButton } from 'primereact/radiobutton';
 import { InputTextarea } from 'primereact/inputtextarea';
 
 import FaltasList from '../components/UserConfig/FaltasList'
+import { Dropdown } from 'primereact/dropdown';
 
 
 function userDash() {
@@ -32,6 +33,10 @@ function userDash() {
     const [nif , setNif] = useState('');
     const [niss , setNiss] = useState('');
     const [nascimento , setNascimento] = useState(null);
+    const [estadoCivil , setEstadoCivil] = useState('');
+    const [dependentes , setDependentes] = useState('');
+    const [deficientes , setDeficientes] = useState('');
+
 
     const [motivo, setMotivo] = useState('');
     const [diasFalta, setDiasFalta] = useState(null);
@@ -39,6 +44,43 @@ function userDash() {
     const [obs, setObs] = useState('');
 
     const [faltas, setFaltas] = useState([]);
+
+    const estadoCivilOptions = [
+        {label: 'Solteiro', value: 'Solteiro'},
+        {label: 'Casado', value: 'Casado'},
+        {label: 'Divorciado', value: 'Divorciado'},
+        {label: 'Viúvo', value: 'Viúvo'},
+    ]
+
+    const dependentesOptions = [
+        {label: '0', value: '0'},
+        {label: '1', value: '1'},
+        {label: '2', value: '2'},
+        {label: '3', value: '3'},
+        {label: '4', value: '4'},
+        {label: '5', value: '5'},
+        {label: '6', value: '6'},
+        {label: '7', value: '7'},
+        {label: '8', value: '8'},
+        {label: '9', value: '9'},
+        {label: '10', value: '10'},
+    ]
+
+    const deficientesOptions = [
+        {label: '0', value: '0'},
+        {label: '1', value: '1'},
+        {label: '2', value: '2'},
+        {label: '3', value: '3'},
+        {label: '4', value: '4'},
+        {label: '5', value: '5'},
+        {label: '6', value: '6'},
+        {label: '7', value: '7'},
+        {label: '8', value: '8'},
+        {label: '9', value: '9'},
+        {label: '10', value: '10'},
+        {label: '11', value: '11'},
+        {label: '12', value: '12'},
+    ]
 
 
     useEffect(() => {
@@ -71,59 +113,40 @@ function userDash() {
 
     // on handleSubmit update user data in database and show toast message
     const handleSubmit = () => {
-        alert('codigo postal inserir: ' + userData.codPostal)
-        //if field is empty set value to default value
-        if (codPostal === '' || codPostal === null || codPostal === undefined)  { 
-            setCodPostal(userData.codPostal);
+   
+        // Update userData with new values
+        const newUserData = {
+            ...userData,
+            codPostal: codPostal || userData.codPostal,
+            iban: iban || userData.iban,
+            morada: morada || userData.morada,
+            nacionalidade: nacionalidade || userData.nacionalidade,
+            contacto: contacto || userData.contacto,
+            nif: nif || userData.nif,
+            niss: niss || userData.niss,
+            nascimento: nascimento || userData.nascimento,
+            estadoCivil: estadoCivil || userData.estadoCivil,
+            dependentes: dependentes || userData.dependentes,
+            deficientes: deficientes || userData.deficientes,
         }
-        if (iban === '' || iban === null || iban === undefined) {
-            setIban(userData.iban);
-        }
-        if (morada === '' || morada === null || morada === undefined) {
-            setMorada(userData.morada);
-        }
-        if (nacionalidade === '' || nacionalidade === null || nacionalidade === undefined) {
-            setNacionalidade(userData.nacionalidade);
-        }
-        if (contacto === '' || contacto === null || contacto === undefined) {
-            setContacto(userData.contacto);
-        }
-        if (nif === '' || nif === null || nif === undefined) {
-            setNif(userData.nif);
-        }
-        if (niss === '' || niss === null || niss === undefined) {
-            setNiss(userData.niss);
-        }
-        if (nascimento === null || nascimento === undefined) {
-            setNascimento(userData.nascimento);
-        }       
-
-        alert('codigo postal: ' + userData.codPostal + 'codigo Postal 2: ' + codPostal);
-
-
+        
         const q = query(collection(db, "users"), where("uid", "==", currentUser.uid));
         const querySnapshot = getDocs(q).then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
-                updateDoc(doc.ref, {
-                    codPostal: codPostal,
-                    iban: iban,
-                    morada: morada,
-                    nacionalidade: nacionalidade,
-                    nascimento: nascimento,
-                    contacto: contacto,
-                    nif: nif,
-                    niss: niss,
-                });
+                updateDoc(doc.ref, newUserData);
             });
         }).then(() => {
             toast.current.show({severity:'success', summary: 'Atualizado', detail:'Campos atualizados com sucesso.', life: 3000});
         })
-
-    }
+    
+    }  
 
 
     //set minDate to diasFalta 
     const minDate = new Date(diasFalta);
+
+    //max date is today date
+    const maxDate = new Date();
 
     const registerFalta = () => {
         addDoc(collection(db, "faltas"), {
@@ -203,13 +226,12 @@ function userDash() {
         <div className='user-profile'>
             <div className='user-profile-left'>
                 <h2>Editar Perfil</h2>
-                <span>*Caso necessite de reeditar o perfil, por favor coloque todos os campos novamente</span>
                 <div className='user-profile-changes'>
                     <form>
                         <div className='form-flex'>
                             <div className='form-group'>
                                 <label htmlFor='name'>Nome</label>
-                                <InputText id='name' type='text' className="inputText" defaultValue={userData.name} disabled/>
+                                <InputText id='name' type='text' className="inputText" defaultValue={userData.displayName} disabled/>
                             </div>
                             <div className='form-group'>
                                 <label htmlFor='email'>Email</label>
@@ -229,11 +251,11 @@ function userDash() {
                         <div className='form-flex'>
                             <div className='form-group morada'>
                                 <label htmlFor='nacionalidade'>Nacionalidade</label>
-                                <InputText id='nacionalidade' type='nacionalidade' className="inputText" defaultValue={userData.nacionalidade}  onChange={(e) => setNacionalidade(e.target.value)}/>
+                                <InputText id='nacionalidade' type='nacionalidade' className="inputText"  defaultValue={userData.nacionalidade}  onChange={(e) => setNacionalidade(e.target.value)}/>
                             </div>
                             <div className='form-group morada'>
                                 <label htmlFor='nascimento'>Data de Nascimento</label>
-                                <Calendar value={date} dateFormat="dd/mm/yy" onChange={(e) => setNascimento(e.value)} showIcon />                                
+                                <Calendar value={date} dateFormat="dd/mm/yy" maxDate={maxDate} onChange={(e) => setNascimento(e.value)} showIcon />                                
                             </div>
                         </div>
 
@@ -258,6 +280,25 @@ function userDash() {
                                 <InputText id='niss' type='niss' className="inputText" defaultValue={userData.niss} onChange={(e) => setNiss(e.target.value)}/>
                             </div>
                         </div>
+
+                        <div className='form-flex'>
+                            <div className='form-group'>
+                                <label htmlFor='estadoCivil'>Estado Civil</label>
+                                <Dropdown className="dropdown-value" value={estadoCivil} options={estadoCivilOptions} onChange={(e) => setEstadoCivil(e.value)} placeholder="Selecione o Estado Civil" />
+                            </div>
+                            <div className='form-group'>
+                                <label htmlFor='dependentes'>Número de Dependentes</label>
+                                <Dropdown className="dropdown-value" value={dependentes} options={dependentesOptions} onChange={(e) => setDependentes(e.value)} placeholder="Selecione o Número de Dependentes" />
+                            </div>  
+                        </div>
+                        <div className='form-flex'>
+                            <div className='form-group'>
+                                <label htmlFor='deficientes'>Número de deficientes no agregado familiar</label>
+                                <Dropdown className="dropdown-value" value={deficientes} options={deficientesOptions} onChange={(e) => setDeficientes(e.value)} placeholder="Selecione o Número de Deficientes" />
+                            </div>
+                        </div>
+
+                        
 
                         <div className='form-flex-buttons'>
                             <div className="form-buttons">
