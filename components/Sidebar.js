@@ -107,7 +107,7 @@ function Sidebar() {
                             <span className="tooltip">Dashboard</span>
                         </li>
                         <li>
-                            <Link href="/" >
+                            <Link href="/projetos" >
                                 
                                 <i className='pi pi-folder-open'></i>
                                 <p className="links_name">Projetos</p>
@@ -154,8 +154,11 @@ function Sidebar() {
                     </ul>
                 </div>
                 <div className="footer-sidebar" id="footer-sidebar">    
+                    <Link href='/userDash'>
+                      
                         
                         <img src={currentUser.photoURL} alt="" onClick={() => window.location = "/userDash"}/>
+
                         <div className="user-role">
                             {currentUser && ( <>
                                 <h2>{currentUser.displayName}</h2>
@@ -163,11 +166,11 @@ function Sidebar() {
                             </>
                             )}
                         </div>
-                    
+                  
+        </Link>
                     <i className='pi pi-sign-out' id="log_out" onClick={() => SignOutUser()} ></i>
-                </div>
-        
-        
+                
+          </div>
             </nav>
           )
     } else if (role === 'funcionario'){
@@ -221,8 +224,8 @@ function Sidebar() {
                     </ul>
                 </div>
                 <div className="footer-sidebar" id="footer-sidebar" >
-                        
-                    <img src={currentUser.photoURL} alt="" onClick={() => window.location = "/userDash"}/>
+                    <Link href='/userDash'>
+                    <img src={currentUser.photoURL} alt=""/>
                     <div className="user-role">
                         {currentUser && ( <>
                             <h2>{currentUser.displayName}</h2>
@@ -230,7 +233,7 @@ function Sidebar() {
                         </>
                         )}
                     </div>
-                    
+                    </Link>
                     <i className='pi pi-sign-out' id="log_out" onClick={() => SignOutUser()} ></i>
                 </div>
             </nav>

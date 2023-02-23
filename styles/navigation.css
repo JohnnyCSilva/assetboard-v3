@@ -123,25 +123,25 @@
 
     transition: 0.2s ease-in-out;
 }
-.footer-sidebar > img{
+.footer-sidebar >a >img{
     width: 40px;
     height: 40px;
     object-fit: cover;
     border-radius: 50px;
 }
-.footer-sidebar > .user-role{
+.footer-sidebar >a > .user-role{
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     opacity: 0;
     margin-left: 15px;
 }
-.footer-sidebar > .user-role > h2, .footer-sidebar > .user-role > p{
+.footer-sidebar > a> .user-role > h2, .footer-sidebar > .user-role > p{
     font-size: 14px;
     font-weight: 400;
     color: white;
 }
-.footer-sidebar > .user-role > p {
+.footer-sidebar > a>.user-role > p {
     font-size: 12px;
 }
 .footer-sidebar > i {
