@@ -125,7 +125,7 @@ function Sidebar() {
                             <span className="tooltip">Funcionários</span>
                         </li>
                         <li>
-                            <Link href="/" >
+                            <Link href="/despesas" >
                                 
                                 <i className='pi pi-calculator'></i>
                                 <p className="links_name">Despesas</p>
@@ -134,7 +134,7 @@ function Sidebar() {
                             <span className="tooltip">Despesas</span>
                         </li>
                         <li>
-                            <Link href="/" >
+                            <Link href="/clientes" >
                                 
                                 <i className='pi pi-users'></i>
                                 <p className="links_name">Clientes</p>
