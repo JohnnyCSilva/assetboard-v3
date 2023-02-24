@@ -498,7 +498,7 @@ function despesas() {
                 </div>
                 <div className='form-flex-buttons'>
                     <div className="form-buttons">
-                        <button type="button" className='button button-save' onClick={updateDespesa}><i className='pi pi-check-circle'></i><span>Registar</span></button>
+                        <button type="button" className='button button-save' onClick={updateDespesa}><i className='pi pi-check-circle'></i><span>Atualizar</span></button>
                     </div>
                 </div>
             </form>

@@ -286,7 +286,7 @@ function pedidos() {
                         </div>
                         <div className='form-flex-buttons'>
                             <div className="form-buttons">
-                                <button type="button" className='button button-save' onClick={updatePedido}><i className='pi pi-calendar-plus'></i>Atualizar Falta</button>
+                                <button type="button" className='button button-save' onClick={updatePedido}><i className='pi pi-calendar-plus'></i><span>Atualizar</span></button>
                             </div>
                        </div>
                     </form>
