@@ -206,20 +206,17 @@ function pedidos() {
                 <h1>Pedidos de Ausência</h1>    
             </div>
             <div className='title-right-side'>
-                <div className='input-group-search' id='search-box'>
-                    <div className='search-icon'>
-                        <i className='pi pi-search' onClick={expandSearchBox}></i>
-                    </div>
-                    <div className='search-input'>
-                        <input type='text' placeholder='Pesquisar' value={globalFilterValue} onChange={onGlobalFilterChange} />
-                        <i className='pi pi-times'></i>
-                    </div>
-                </div>
-                <button className='button button-excel'><i className='pi pi-file-excel' onClick={exportExcel}></i></button>
-                <button className='button button-vaccation'><i className='pi pi-calendar'></i><span>Adicionar Falta</span></button>
+                <button className='button button-excel'><i className='pi pi-file-excel' onClick={exportExcel}></i><span>Exportar</span></button>
+                <button className='button button-add'><i className='pi pi-plus-circle'></i><span>Adicionar Falta</span></button>
             </div>
         </div>
         <div className='page-content'>
+
+            <div className='search-box'>
+                <i className='pi pi-search'></i>
+                <input type="text" placeholder='Pesquisar' id='search-box' value={globalFilterValue} onChange={onGlobalFilterChange} />
+            </div>
+
             <div className='page-content-table'>
                 <DataTable 
                 ref={dt}

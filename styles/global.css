@@ -29,33 +29,86 @@ table{
   border-collapse: collapse; 
 }
 
+.page-title{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.page-title > .title-left-side{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.page-title > .title-right-side{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .button{
   width: auto;
   padding: 10px 20px;
   height: 50px;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   color: #fff;
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
+  margin: 0 2px;
 
   transition: all 0.3s ease-in-out;
 }
 
-.button > i {
-  margin-right: 10px;
+.button > span {
+  margin-left: 10px;
 }
 
 .button:hover{
   opacity: 0.8;
 }
 
-.button-uploadFile{
-  font-size: 15px !important;
-  font-weight: normal !important;
-  padding: 7px 0px 7px 10px !important;
-  border-radius: 50px !important;
+.button-edit, .button-info, .button-delete{
+  background-color: transparent;
+  border-radius: 50px;
+  height: auto;
+  padding: 5px 10px;
+  color: #bfcad6;
+
+  transition: all 0.2s ease;
+}
+
+.button > i{
+  transition: all 0.2s ease;
+}
+
+.button-save{
+  background-color: #10B981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px ;
+
+}.button-see{
+  background-color: #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}.button-excel{
+  background-color: #f97316;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}.button-add{
+  background-color: #10B981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .home-section{
@@ -67,8 +120,8 @@ table{
   z-index: 1;
   padding: 25px;
   transition: 0.2s ease-in-out;
-  
 }
+
 
 .sidebar.open ~ .home-section{
   left: 250px;
@@ -89,5 +142,17 @@ table{
   .navbar.open ~ .home-section{
     left: 0;
     top: 500px;    
+  }
+  .page-title > .title-left-side{
+    display: none;
+  }
+  .page-title > .title-right-side > .button > span{
+    display: none;
+  }
+  .page-title > .title-right-side > .button{
+    padding: 10px 15px;
+  }
+  .page-title > .title-right-side > .button > i{
+    margin: 0;
   }
 }

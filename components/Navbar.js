@@ -3,9 +3,11 @@ import { AuthContext } from '../config/AuthContext';
 import { signOut } from 'firebase/auth';
 import { auth } from '../config/Firebase'
 import { Toast } from 'primereact/toast';
-import Link from 'next/link';
+
 import { db } from '../config/Firebase'
 import { collection, query, getDocs } from "firebase/firestore";
+
+import Link from 'next/link';
 
 function Navbar() {
 
@@ -15,8 +17,6 @@ function Navbar() {
     const [role, setRole] = useState('');
     
     useEffect(() => {
-        const navbar = document.getElementById("navbar");
-        const menu = document.getElementById("menu_show");
 
         const q = query(collection(db, "users"));
         const querySnapshot = getDocs(q).then((querySnapshot) => {
@@ -29,7 +29,43 @@ function Navbar() {
         )
     }, [])
 
+    //getCurrentPageTitle
+    const [pageTitle, setPageTitle] = useState('');
+
+    useEffect(() => {
+        const path = window.location.pathname;
+        switch (path) {
+            case '/dashboard':
+                setPageTitle('Dashboard');
+                break;
+            case '/projetos':
+                setPageTitle('Projetos');
+                break;
+            case '/funcionarios':
+                setPageTitle('Funcionários');
+                break;
+            case '/despesas':
+                setPageTitle('Despesas');
+                break;
+            case '/clientes':
+                setPageTitle('Clientes');
+                break;
+            case '/pedidos':
+                setPageTitle('Pedidos');
+                break;
+            case '/userDash':
+                setPageTitle('Perfil');
+                break;
+
+            default:
+                setPageTitle('Dashboard');
+                break;
+        }
+    }, [])
+
     function toggleNavbar() {
+        const menu = document.getElementById("menu_show");
+        const navbar = document.getElementById("navbar");
 
         navbar.classList.toggle("show");
 
@@ -44,6 +80,8 @@ function Navbar() {
     };
 
     async function SignOutUser() {
+        const navbar = document.getElementById("navbar");
+
         navbar.classList.toggle("show");
 
         showToast();
@@ -59,70 +97,70 @@ function Navbar() {
 
                 <div className='header-navbar'>
                     <i className='pi pi-bars' id="menu_show" onClick={() => toggleNavbar()}></i>
-                    <h1>AssetBoard</h1>
+                    <h1>{pageTitle}</h1>
                     <img src={currentUser.photoURL} alt="" onClick={() => window.location = "/userDash"}/>
                 </div>
                 <div className='container-navbar'>
                     <ul className="list-menu">
                         <li>
-                            <Link href="/dashboard" >
+                            <a href="/dashboard" >
+                                    
+                                <i className='pi pi-home'></i>
+                                <p className="name-link">Dashboard</p>
                                 
-                                    <i className='pi pi-th-large'></i>
-                                    <p className="name-link">Dashboard</p>
-                                
-                            </Link>
+                            </a>
                         </li>
 
                         <li>
-                            <Link href="/">
+                            <a href="/projetos" >
                                 
-                                    <i className='pi pi-folder-open'></i>
-                                    <p className="name-link">Projetos</p>
+                                <i className='pi pi-folder-open'></i>
+                                <p className="name-link">Projetos</p>
                                 
-                            </Link>
+                            </a>
                         </li>
 
                         <li>
-                            <Link href="/funcionarios">
+                            <a href="/funcionarios" >
                                 
-                                    <i className='pi pi-users'></i>
-                                    <p className="name-link">Funcionários</p>
+                                <i className='pi pi-users'></i>
+                                <p className="name-link">Funcionários</p>
                                 
-                            </Link>
+                            </a>
                         </li>
 
                         <li>
-                            <Link href="/">
+                            <a href="/despesas" >
                                 
-                                    <i className='pi pi-calculator'></i>
-                                    <p className="name-link">Despesas</p>
+                                <i className='pi pi-calculator'></i>
+                                <p className="name-link">Despesas</p>
                                 
-                            </Link>
+                            </a>
                         </li>
 
                         <li>
-                            <Link href="/">
+                            <a href="/clientes" >
                                 
                                 <i className='pi pi-users'></i>
                                 <p className="name-link">Clientes</p>
                                 
-                            </Link>
+                            </a>
                         </li>
 
                         <li>
-                            <Link href="/">
+                            <a href="/pedidos" >
                                 
                                 <i className='pi pi-bell'></i>
                                 <p className="name-link">Pedidos</p>
                                 
-                            </Link>
+                            </a>
                         </li>
 
                         <li>
-                            <Link onClick={SignOutUser}>
+                            <a onClick={SignOutUser}>
                                 <i className='pi pi-sign-out'></i>
                                 <p className="name-link">Sair da Conta</p>
-                            </Link>
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -136,54 +174,54 @@ function Navbar() {
 
                 <div className='header-navbar'>
                     <i className='pi pi-bars' id="menu_show" onClick={() => toggleNavbar()}></i>
-                    <h1>AssetBoard</h1>
+                    <h1>{pageTitle}</h1>
                     <img src={currentUser.photoURL} alt="" onClick={() => window.location = "/userDash"}/>
                 </div>
                 <div className='container-navbar'>
                     <ul className="list-menu">
                         <li>
-                            <Link href="/dashboard" >
-                                
-                                <i className='pi pi-th-large'></i>
+                            <a href="/dashboard" >
+                                    
+                                <i className='pi pi-home'></i>
                                 <p className="name-link">Dashboard</p>
-                                
-                            </Link>
+                                    
+                            </a>
                         </li>
 
                         <li>
-                            <Link href="/">
+                            <a href="/projetos" >
                                 
                                 <i className='pi pi-folder-open'></i>
                                 <p className="name-link">Projetos</p>
                                 
-                            </Link>
+                            </a>
                         </li>
 
                         <li>
-                            <Link href="/">
+                            <a href="/tarefas">
                                 
                                 <i className='pi pi-calendar-times'></i>
                                 <p className="name-link">Tarefas</p>
                                 
-                            </Link>
+                            </a>
                         </li>
 
                         <li>
-                            <Link href="/">
+                            <a href="/despesas">
                                 
                                 <i className='pi pi-calculator'></i>
                                 <p className="name-link">Despesas</p>
                                 
-                            </Link>
+                            </a>
                         </li>
 
                         <li>
-                            <Link onClick={SignOutUser} >
+                            <a onClick={SignOutUser} >
                                 
                                 <i className='pi pi-sign-out'></i>
                                 <p className="name-link">Sair da Conta</p>
                                 
-                            </Link>
+                            </a>
                         </li>
                     </ul>
                 </div>

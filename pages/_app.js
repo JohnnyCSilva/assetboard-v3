@@ -1,10 +1,12 @@
 import '@/styles/global.css';
 import '@/styles/navigation.css';
 import '@/styles/signUp.css';
-import '@/styles/funcionario.css';
 import '@/styles/userDash.css';
 import '@/styles/pedidos.css';
+
 import '@/styles/cliente.css';
+import '@/styles/despesas.css';
+
 
 import "primeicons/primeicons.css";
 import "primereact/resources/primereact.min.css"; 
@@ -35,17 +37,13 @@ function App({ Component, pageProps }) {
     return unsubscribe;
   }, []);
 
-  //logout function
-  const logout = () => {
-    auth.signOut();
-  };
 
   return (
     <AuthContextProvider>
       {user ? (
         <>  
           <Sidebar />
-          {/*<Navbar />*/}
+          <Navbar />
           <div className='home-section'>
             <Component {...pageProps} />
           </div>

@@ -186,7 +186,7 @@ function Sidebar() {
                 <div className="container-sidebar" id="container-sidebar">
                     <ul className="menu-list">
                         <li>
-                            <Link href="/" >
+                            <Link href="/dashboard" >
                                 
                                 <i className='pi pi-th-large'></i>
                                 <p className="links_name">Dashboard</p>
@@ -195,7 +195,7 @@ function Sidebar() {
                             <span className="tooltip">Dashboard</span>
                         </li>
                         <li>
-                            <Link href="/" >
+                            <Link href="/projetos" >
                                 
                                 <i className='pi pi-folder-open'></i>
                                 <p className="links_name">Projetos</p>
@@ -204,7 +204,7 @@ function Sidebar() {
                             <span className="tooltip">Projetos</span>
                         </li>
                         <li>
-                            <Link href='/' >
+                            <Link href='/tarefas' >
                                 
                                 <i className='pi pi-calendar-times'></i>
                                 <p className="links_name">Tarefas</p>
@@ -213,7 +213,7 @@ function Sidebar() {
                             <span className="tooltip">Tarefas</span>
                         </li>
                         <li>
-                            <Link href="/" >
+                            <Link href="/despesas" >
                                 
                                 <i className='pi pi-calculator'></i>
                                 <p className="links_name">Despesas</p>
