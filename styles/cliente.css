@@ -60,3 +60,8 @@
     opacity: 0.8;
 }
 
+@media screen and (max-width: 768px) {
+    .colunaicons{
+        max-width: 150px;
+    }
+}

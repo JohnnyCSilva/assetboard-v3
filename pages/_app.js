@@ -4,6 +4,7 @@ import '@/styles/signUp.css';
 import '@/styles/funcionario.css';
 import '@/styles/userDash.css';
 import '@/styles/pedidos.css';
+import '@/styles/cliente.css';
 
 import "primeicons/primeicons.css";
 import "primereact/resources/primereact.min.css"; 
