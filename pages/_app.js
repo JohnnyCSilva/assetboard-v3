@@ -34,17 +34,13 @@ function App({ Component, pageProps }) {
     return unsubscribe;
   }, []);
 
-  //logout function
-  const logout = () => {
-    auth.signOut();
-  };
 
   return (
     <AuthContextProvider>
       {user ? (
         <>  
           <Sidebar />
-          {/*<Navbar />*/}
+          <Navbar />
           <div className='home-section'>
             <Component {...pageProps} />
           </div>

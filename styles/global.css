@@ -55,17 +55,18 @@ table{
   padding: 10px 20px;
   height: 50px;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   color: #fff;
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
+  margin: 0 2px;
 
   transition: all 0.3s ease-in-out;
 }
 
-.button > i {
-  margin-right: 10px;
+.button > span {
+  margin-left: 10px;
 }
 
 .button:hover{
@@ -87,11 +88,28 @@ table{
 }
 
 .button-save{
-  background-color: #4CAF50;
+  background-color: #10B981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px ;
+
 }.button-see{
   background-color: #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}.button-excel{
+  background-color: #f97316;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}.button-add{
+  background-color: #10B981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
 
 .home-section{
   position: relative;
@@ -125,7 +143,9 @@ table{
     left: 0;
     top: 500px;    
   }
-
+  .page-title > .title-left-side{
+    display: none;
+  }
   .page-title > .title-right-side > .button > span{
     display: none;
   }

@@ -180,7 +180,7 @@ function userDash() {
                 <h1>Perfil</h1>
             </div>
             <div className='title-right-side'>
-                <button className='button button-vaccation' onClick={() => setVisible(true)}><i className='pi pi-calendar'></i>Registar Faltas</button>
+                <button className='button button-add' onClick={() => setVisible(true)}><i className='pi pi-plus-circle'></i><span>Adicionar Falta</span></button>
                 <Dialog header="Registar Faltas" visible={visible} className='dialog-faltas' onHide={() => setVisible(false)}>
                     <form className='form-dialog'>
                         <label>Motivo</label>
@@ -216,7 +216,7 @@ function userDash() {
                         </div>
                         <div className='form-flex-buttons'>
                             <div className="form-buttons">
-                                <button type="button" className='button button-save' onClick={registerFalta}><i className='pi pi-calendar-plus'></i>Registar</button>
+                                <button type="button" className='button button-save' onClick={registerFalta}><i className='pi pi-calendar-plus'></i><span>Registar</span></button>
                             </div>
                        </div>
                     </form>
@@ -298,11 +298,10 @@ function userDash() {
                             </div>
                         </div>
 
-                        
 
                         <div className='form-flex-buttons'>
                             <div className="form-buttons">
-                                <button type="button" className='button button-save' onClick={handleSubmit}><i className='pi pi-save'></i>Guardar</button>
+                                <button type="button" className='button button-save' onClick={handleSubmit}><i className='pi pi-save'></i><span>Guardar</span></button>
                             </div>
                        </div>
                     </form>
@@ -311,7 +310,6 @@ function userDash() {
             <div className='user-profile-right'>
                 <h2>Registo de Faltas</h2>
                 <div className='user-profile-faltas'>
-                    
                     <FaltasList faltas={faltas} />
                 </div>  
             </div>

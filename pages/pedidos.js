@@ -207,7 +207,7 @@ function pedidos() {
             </div>
             <div className='title-right-side'>
                 <button className='button button-excel'><i className='pi pi-file-excel' onClick={exportExcel}></i><span>Exportar</span></button>
-                <button className='button button-vaccation'><i className='pi pi-calendar'></i><span>Adicionar Falta</span></button>
+                <button className='button button-add'><i className='pi pi-plus-circle'></i><span>Adicionar Falta</span></button>
             </div>
         </div>
         <div className='page-content'>

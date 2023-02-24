@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useContext, useRef, use} from 'react'
+import React, { useState, useEffect, useContext, useRef} from 'react'
 
 import { db } from '../config/Firebase'
-import { collection, query, getDocs, updateDoc, where, addDoc, orderBy } from "firebase/firestore";
+import { collection, query, getDocs, updateDoc, where, addDoc, orderBy, deleteDoc } from "firebase/firestore";
 import { FilterMatchMode, FilterOperator } from 'primereact/api'
 import { AuthContext } from '../config/AuthContext';
 import { Dialog } from 'primereact/dialog';
@@ -9,23 +9,41 @@ import { RadioButton } from 'primereact/radiobutton';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
-import { FileUpload } from 'primereact/fileupload';
 import { Toast } from 'primereact/toast';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';        
 
 function despesas() {
 
+    const dt = useRef(null);
+    const toast = useRef(null);
     const { currentUser } = useContext(AuthContext);
+
+    let emptyDespesa = {
+            
+        funcionario: '',
+        tipoDespesa: '',
+        selectedDespesa: '',
+        despesa: '',
+        valor: '',
+        projeto: '',
+        createdAt: '',
+        estado: '',
+
+    };
+    
+    const [ despesas, setDespesas ] = useState([]);
     const [ displayBasic, setDisplayBasic ] = useState(false);
     const [ tipoDespesa, setTipoDespesa ] = useState('Pessoal');
     const [ filters, setFilters ] = useState(null);
     const [ selectedDespesa, setSelectedDespesa ] = useState([]);
     const [ description, setDescription ] = useState([]);
-    const toast = useRef(null);
     const [ globalFilterValue, setGlobalFilterValue ] = useState('');
     const [ valor, setValor ] = useState([]);
     const [ projeto, setProjeto ] = useState([]);
+    const [ displayEdit, setDisplayEdit ] = useState(false);
+    const [ selectedEstado, setSelectedEstado ] = useState(null);
     
 
     // if tipoDespesa === Pessoal values of dropdown "combustivel, alimentacao, etc"
@@ -47,13 +65,20 @@ function despesas() {
         {label: 'Outros', value: 'outros'},
     ]
 
+    const estados = [
+        { name: 'Aprovado', code: 'Aprovado' },
+        { name: 'Rejeitado', code: 'Rejeitado' },
+        { name: 'Pendente', code: 'Pendente' }
+    ];
+
     const [ funcionarios, setFuncionarios ] = useState([]);
     const [ selectedFuncionario, setSelectedFuncionario ] = useState([]);
-    const [ despesas, setDespesas ] = useState([]);
+    
     
     const [ depesasPessoais, setDespesasPessoais ] = useState(0);
     const [ depesasProfissionais, setDespesasProfissionais ] = useState(0);
     const [ despesasTotal, setDespesasTotal ] = useState(0);
+    
 
     //get all despesas from db
     const getDespesas = async () => {
@@ -66,15 +91,19 @@ function despesas() {
         setDespesas(despesas);
 
         let totalDespesas = 0;
+        //if despesa is approved add to total despesas
         despesas.map((despesa) => {
-            totalDespesas += despesa.valor;
+            if(despesa.estado === 'Aprovado') {
+                totalDespesas += despesa.valor;
+            }
         })
         totalDespesas = Math.round(totalDespesas * 100) / 100;
         setDespesasTotal(totalDespesas);
 
         let totalDespesasPessoais = 0;
+        //if despesa is approved and despesa is pessoal add to total despesasPessoais
         despesas.map((despesa) => {
-            if(despesa.tipoDespesa === 'Pessoal') {
+            if(despesa.estado === 'Aprovado' && despesa.tipoDespesa === 'Pessoal') {
                 totalDespesasPessoais += despesa.valor;
             }
         })
@@ -83,7 +112,7 @@ function despesas() {
 
         let totalDespesasProfissionais = 0;
         despesas.map((despesa) => {
-            if(despesa.tipoDespesa === 'Profissional') {
+            if(despesa.estado === 'Aprovado' && despesa.tipoDespesa === 'Profissional') {
                 totalDespesasProfissionais += despesa.valor;
             }
         })
@@ -128,23 +157,25 @@ function despesas() {
     //add despesa to db with funcionario uid 
     const addDespesa = async () => {
         await addDoc(collection(db, "despesas"), {
+            key: Math.random().toString(36),
             funcionario: selectedFuncionario,
             tipoDespesa: tipoDespesa,
             selectedDespesa: selectedDespesa,
             despesa: description,
             valor: valor,
             projeto: projeto,
+            estado: 'Aprovado',
             createdAt: new Date(),         
         });
-        toast.current.show({severity:'success', summary: 'Registado', detail:'Falta registada com sucesso.', life: 3000});
+        toast.current.show({severity:'success', summary: 'Registado', detail:'Despesa registada com sucesso.', life: 3000});
         setDisplayBasic(false);
 
         setSelectedFuncionario('');
         setTipoDespesa('Pessoal');
+        setSelectedDespesa('');
         setDescription('');
         setValor('');
         setProjeto('');
-
 
         getDespesas();
     }
@@ -182,12 +213,77 @@ function despesas() {
     const actionBodyTemplate = (rowData) => {
         return (
             <React.Fragment>
-                <button type='button' className='button button-edit'><i className='pi pi-pencil'></i></button>
-                <button type='button' className='button button-delete'><i className='pi pi-trash'></i></button>
+                <button type='button' className='button button-edit' onClick={() => editProduct(rowData)}><i className='pi pi-pencil'></i></button>
+                <button type='button' className='button button-delete' onClick={() => deleteDespesa(rowData)}><i className='pi pi-trash'></i></button>
             </React.Fragment>
         );
     };
 
+    const [ despesa, setDespesa ] = useState(false);
+
+    const editProduct = (rowData) => {
+        setDespesa(rowData);
+        setDisplayEdit(true);
+    }
+
+    const deleteDespesa = async (rowData) => {
+        setDespesa(rowData);
+        //show confirmation dialog
+        confirmDialog({
+            message: 'Tem a certeza que deseja apagar esta despesa?',
+            header: 'Confirmação',
+            icon: 'pi pi-exclamation-triangle',
+            acceptClassName: 'p-button-danger',
+            accept: () => {
+                deletePedido(rowData);
+            },
+        });
+
+    };
+
+    const exportExcel = () => {
+        dt.current.exportCSV();
+    };
+
+    const statusBodyTemplate = (rowData) => {
+
+        return (rowData.estado === 'Aprovado' ? <span className='estado-aprovado-pedidos'>{rowData.estado}</span> 
+        : rowData.estado === 'Rejeitado' ? <span className='estado-rejeitado-pedidos'>{rowData.estado}</span>
+        : rowData.estado === 'Pendente' ? <span className='estado-pendente-pedidos'>{rowData.estado}</span>
+        : null
+        );
+        
+    };
+
+    //update despesa to db with estado 
+    const updateDespesa = async () => {
+        const despesaRef = collection(db, "despesas");
+        const q = query(despesaRef, where("key", "==", despesa.key));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            updateDoc(doc.ref, {
+                estado: selectedEstado,
+            });
+        });
+        toast.current.show({severity:'success', summary: 'Registado', detail:'Despesa atualizada com sucesso.', life: 3000});
+        setDisplayEdit(false);
+
+        getDespesas();
+    }
+
+    const deletePedido = async (rowData) => {
+        const despesaRef = collection(db, "despesas");
+        const q = query(despesaRef, where("key", "==", rowData.key));
+        const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                deleteDoc(doc.ref);
+            });
+
+        toast.current.show({severity:'success', summary: 'Registado', detail:'Despesa apagada com sucesso.', life: 3000});
+        
+        setDespesas([]);
+        getDespesas();
+    }
 
 
   return (
@@ -199,9 +295,9 @@ function despesas() {
                 <h1>Despesas</h1>    
             </div>
             <div className='title-right-side'>
-                <button className='button button-excel'><i className='pi pi-file-excel'></i><span>Exportar</span></button>
+                <button className='button button-excel' onClick={exportExcel}><i className='pi pi-file-excel'></i><span>Exportar</span></button>
                 <button className='button button-see' onClick={toggleInsightBox}><i className='pi pi-eye-slash' id="eye-box"></i></button>
-                <button className='button button-vaccation' onClick={() => setDisplayBasic(true)}><i className='pi pi-calculator'></i><span>Despesa</span></button>
+                <button className='button button-add' onClick={() => setDisplayBasic(true)}><i className='pi pi-plus-circle'></i><span>Adicionar Despesa</span></button>
             </div>
         </div>
 
@@ -257,6 +353,7 @@ function despesas() {
 
             <div className='table-box'>
                 <DataTable 
+                ref={dt}
                 value={despesas} 
                 paginator 
                 rows={10} 
@@ -272,13 +369,14 @@ function despesas() {
                     <Column field="tipoDespesa" header="Tipo de Despesa"/>
                     <Column field="selectedDespesa" header="Despesa"/>
                     <Column field="valor" header="Valor" body={priceBodyTemplate} sortable/>
+                    <Column field="estado" header="Estado" body={statusBodyTemplate}/>
                     <Column body={actionBodyTemplate} exportable={false} style={{ maxWidth: '5rem'}}></Column>
                 </DataTable>
             </div>
             
         </div>
 
-        <Dialog header="Adicionar Despesa" visible={displayBasic} style={{ width: '50vw' }} onHide={() => setDisplayBasic(false)}>
+        <Dialog header="Adicionar Despesa" visible={displayBasic} className='dialog-faltas' onHide={() => setDisplayBasic(false)}>
             <form className='form-dialog'>
                 <label>Tipo de Despesa</label>
                 <div className='form-flex'>
@@ -342,21 +440,69 @@ function despesas() {
                     </div>
                 </div>
 
-                <div className='form-flex'>
-                    <div className='form-group'>
-                        <label>Inserir Ficheiro</label>
-                        <FileUpload name="demo[]" url="./upload.php" multiple={true} accept="image/*" maxFileSize={1000000} />
-                    </div>
-                </div>
-
                 <div className='form-flex-buttons'>
                     <div className="form-buttons">
-                        <button type="button" className='button button-save' onClick={addDespesa}><i className='pi pi-check-circle'></i>Adicionar Despesa</button>
+                        <button type="button" className='button button-save' onClick={addDespesa}><i className='pi pi-check-circle'></i><span>Registar</span></button>
                     </div>
                 </div>
             </form>
         </Dialog> 
 
+        <ConfirmDialog />
+
+        <Dialog header="Editar Despesa" visible={displayEdit} className='dialog-faltas' onHide={() => setDisplayEdit(false)}>
+            <form className='form-dialog'>
+                <div className='form-flex'>
+                    <div className='form-group'>
+                        <label>Tipo de Despesa</label>
+                        <InputText id='projeto' type='text' className="inputText" defaultValue={despesa.tipoDespesa} disabled/>
+                    </div>
+                    <div className='form-group'>
+                        <label>Despesa</label>
+                        <InputText id='projeto' type='text' className="inputText" defaultValue={despesa.selectedDespesa} disabled/>
+                    </div>
+                </div>
+                <div className='form-flex'>
+                    <div className='form-group'>
+                        <label>Projeto</label>
+                        <InputText id='projeto' type='text' className="inputText" defaultValue={despesa.projeto} disabled/>
+                    </div>
+                    <div className='form-group'>
+                        <label>Funcionário</label>
+                        <InputText id='projeto' type='text' className="inputText" defaultValue={despesa.funcionario} disabled/>
+                    </div>
+                </div>
+                <div className='form-flex'>
+                    <div className='form-group'>
+                        <label>Valor da Despesa</label>
+                        <InputText id='projeto' type='text' className="inputText" defaultValue={despesa.valor} disabled/>
+                    </div>
+                </div>
+                {
+                    despesa.despesa != '' ? (
+                        <div className='form-flex'>
+                            <div className='form-group'>
+                                <label>Observações</label>
+                                <InputText id='projeto' type='text' className="inputText" defaultValue={despesa.despesa} disabled/>
+                            </div>
+                        </div>
+                    ) : (	
+                        <></>
+                    )
+                }
+                <div className='form-flex'>
+                    <div className='form-group'>
+                        <label>Estado</label>
+                        <Dropdown optionLabel="name" optionValue="code" value={selectedEstado} options={estados} onChange={(e) => setSelectedEstado(e.value)} placeholder="Selecione o Estado" />
+                    </div>
+                </div>
+                <div className='form-flex-buttons'>
+                    <div className="form-buttons">
+                        <button type="button" className='button button-save' onClick={updateDespesa}><i className='pi pi-check-circle'></i><span>Registar</span></button>
+                    </div>
+                </div>
+            </form>
+        </Dialog>
     </div>
   )
 }
