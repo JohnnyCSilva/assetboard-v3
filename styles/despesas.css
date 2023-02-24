@@ -1,0 +1,121 @@
+.button-see{
+    background-color: #3b82f6;
+    margin-right: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+}
+.button-see > i {
+    padding: 0;
+    margin: 0;
+}
+
+.page-insight{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 20px;
+}
+
+.page-insight.hidden{
+    display: none;
+}
+
+.page-insight > .page-insight-left,
+.page-insight > .page-insight-center,
+.page-insight > .page-insight-right{
+    background-color: white;
+    border-radius: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 30px;
+}
+
+.page-insight > .page-insight-left > .insight-box,
+.page-insight > .page-insight-center > .insight-box,
+.page-insight > .page-insight-right > .insight-box{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.page-insight > .page-insight-left > .insight-box > .insight-box-right > .icon-box > i,
+.page-insight > .page-insight-center > .insight-box > .insight-box-right > .icon-box > i,
+.page-insight > .page-insight-right > .insight-box > .insight-box-right > .icon-box > i{
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 50px;
+}
+
+.page-insight > .page-insight-left > .insight-box > .insight-box-right > .icon-box > i{
+    color: #3b82f6;
+    background-color: #d0e1fd;
+}
+.page-insight > .page-insight-center > .insight-box > .insight-box-right > .icon-box > i{
+    color: #f97316;
+    background-color: #feddc7;
+}
+.page-insight > .page-insight-right > .insight-box > .insight-box-right > .icon-box > i{
+    color: #b655f7;
+    background-color: #ead6fd;
+}
+
+.page-insight > .page-insight-left > .insight-box > .insight-box-left > h3,
+.page-insight > .page-insight-center > .insight-box > .insight-box-left > h3,
+.page-insight > .page-insight-right > .insight-box > .insight-box-left > h3{
+    font-size: 15px;
+    padding-right: 5px;
+    color: #9e9e9e;
+    font-weight: 500;
+} 
+
+@media screen and (max-width: 768px){
+    .page-insight{
+        flex-direction: column;
+    }
+
+    
+}
+
+.page-content{
+    width: 100%;
+
+}
+
+.page-content > .search-box{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px 10px;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.page-content > .search-box > i{
+    font-size: 15px;
+    padding: 10px;
+    border-radius: 50px;
+}
+
+.page-content > .search-box > input{
+    width: 100%;
+    height: 40px;
+    border: none;
+    outline: none;
+    padding: 0 5px;
+    font-size: 15px;
+    color: #9e9e9e;
+    font-weight: 400;
+}

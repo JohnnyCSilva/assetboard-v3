@@ -29,6 +29,27 @@ table{
   border-collapse: collapse; 
 }
 
+.page-title{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.page-title > .title-left-side{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.page-title > .title-right-side{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .button{
   width: auto;
   padding: 10px 20px;
@@ -51,12 +72,26 @@ table{
   opacity: 0.8;
 }
 
-.button-uploadFile{
-  font-size: 15px !important;
-  font-weight: normal !important;
-  padding: 7px 0px 7px 10px !important;
-  border-radius: 50px !important;
+.button-edit, .button-info, .button-delete{
+  background-color: transparent;
+  border-radius: 50px;
+  height: auto;
+  padding: 5px 10px;
+  color: #bfcad6;
+
+  transition: all 0.2s ease;
 }
+
+.button > i{
+  transition: all 0.2s ease;
+}
+
+.button-save{
+  background-color: #4CAF50;
+}.button-see{
+  background-color: #3b82f6;
+}
+
 
 .home-section{
   position: relative;
@@ -67,8 +102,8 @@ table{
   z-index: 1;
   padding: 25px;
   transition: 0.2s ease-in-out;
-  
 }
+
 
 .sidebar.open ~ .home-section{
   left: 250px;
@@ -89,5 +124,15 @@ table{
   .navbar.open ~ .home-section{
     left: 0;
     top: 500px;    
+  }
+
+  .page-title > .title-right-side > .button > span{
+    display: none;
+  }
+  .page-title > .title-right-side > .button{
+    padding: 10px 15px;
+  }
+  .page-title > .title-right-side > .button > i{
+    margin: 0;
   }
 }
