@@ -455,7 +455,7 @@ function despesas() {
                 <div className='form-flex'>
                     <div className='form-group'>
                         <label>Tipo de Despesa</label>
-                        <InputText id='projeto' type='text' className="inputText" defaultValue={despesa.tipoDespesa} disabled/>
+                        <InputText id='prjeto' type='text' className="inputText" defaultValue={despesa.tipoDespesa} disabled/>
                     </div>
                     <div className='form-group'>
                         <label>Despesa</label>
@@ -475,7 +475,7 @@ function despesas() {
                 <div className='form-flex'>
                     <div className='form-group'>
                         <label>Valor da Despesa</label>
-                        <InputText id='projeto' type='text' className="inputText" defaultValue={despesa.valor} disabled/>
+                        <InputText id='projeto' typeo='text' className="inputText" defaultValue={despesa.valor} disabled/>
                     </div>
                 </div>
                 {
