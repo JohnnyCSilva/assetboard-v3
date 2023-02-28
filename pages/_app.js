@@ -3,6 +3,7 @@ import '@/styles/navigation.css';
 import '@/styles/signUp.css';
 import '@/styles/userDash.css';
 import '@/styles/pedidos.css';
+import '@/styles/projetos.css';
 
 import '@/styles/cliente.css';
 import '@/styles/despesas.css';

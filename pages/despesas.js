@@ -233,8 +233,6 @@ function despesas() {
         );
     };
 
-    
-
     const editProduct = (rowData) => {
         setDespesa(rowData);
         setDisplayEdit(true);
@@ -310,13 +308,13 @@ function despesas() {
         }
     };
 
-    /*const formatDate = (value) => {
+    const formatDate2 = (value) => {
         return value.toLocaleDateString('en-US', {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric'
         });
-    };*/
+    };
 
     const dateBodyTemplate = (rowData) => {
         return formatDate(rowData.dataDespesa);
@@ -361,6 +359,12 @@ function despesas() {
         })
         totalDespesasProfissionais = Math.round(totalDespesasProfissionais * 100) / 100;
         setDespesasIndividualProfissionais(totalDespesasProfissionais);
+
+        //transform timestamp to date   
+        despesas.map((despesa) => {
+            despesa.dataDespesa = formatDate(despesa.dataDespesa);
+        })
+
     }
 
     useEffect(() => {
@@ -719,7 +723,7 @@ function despesas() {
                             </div>
                         </div>
                     </div>
-                    <div className='page-insight-center'>
+                    <div className='page-insight-right'>
                         <div className='insight-box'>
                             <div className='insight-box-left'>
                                 <h3>Despesas Profissionais</h3>
@@ -752,7 +756,7 @@ function despesas() {
                     rowsPerPageOptions={[10,20,50]} 
                     emptyMessage="Sem dados para mostrar" 
                     className="table-pedidos"
-                    filters={filters}
+                    filters={filters}    
                     responsiveLayout="scroll"
                     globalFilterFields={['projeto', 'dataDespesa']}
                     >   
@@ -761,7 +765,7 @@ function despesas() {
                         <Column field="selectedDespesa" header="Despesa"/>
                         <Column field="valor" header="Valor" body={priceBodyTemplate} sortable/>
                         <Column field="estado" header="Estado" body={statusBodyTemplate}/>
-                        <Column field="dataDespesa" header="Data da Despesa" body={dateBodyTemplate} filterField="date" dataType="date" filter filterElement={dateFilterTemplate}/>
+                        <Column field="dataDespesa" header="Data da Despesa" filterField="date" dataType="date" filter filterElement={dateFilterTemplate}/>
                         <Column body={editRowDespesa} exportable={false} style={{ maxWidth: '5rem'}}></Column>
                     </DataTable>
                     </div>
