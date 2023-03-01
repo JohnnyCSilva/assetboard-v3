@@ -87,6 +87,15 @@ table{
   transition: all 0.2s ease;
 }
 
+.button-actions{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  color: #bfcad6;
+  background-color: transparent;
+}
+
 .button-save{
   background-color: #10B981;
   display: flex;
@@ -106,6 +115,18 @@ table{
   justify-content: center;
 }.button-add{
   background-color: #10B981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}.button-contact{
+  background-color: #695cfe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}.button-more{
+  padding: 10px 5px;
+  background-color: transparent;
+  color: #695cfe;
   display: flex;
   align-items: center;
   justify-content: center;
