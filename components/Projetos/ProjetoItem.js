@@ -1,8 +1,15 @@
 import React from 'react'
 import { ProgressBar } from 'primereact/progressbar';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 
 function ProjetoItem(props) {
+
+    const router = useRouter()
+
+    //open new page with project details
+    const openProjectDetails = () => {
+        router.push('/details/' + props.projetos.key);
+    }
 
     const dataInicioProjeto = new Date(props.projetos.dataInicio.seconds * 1000).toLocaleDateString('pt-PT');
     const dataPrevisaoEntrega = new Date(props.projetos.previsaoEntrega.seconds * 1000).toLocaleDateString('pt-PT');
@@ -26,10 +33,7 @@ function ProjetoItem(props) {
         + props.projetos.nome + ' que está a decorrer.';
     }
 
-    //open new page with project details
-    const openProjectDetails = () => {
-        Router.push('/api/' + props.projetos.key);
-    }
+    
 
 
   return (
