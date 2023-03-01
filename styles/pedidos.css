@@ -24,6 +24,7 @@
 }
 .button-edit > i, .button-info > i, .button-delete > i{
     margin: 0;
+    
 }
 
 .button-edit:hover, .button-info:hover, .button-delete:hover{
