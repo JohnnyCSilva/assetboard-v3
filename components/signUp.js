@@ -52,12 +52,12 @@ function signUp() {
       
         try {
           const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
           console.log('User account created:', userCredential.user.uid);
-      
-          // Add a new user document to the Firestore "users" collection
+            console.log(userCredential);
+          alert('Conta criada com sucesso!');
             await addUser(userCredential.user);
       
-          // Automatically log in the new user
           await signInWithEmailAndPassword(auth, email, password);
         } catch (err) {
           setError(err.message);
