@@ -1,14 +1,14 @@
 import React from 'react'
 import { ProgressBar } from 'primereact/progressbar';
-import Router, { useRouter } from 'next/router';
+import Router from 'next/router';
 
 function ProjetoItem(props) {
 
-    const router = useRouter()
 
     //open new page with project details
     const openProjectDetails = () => {
-        router.push('/details/' + props.projetos.key);
+        alert(props.projetos.key);
+        Router.push('/details/' + props.projetos.key);
     }
 
     const dataInicioProjeto = new Date(props.projetos.dataInicio.seconds * 1000).toLocaleDateString('pt-PT');

@@ -78,9 +78,174 @@
     padding-bottom: 10px;
 }   
 
-@media screen and (max-width: 768px){
-    .grid-template-column{
-        grid-template-columns: repeat(1, 1fr);
-    }
+.page-content-details{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-radius: 10px;
+    margin-top: 30px;
+    gap: 20px;
 }
+.page-content-details > .page-content-left-side{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 70%;
+}
+.page-content-details > .page-content-right-side{
+    width: 30%;
+}
+
+.page-content-details > .page-content-right-side > .detalhes-projeto{
+    width: 100%;
+    padding: 30px;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.page-content-details > .page-content-right-side > .detalhes-projeto{
+    width: 100%;
+    padding: 30px;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.page-content-details > .page-content-right-side > .detalhes-projeto > .detalhes-projeto-content > .detalhes-projeto-content-item{
+    margin: 20px 0;
+}
+
+.page-content-details > .page-content-right-side > .detalhes-projeto > .detalhes-projeto-content > .detalhes-projeto-content-item > .detalhes-item-text{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.page-content-details > .page-content-right-side > .detalhes-projeto > .detalhes-projeto-content > .detalhes-projeto-content-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.page-content-details > .page-content-right-side > .detalhes-projeto > .detalhes-projeto-content > .detalhes-projeto-content-item > i{
+    margin-right: 10px;
+    color: #695cfe;
+    border-radius: 50px;
+    background-color: #ececec;
+    padding: 15px;
+    font-size: 14px;
+}
+
+.page-content-details > .page-content-right-side > .detalhes-projeto > .detalhes-projeto-content > .detalhes-projeto-content-item > .detalhes-item-text{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.page-content-details > .page-content-right-side > .detalhes-projeto > .detalhes-projeto-content > .detalhes-projeto-content-item > .detalhes-item-text > span{
+    font-size: 13px;
+    color: #9e9e9e;
+}
+
+.page-content-details > .page-content-right-side > .detalhes-projeto > .detalhes-projeto-content > .detalhes-projeto-content-item > .detalhes-item-text > p{
+    font-size: 15px;
+    font-weight: 400;
+    color: #000;
+}
+
+
+
+.page-content-details > .page-content-left-side > .detalhes-projeto{
+    width: 100%;
+    padding: 30px;
+    background-color: white;
+    border-radius: 10px;
+    height: 300px;
+}
+
+.page-content-details > .page-content-left-side > .funcionarios-projeto{
+    width: 100%;
+    padding: 30px;
+    background-color: white;
+    border-radius: 10px;
+    height: auto;
+}
+
+.page-content-details > .page-content-left-side > .funcionarios-projeto > .funcionarios-projeto-title{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+}
+
+.funcionarios-projeto-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-gap: 20px;
+    margin-top: 20px;
+}
+
+.grid-membros-projeto{
+    border: 1px solid #e4e9f7;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.grid-membros-projeto > .membro-card-projeto > .membro-card-title{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.grid-membros-projeto > .membro-card-projeto > .membro-card-title > i{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.grid-membros-projeto > .membro-card-projeto > .membro-card-title > div{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.grid-membros-projeto > .membro-card-projeto > .membro-card-title > div > img{
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    margin-right: 10px;
+}
+
+.grid-membros-projeto > .membro-card-projeto > .membro-card-title > div > h3{
+    font-size: 14px;
+    font-weight: 400;
+    color: #000;
+}
+
+.grid-membros-projeto > .membro-card-projeto > .membro-card-info{
+    margin: 15px 0;
+}
+
+.grid-membros-projeto > .membro-card-projeto > .membro-card-info > p{
+    font-size: 14px;
+    font-weight: 400;
+    color: #000;
+    margin: 10px 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.grid-membros-projeto > .membro-card-projeto > .membro-card-info > p > i{
+    margin-right: 10px;
+    color: #695cfe;
+    border-radius: 50px;
+    background-color: #ececec;
+    padding: 10px;
+    font-size: 14px;
+}
+
+
+
+
     
