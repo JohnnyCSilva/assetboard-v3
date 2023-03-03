@@ -1,19 +1,23 @@
 import React, { useState } from 'react'
 import { useEffect } from 'react';
 import { db } from '../../config/Firebase'
-import { collection, query, getDocs, updateDoc, where, addDoc, orderBy, deleteDoc } from "firebase/firestore";
+import { collection, query, getDocs, updateDoc, where, addDoc, orderBy, deleteDoc, getDoc, doc } from "firebase/firestore";
 
 
 function FuncionariosProjeto(props) {
 
+    const { funcionario, detalhesProjetoKey } = props;
+
     const [ funcionarioDetails, setFuncionarioDetails ] = useState([]);
+    const [ detalhesProjeto, setDetalhesProjeto ] = useState([]);
+
 
     //Get funcionario details from db
     const getFuncionarioDetails = async () => {
 
         console.log(props)
 
-        const q = query(collection(db, "users"), where("displayName", "==", props.funcionario));
+        const q = query(collection(db, "users"), where("uid", "==", funcionario));
 
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
@@ -22,27 +26,36 @@ function FuncionariosProjeto(props) {
         });
     }
 
+    //query db project details on page load
+    const getProjectDetails = async () => {
+        const q = query(collection(db, "projetos"), where("key", "==", detalhesProjetoKey));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            const detalhesProjeto = doc.data();
+            setDetalhesProjeto(detalhesProjeto);
+        });
+    }
+
+
+
     useEffect (() => {
         getFuncionarioDetails();
+        getProjectDetails();
     }, [])
 
     //delete funcionario from project
-    const deleteFuncionario = async () => {
-        const q = query(collection(db, "projetos"), where("key", "==", props.key));
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
-            const funcionariosProjeto = doc.data().funcionarios;
-            const index = funcionariosProjeto.indexOf(props.funcionario);
-            funcionariosProjeto.splice(index, 1);
-            updateDoc(doc.ref, {
-                funcionarios: funcionariosProjeto
-            })
+    const deleteFuncionario = async (funcionario) => {
+        const funcionarios = detalhesProjeto.funcionarios;
+        const index = funcionarios.indexOf(funcionario);
+        if (index > -1) {
+            funcionarios.splice(index, 1);
+        }
+        const docRef = doc(db, "projetos", detalhesProjetoKey);
+        await updateDoc(docRef, {
+            funcionarios: funcionarios
         });
-
-        //get project details again
-        props.getProjectDetails();
-
-    }
+        window.location.reload();
+    }     
 
 
   return (
@@ -57,7 +70,7 @@ function FuncionariosProjeto(props) {
                     {
                     //delete funcionario from project
                     }
-                    <button type="button" className='button button-delete' onClick={deleteFuncionario}><i className="pi pi-trash"></i></button>
+                    <button type="button" className='button button-delete' onClick={() => deleteFuncionario(funcionarioDetails.uid)}><i className="pi pi-trash"></i></button>
                 </div>
                 <div className="membro-card-info">
                     <p><i className="pi pi-wrench"></i><span>{funcionarioDetails.userRole}</span></p>

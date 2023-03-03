@@ -25,8 +25,6 @@ function productDetails() {
     //get project details from db
     const getProjectDetails = async () => {
 
-        
-
         const q = query(collection(db, "projetos"), where("key", "==", key));
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
@@ -51,7 +49,7 @@ function productDetails() {
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
             if(doc.data().userRole != 'admin') {
-                funcionarios.push({label: doc.data().displayName, value: doc.data().displayName})
+                funcionarios.push({label: doc.data().displayName, value: doc.data().uid})
             }
         });
         setFuncionarios(funcionarios);
@@ -117,7 +115,7 @@ function productDetails() {
                                 <FuncionariosProjeto
                                 funcionario={label}
                                 key={label}
-                                //detalhesProjetoKey={detalhesProjeto.key}
+                                detalhesProjetoKey={detalhesProjeto.key}
                               />
                             ))}
                             </div>
