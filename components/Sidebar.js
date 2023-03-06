@@ -20,6 +20,8 @@ function Sidebar() {
     const toast = useRef(null);
     const { currentUser } = useContext(AuthContext);
     const delay = ms => new Promise(res => setTimeout(res, ms));
+    const [displayName, setDisplayName] = useState('');
+    const [profilePic, setProfilePic] = useState('');
 
 
     // get currentUser role from database
@@ -31,10 +33,11 @@ function Sidebar() {
             querySnapshot.forEach((doc) => {
                 if (doc.data().uid === currentUser.uid) {
                     setRole(doc.data().userRole);
+                    setDisplayName(doc.data().displayName);
+                    setProfilePic(doc.data().photoURL);
                 }
             });
-        }
-        )
+        })
     }, [])
 
     const showToast = () => {
@@ -157,11 +160,11 @@ function Sidebar() {
                     <Link href='/userDash'>
                       
                         
-                        <img src={currentUser.photoURL} alt=""/>
+                        <img src={profilePic} alt=""/>
 
                         <div className="user-role">
                             {currentUser && ( <>
-                                <h2>{currentUser.displayName}</h2>
+                                <h2>{displayName}</h2>
                                 <p>{role}</p>
                             </>
                             )}
@@ -225,10 +228,10 @@ function Sidebar() {
                 </div>
                 <div className="footer-sidebar" id="footer-sidebar" >
                     <Link href='/userDash'>
-                    <img src={currentUser.photoURL} alt=""/>
+                    <img src={profilePic} alt=""/>
                     <div className="user-role">
                         {currentUser && ( <>
-                            <h2>{currentUser.displayName}</h2>
+                            <h2>{displayName}</h2>
                             <p>{role}</p>
                         </>
                         )}
