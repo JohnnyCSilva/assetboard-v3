@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useEffect } from 'react';
-import { db } from '../../config/Firebase'
+
+import { db } from '../../config/firebase';
 import { collection, query, getDocs, updateDoc, where, addDoc, orderBy, deleteDoc, getDoc, doc } from "firebase/firestore";
 
 
@@ -36,8 +37,6 @@ function FuncionariosProjeto(props) {
         });
     }
 
-
-
     useEffect (() => {
         getFuncionarioDetails();
         getProjectDetails();
@@ -48,14 +47,22 @@ function FuncionariosProjeto(props) {
         const funcionarios = detalhesProjeto.funcionarios;
         const index = funcionarios.indexOf(funcionario);
         if (index > -1) {
-            funcionarios.splice(index, 1);
+          funcionarios.splice(index, 1);
         }
         const docRef = doc(db, "projetos", detalhesProjetoKey);
-        await updateDoc(docRef, {
+        try {
+          await updateDoc(docRef, {
             funcionarios: funcionarios
-        });
-        window.location.reload();
-    }     
+          });
+        } catch (error) {
+          console.log(error.message);
+        }
+        //window.location.reload();
+    }
+      
+          
+
+
 
 
   return (

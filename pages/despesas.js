@@ -28,7 +28,8 @@ function despesas() {
     const [ description, setDescription ] = useState([]);
     const [ globalFilterValue, setGlobalFilterValue ] = useState('');
     const [ valor, setValor ] = useState([]);
-    const [ projeto, setProjeto ] = useState([]);
+    const [ projetos, setProjetos ] = useState([]);
+    const [ selectedProjeto, setSelectedProjeto ] = useState([]);
     const [ displayEdit, setDisplayEdit ] = useState(false);
     const [ selectedEstado, setSelectedEstado ] = useState(null);
     const [ role, setRole ] = useState('');
@@ -65,22 +66,35 @@ function despesas() {
     const [ funcionarios, setFuncionarios ] = useState([]);
     const [ selectedFuncionario, setSelectedFuncionario ] = useState([]);
     
-    
     const [ depesasPessoais, setDespesasPessoais ] = useState(0);
     const [ depesasProfissionais, setDespesasProfissionais ] = useState(0);
     const [ despesasTotal, setDespesasTotal ] = useState(0);
     const [ despesa, setDespesa ] = useState(false);
-    
 
     //get all despesas from db
     const getDespesas = async () => {
+        //get despesas from db and map project id to project name
         const despesas = [];
         const q = query(collection(db, "despesas"), orderBy("dataDespesa", "desc"));
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
             despesas.push(doc.data());
         });
+
+        //map project id to project name
+        despesas.map((despesa) => {
+            projetos.map((projetos) => {
+                if(despesa.projetoId === projetos.key) {
+                    despesa.projetoId = projetos.nome;
+                }
+            })
+        })
+
         setDespesas(despesas);
+        console.log(despesas);
+
+        
+
 
         let totalDespesas = 0;
         //if despesa is approved add to total despesas
@@ -114,7 +128,6 @@ function despesas() {
         //new date with dataDespesa
 
     }
-
     //get user role from db
     const getUserRole = async () => {
         const q = query(collection(db, "users"), where("email", "==", currentUser.email));
@@ -135,12 +148,22 @@ function despesas() {
         });
         setFuncionarios(funcionarios);
     }
-
+    //get all projetos from db
+    const getProjetos = async () => {
+        const projetos = [];
+        const q = query(collection(db, "projetos"));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            projetos.push({label: doc.data().nome, value: doc.data().key})
+        });
+        setProjetos(projetos);
+    }
     useEffect(() => {
         getFuncionarios();
         getDespesas();
         getUserRole();
         initFilters();
+        getProjetos();
     }, [])
 
     const toggleInsightBox = () => {
@@ -154,7 +177,7 @@ function despesas() {
     
     const addDespesa = async () => {
 
-        if(tipoDespesa === '' || selectedDespesa === '' || valor === '' || projeto === '' || dataDespesa === '') {
+        if(tipoDespesa === '' || selectedDespesa === '' || valor === '' || selectedProjeto === '' || dataDespesa === '') {
             toast.current.show({severity:'error', summary: 'Erro', detail:'Por favor preencha todos os campos.', life: 3000});
             return;
         }
@@ -173,7 +196,7 @@ function despesas() {
                 selectedDespesa: selectedDespesa,
                 outroSelected: description,
                 valor: valor,
-                projeto: projeto,
+                projetoId: selectedProjeto,
                 estado: 'Aprovado',
                 dataDespesa: dataDespesa,
             }
@@ -188,10 +211,8 @@ function despesas() {
         setSelectedDespesa('');
         setDescription('');
         setValor('');
-        setProjeto('');
         setSelectedFuncionario('');
         
-
         toast.current.show({severity:'success', summary: 'Registado', detail:'Despesa registada com sucesso.', life: 3000});
         
     }
@@ -205,7 +226,6 @@ function despesas() {
         });
         setGlobalFilterValue('');
     }
-
     const onGlobalFilterChange = (e) => {
         const value = e.target.value;
         let _filters = { ...filters };
@@ -215,15 +235,12 @@ function despesas() {
         setFilters(_filters);
         setGlobalFilterValue(value);
     }
-
     const priceBodyTemplate = (despesas) => {
         return formatCurrency(despesas.valor);
     };
-
     const formatCurrency = (value) => {
         return value.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
     };
-
     const actionBodyTemplate = (rowData) => {
         return (
             <React.Fragment>
@@ -232,12 +249,10 @@ function despesas() {
             </React.Fragment>
         );
     };
-
     const editProduct = (rowData) => {
         setDespesa(rowData);
         setDisplayEdit(true);
     }
-
     const deleteDespesa = async (rowData) => {
         setDespesa(rowData);
         //show confirmation dialog
@@ -252,11 +267,9 @@ function despesas() {
         });
 
     };
-
     const exportExcel = () => {
         dt.current.exportCSV();
     };
-
     const statusBodyTemplate = (rowData) => {
 
         return (rowData.estado === 'Aprovado' ? <span className='estado-aprovado-pedidos'>{rowData.estado}</span> 
@@ -266,7 +279,6 @@ function despesas() {
         );
         
     };
-
     //update despesa to db with estado 
     const updateDespesa = async () => {
 
@@ -307,7 +319,6 @@ function despesas() {
             return day + '/' + month + '/' + year;
         }
     };
-
     const formatDate2 = (value) => {
         return value.toLocaleDateString('en-US', {
             day: '2-digit',
@@ -315,15 +326,12 @@ function despesas() {
             year: 'numeric'
         });
     };
-
     const dateBodyTemplate = (rowData) => {
         return formatDate(rowData.dataDespesa);
     };
-
     const dateFilterTemplate = (options) => {
         return <Calendar value={options.value} onChange={(e) => options.filterCallback(e.value, options.index)} dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy"/>;
     };
-
     //Role Funcionario ------------------------------------------ 
 
     const [ displayFuncionarioAdd , setDisplayFuncionarioAdd ] = useState(false)
@@ -338,7 +346,9 @@ function despesas() {
         const q = query(despesaRef, where("funcionarioUid", "==", currentUser.uid, orderBy("dataDespesa", "desc")));
         const querySnapshot = await getDocs(q);
         const despesas = querySnapshot.docs.map(doc => doc.data());
+
         setDespesasIndividuais(despesas);
+
 
         let totalDespesasPessoais = 0;
         //if despesa is approved and despesa is pessoal add to total despesasPessoais
@@ -366,15 +376,13 @@ function despesas() {
         })
 
     }
-
     useEffect(() => {
         getDespesasIndividuais();
     }, [])
-
     const addDespesaFuncionario = async () => {
 
         //if fields are empty show error
-        if(tipoDespesa === '' || selectedDespesa === '' || valor === '' || projeto === '' || dataDespesa === '') {
+        if(tipoDespesa === '' || selectedDespesa === '' || valor === '' || selectedProjeto === '' || dataDespesa === '') {
             toast.current.show({severity:'error', summary: 'Erro', detail:'Por favor preencha todos os campos.', life: 3000});
             return;
         }
@@ -387,10 +395,12 @@ function despesas() {
             selectedDespesa: selectedDespesa,
             outroSelected: description,
             valor: valor,
-            projeto: projeto,
+            projeto: selectedProjeto,
             estado: 'Pendente',
             dataDespesa: dataDespesa,
         }
+
+        //add despesa to project in firestore   
 
         await addDoc(collection(db, "despesas"), despesa);
 
@@ -401,7 +411,6 @@ function despesas() {
         setSelectedDespesa('');
         setDescription('');
         setValor('');
-        setProjeto('');
         setSelectedFuncionario('');
         
         getDespesasIndividuais();
@@ -409,7 +418,6 @@ function despesas() {
         toast.current.show({severity:'success', summary: 'Registado', detail:'Despesa registada com sucesso.', life: 3000});
 
     }
-
     const editRowDespesa = (rowData) => {
         return (
             //if estado is pendente show edit button and delete button
@@ -420,12 +428,10 @@ function despesas() {
             </React.Fragment> : null
         );  
     };
-
     const editDespesaIndi = (rowData) => {
         setDespesa(rowData);
         setEditDespesaIndividual(true);
     }
-
     const updateDespesaIndividual = async () => {
         const despesaRef = collection(db, "despesas");
         const q = query(despesaRef, where("key", "==", despesa.key));
@@ -442,7 +448,6 @@ function despesas() {
         getDespesasIndividuais();
 
     }
-
     const deleteDespesaIndividual = async (rowData) => {
         setDespesa(rowData);
         //show confirmation dialog
@@ -458,6 +463,7 @@ function despesas() {
 
         getDespesasIndividuais();
     }
+
 
 
     if (role === 'admin') {
@@ -541,7 +547,7 @@ function despesas() {
                 globalFilterFields={['funcionario', 'projeto']}
                 >   
                     <Column field="funcionario" header="Funcionário"/>
-                    <Column field="projeto" header="Projeto"/>
+                    <Column field="projetoId" header="Projeto"/>
                     <Column field="tipoDespesa" header="Tipo de Despesa"/>
                     <Column field="selectedDespesa" header="Despesa"/>
                     <Column field="valor" header="Valor" body={priceBodyTemplate} sortable/>
@@ -585,7 +591,7 @@ function despesas() {
 
                     <div className='form-group'>
                         <label>Projeto</label>
-                        <InputText id='projeto' type='text' className="inputText" onChange={(e) => setProjeto(e.target.value)} />
+                        <Dropdown optionLabel="label" optionValue="value" value={selectedProjeto} options={projetos} onChange={(e) => setSelectedProjeto(e.value)} placeholder="Selecione o Projeto" required/>
                     </div>
                 </div>
 
@@ -803,7 +809,7 @@ function despesas() {
 
                             <div className='form-group'>
                                 <label>Projeto</label>
-                                <InputText id='projeto' type='text' className="inputText" onChange={(e) => setProjeto(e.target.value)} required/>
+                                <Dropdown optionLabel="label" optionValue="value" value={selectedProjeto} options={projetos} onChange={(e) => setSelectedProjeto(e.value)} placeholder="Selecione o Projeto" required/>
                             </div>
                         </div>
 

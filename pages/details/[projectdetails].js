@@ -2,12 +2,14 @@ import React, { useState, useEffect, useContext, useRef} from 'react'
 import { useRouter } from 'next/router';
 
 import { db } from '../../config/Firebase'
-import { collection, query, getDocs, updateDoc, where, addDoc, orderBy, deleteDoc } from "firebase/firestore";
+import { collection, query, getDocs, updateDoc, where, addDoc, orderBy, deleteDoc, doc, arrayUnion } from "firebase/firestore";
 import { AuthContext } from '../../config/AuthContext';
 import { Toast } from 'primereact/toast';
 import { Dialog } from 'primereact/dialog';
 import { MultiSelect } from 'primereact/multiselect';
 import FuncionariosProjeto from '../../components/Projetos/FuncionariosProjeto'
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
 
 function productDetails() {
 
@@ -19,12 +21,13 @@ function productDetails() {
     const [ detalhesProjeto, setDetalhesProjeto ] = useState([]);
     const [ funcionarios, setFuncionarios ] = useState([]);
     const [ adicionarFuncionario, setAdicionarFuncionario ] = useState(false);
-    const [ funcionarioSelecionado, setFuncionarioSelecionado ] = useState('');
+    const [ funcionarioSelecionado, setFuncionarioSelecionado ] = useState([]);
     const [ funcionariosProjeto, setFuncionariosProjeto ] = useState([]);
+    const [ despesas, setDespesas ] = useState([]);
 
     //get project details from db
     const getProjectDetails = async () => {
-
+        console.log(key);
         const q = query(collection(db, "projetos"), where("key", "==", key));
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
@@ -38,8 +41,28 @@ function productDetails() {
 
             setDetalhesProjeto(detalhesProjeto);
             setFuncionariosProjeto(funcionariosProjeto);
-            console.log(funcionariosProjeto)
         });       
+    }
+
+    const getDespesas = async () => {
+        const despesas = [];
+        const q = query(collection(db, "despesas"), where("key", "==", key));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            const despesa = doc.data();
+            despesas.push(despesa);
+        });
+        setDespesas(despesas);
+
+        //if tipoDespesa is 'Profissional' get values else discard
+        const despesasProfissionais = [];
+        despesas.map((despesa) => {
+            if(despesa.tipoDespesa === 'Profissional') {
+                despesasProfissionais.push(despesa);
+            }
+        })
+        setDespesas(despesasProfissionais);
+
     }
 
     //get all funcionarios from db to populate dropdown
@@ -55,29 +78,62 @@ function productDetails() {
         setFuncionarios(funcionarios);
     }
 
-    //add funcionario to project
+    //update funcionarios array in db
     const addFuncionarioToProject = async () => {
+
+        console.log(funcionarioSelecionado);
+
+        /*const funcionariosAntes = detalhesProjeto.funcionarios;
+        const funcionariosDepois = [...funcionariosAntes, funcionarioSelecionado];
+        console.log(funcionariosDepois);
 
         const q = query(collection(db, "projetos"), where("key", "==", key));
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
             updateDoc(doc.ref, {
-                funcionarios: funcionarioSelecionado
+                funcionarios: funcionariosDepois
             });
         });
 
         toast.current.show({severity:'success', summary: 'Sucesso', detail:'Funcionário adicionado com sucesso', life: 3000});
         setAdicionarFuncionario(false);
         setDetalhesProjeto([]);
-        getProjectDetails();
-    }
-
-    
+        getProjectDetails();*/
+    }    
 
     useEffect(() => {
         getProjectDetails();
         getAllFuncionarios();
+        getDespesas();
     }, [])
+
+    const formatDate = (value) => {
+        if (value) {
+            let date = new Date(value.seconds * 1000);
+            let day = date.getDate();
+            let month = date.getMonth() + 1;
+            let year = date.getFullYear();
+            return day + '/' + month + '/' + year;
+        }
+    };
+    const dateBodyTemplate = (rowData) => {
+        return formatDate(rowData.dataDespesa);
+    };
+    const priceBodyTemplate = (despesas) => {
+        return formatCurrency(despesas.valor);
+    };
+    const formatCurrency = (value) => {
+        return value.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
+    };
+    const statusBodyTemplate = (rowData) => {
+
+        return (rowData.estado === 'Aprovado' ? <span className='estado-aprovado-pedidos'>{rowData.estado}</span> 
+        : rowData.estado === 'Rejeitado' ? <span className='estado-rejeitado-pedidos'>{rowData.estado}</span>
+        : rowData.estado === 'Pendente' ? <span className='estado-pendente-pedidos'>{rowData.estado}</span>
+        : null
+        );
+        
+    };
 
 
     return (
@@ -123,6 +179,24 @@ function productDetails() {
                             <p>Nenhum funcionário adicionado</p>
                         }
 
+                        </div>
+                    </div>
+                    <div className='despesas-projeto'>
+                        <div className='despesas-projeto-title'>
+                            <h2>Despesas do Projeto</h2>
+                        </div>
+
+                        <div className='despesas-projeto-content'>
+                            <DataTable value={despesas}
+                             paginator rows={10} rowsPerPageOptions={[10, 20, 50]}
+                             className="table-pedidos"
+                             responsiveLayout="scroll"
+                             emptyMessage="Sem despesas do projeto">
+                                <Column field="funcionario" header="Funcionário"></Column>
+                                <Column field="valor" header="Valor" body={priceBodyTemplate}></Column>
+                                <Column field="data" header="Data" body={dateBodyTemplate}></Column>
+                                <Column field="estado" header="Estado" body={statusBodyTemplate}></Column>
+                            </DataTable>
                         </div>
                     </div>
                 </div>
@@ -178,7 +252,12 @@ function productDetails() {
                     <div className='form-flex'>
                         <div className='form-group'>
                             <label htmlFor='obs'>Selecione os Funcionários</label>
-                            <MultiSelect value={funcionarioSelecionado} options={funcionarios} onChange={(e) => setFuncionarioSelecionado(e.value)} optionLabel="label" />
+                            <MultiSelect 
+                            value={funcionarioSelecionado} 
+                            options={funcionarios} 
+                            onChange={(e) => setFuncionarioSelecionado(e.value)} 
+                            optionLabel="label"
+                            display="chip"/>
                         </div>
                     </div>
                     <div className='form-flex-buttons'>

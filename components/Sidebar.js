@@ -7,7 +7,7 @@ import { auth } from '../config/Firebase'
 import { Toast } from 'primereact/toast';
 
 import { db } from '../config/Firebase'
-import { collection, query, getDocs } from "firebase/firestore";
+import { collection, query, getDocs, where } from "firebase/firestore";
 
 import { Badge } from 'primereact/badge';
 
@@ -20,25 +20,23 @@ function Sidebar() {
     const toast = useRef(null);
     const { currentUser } = useContext(AuthContext);
     const delay = ms => new Promise(res => setTimeout(res, ms));
-    const [displayName, setDisplayName] = useState('');
-    const [profilePic, setProfilePic] = useState('');
-
-
-    // get currentUser role from database
-    const [role, setRole] = useState('');
+    const [currentUserInfo, setCurrentUserInfo] = useState([]);
 
     useEffect(() => {
-        const q = query(collection(db, "users"));
-        const querySnapshot = getDocs(q).then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                if (doc.data().uid === currentUser.uid) {
-                    setRole(doc.data().userRole);
-                    setDisplayName(doc.data().displayName);
-                    setProfilePic(doc.data().photoURL);
-                }
-            });
-        })
+        getCurrentUserInfo();
+        console.log(currentUserInfo);
     }, [])
+
+    //get current user details from db
+    const getCurrentUserInfo = async () => {
+        console.log(currentUser.uid);
+        const q = query(collection(db, "users"), where("uid", "==", currentUser.uid));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            setCurrentUserInfo(doc.data());
+        });
+    }
+
 
     const showToast = () => {
         toast.current.show({ severity: 'warn', summary: 'Sessão Encerrada', detail: 'A terminar sessão...' });
@@ -85,7 +83,7 @@ function Sidebar() {
     }, [])
 
 
-    if (role === 'admin') {
+    if (currentUserInfo.userRole === 'admin') {
 
         return (
 
@@ -158,25 +156,21 @@ function Sidebar() {
                 </div>
                 <div className="footer-sidebar" id="footer-sidebar">    
                     <Link href='/userDash'>
-                      
-                        
-                        <img src={profilePic} alt=""/>
-
+                        <img src={currentUserInfo.photo || currentUserInfo.photoURL} alt=""/>
                         <div className="user-role">
                             {currentUser && ( <>
-                                <h2>{displayName}</h2>
-                                <p>{role}</p>
+                                <h2>{currentUserInfo.name || currentUserInfo.displayName}</h2>
+                                <p>{currentUserInfo.userRole}</p>
                             </>
                             )}
                         </div>
-                  
                     </Link>
                     <i className='pi pi-sign-out' id="log_out" onClick={() => SignOutUser()} ></i>
                 
           </div>
             </nav>
           )
-    } else if (role === 'funcionario'){
+    } else if (currentUserInfo.userRole === 'funcionario'){
         return (
         <nav className='sidebar' id="sidebar">
         
@@ -228,11 +222,11 @@ function Sidebar() {
                 </div>
                 <div className="footer-sidebar" id="footer-sidebar" >
                     <Link href='/userDash'>
-                    <img src={profilePic} alt=""/>
+                    <img src={currentUserInfo.photo || currentUserInfo.photoURL} alt=""/>
                     <div className="user-role">
                         {currentUser && ( <>
-                            <h2>{displayName}</h2>
-                            <p>{role}</p>
+                            <h2>{currentUserInfo.name || currentUserInfo.displayName}</h2>
+                            <p>{currentUserInfo.userRole}</p>
                         </>
                         )}
                     </div>
@@ -241,7 +235,7 @@ function Sidebar() {
                 </div>
             </nav>
         )
-    }   else if (role === 'gestor'){
+    }   else if (currentUserInfo.userRole === 'gestor'){
         alert('gestor');
 
     } 

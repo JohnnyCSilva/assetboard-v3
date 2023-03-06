@@ -5,29 +5,27 @@ import { auth } from '../config/Firebase'
 import { Toast } from 'primereact/toast';
 
 import { db } from '../config/Firebase'
-import { collection, query, getDocs } from "firebase/firestore";
-
-import Link from 'next/link';
+import { collection, query, getDocs, where } from "firebase/firestore";
 
 function Navbar() {
 
     const toast = useRef(null);
     const { currentUser } = useContext(AuthContext);
     const delay = ms => new Promise(res => setTimeout(res, ms));
-    const [role, setRole] = useState('');
+    const [currentUserInfo, setCurrentUserInfo] = useState([]);
     
     useEffect(() => {
-
-        const q = query(collection(db, "users"));
-        const querySnapshot = getDocs(q).then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                if (doc.data().uid === currentUser.uid) {
-                    setRole(doc.data().userRole);
-                }
-            });
-        }
-        )
+        getCurrentUserInfo();
     }, [])
+
+    //get current user details from db
+    const getCurrentUserInfo = async () => {
+        const q = query(collection(db, "users"), where("uid", "==", currentUser.uid));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            setCurrentUserInfo(doc.data());
+        });
+    }
 
     //getCurrentPageTitle
     const [pageTitle, setPageTitle] = useState('');
@@ -89,7 +87,7 @@ function Navbar() {
         signOut(auth);
         window.location = "/";
     }  
-    if (role === 'admin') {
+    if (currentUserInfo.userRole === 'admin') {
         return (
             <nav className='navbar' id="navbar">
 
@@ -98,7 +96,7 @@ function Navbar() {
                 <div className='header-navbar'>
                     <i className='pi pi-bars' id="menu_show" onClick={() => toggleNavbar()}></i>
                     <h1>{pageTitle}</h1>
-                    <img src={currentUser.photoURL} alt="" onClick={() => window.location = "/userDash"}/>
+                    <img src={currentUserInfo.photo} alt="" onClick={() => window.location = "/userDash"}/>
                 </div>
                 <div className='container-navbar'>
                     <ul className="list-menu">
@@ -166,7 +164,7 @@ function Navbar() {
                 </div>
             </nav>
         )
-    } else if (role === 'funcionario'){
+    } else if (currentUserInfo.userRole === 'funcionario'){
         return (
             <nav className='navbar' id="navbar">
 
@@ -175,7 +173,7 @@ function Navbar() {
                 <div className='header-navbar'>
                     <i className='pi pi-bars' id="menu_show" onClick={() => toggleNavbar()}></i>
                     <h1>{pageTitle}</h1>
-                    <img src={currentUser.photoURL} alt="" onClick={() => window.location = "/userDash"}/>
+                    <img src={currentUserInfo.photo} alt="" onClick={() => window.location = "/userDash"}/>
                 </div>
                 <div className='container-navbar'>
                     <ul className="list-menu">
@@ -227,7 +225,7 @@ function Navbar() {
                 </div>
             </nav>
         )
-    } else if (role === 'gestor'){
+    } else if (currentUserInfo.userRole === 'gestor'){
         alert('gestor');
 
     } 
