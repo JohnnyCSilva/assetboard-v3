@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useEffect } from 'react';
 
 import { db } from '../../config/firebase';
-import { collection, query, getDocs, updateDoc, where, addDoc, orderBy, deleteDoc, getDoc, doc } from "firebase/firestore";
+import { collection, query, getDocs, updateDoc, where, addDoc, orderBy, deleteDoc, getDoc, doc, arrayRemove  } from "firebase/firestore";
 
 
 function FuncionariosProjeto(props) {
@@ -42,29 +42,18 @@ function FuncionariosProjeto(props) {
         getProjectDetails();
     }, [])
 
-    //delete funcionario from project
-    const deleteFuncionario = async (funcionario) => {
-        const funcionarios = detalhesProjeto.funcionarios;
-        const index = funcionarios.indexOf(funcionario);
-        if (index > -1) {
-          funcionarios.splice(index, 1);
-        }
+    const deleteFuncionarioFromProject = async (funcionarioKey) => {
+        
+        console.log(funcionarioKey) //get funcionario key from db to delete from project
+
         const docRef = doc(db, "projetos", detalhesProjetoKey);
-        try {
-          await updateDoc(docRef, {
-            funcionarios: funcionarios
-          });
-        } catch (error) {
-          console.log(error.message);
-        }
-        //window.location.reload();
+        await updateDoc(docRef, {
+            funcionarios: arrayRemove(funcionarioKey)
+        });
+
     }
+    
       
-          
-
-
-
-
   return (
     <div>
         <div className="grid-membros-projeto">
@@ -74,10 +63,7 @@ function FuncionariosProjeto(props) {
                         <img src='https://cdn-icons-png.flaticon.com/512/149/149071.png'/>
                         <h3>{funcionarioDetails.displayName}</h3>
                     </div>
-                    {
-                    //delete funcionario from project
-                    }
-                    <button type="button" className='button button-delete' onClick={() => deleteFuncionario(funcionarioDetails.uid)}><i className="pi pi-trash"></i></button>
+                    <button type="button" className='button button-delete' onClick={() => deleteFuncionarioFromProject(funcionarioDetails.uid)}><i className="pi pi-trash"></i></button>
                 </div>
                 <div className="membro-card-info">
                     <p><i className="pi pi-wrench"></i><span>{funcionarioDetails.userRole}</span></p>
