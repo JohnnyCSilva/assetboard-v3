@@ -7,8 +7,8 @@ function ProjetoItem(props) {
 
     //open new page with project details
     const openProjectDetails = () => {
-        alert(props.projetos.key);
-        Router.push('/details/' + props.projetos.key);
+        //alert(props.projetos.key);
+        Router.push('/details/' + props.projetos.nome);
     }
 
     const dataInicioProjeto = new Date(props.projetos.dataInicio.seconds * 1000).toLocaleDateString('pt-PT');

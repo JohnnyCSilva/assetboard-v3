@@ -24,11 +24,14 @@ function productDetails() {
     const [ funcionarioSelecionado, setFuncionarioSelecionado ] = useState([]);
     const [ funcionariosProjeto, setFuncionariosProjeto ] = useState([]);
     const [ despesas, setDespesas ] = useState([]);
+    const [ totalDespesas, setTotalDespesas ] = useState(0);
 
-    //get project details from db
+
     const getProjectDetails = async () => {
-        console.log(key);
-        const q = query(collection(db, "projetos"), where("key", "==", key));
+
+        setDetalhesProjeto([]);   
+
+        const q = query(collection(db, "projetos"), where("nome", "==", key));
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
             const detalhesProjeto = doc.data();
@@ -45,27 +48,39 @@ function productDetails() {
     }
 
     const getDespesas = async () => {
+
+        //get all despesas from db with projectID = key
+        console.log(key);
         const despesas = [];
-        const q = query(collection(db, "despesas"), where("key", "==", key));
+        const q = query(collection(db, "despesas"), where("projetoId", "==", key));
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
             const despesa = doc.data();
             despesas.push(despesa);
-        });
-        setDespesas(despesas);
+        }
+        );
 
-        //if tipoDespesa is 'Profissional' get values else discard
-        const despesasProfissionais = [];
-        despesas.map((despesa) => {
+        //if despesa is profissional, add to despesa else dont add
+        const despesasFiltradas = [];
+        despesas.forEach((despesa) => {
             if(despesa.tipoDespesa === 'Profissional') {
-                despesasProfissionais.push(despesa);
+                despesasFiltradas.push(despesa);
             }
-        })
-        setDespesas(despesasProfissionais);
+        }
+        );
 
+
+        setDespesas(despesasFiltradas);        
+
+        //get total despesas
+        let total = 0;
+        despesas.forEach((despesa) => {
+            total += despesa.valor;
+        }
+        );
+        setTotalDespesas(total);
+        
     }
-
-    //get all funcionarios from db to populate dropdown
     const getAllFuncionarios = async () => {
         const funcionarios = [];
         const q = query(collection(db, "users"));
@@ -77,36 +92,28 @@ function productDetails() {
         });
         setFuncionarios(funcionarios);
     }
-
-    //update funcionarios array in db
     const addFuncionarioToProject = async () => {
 
-        console.log(funcionarioSelecionado);
 
-        /*const funcionariosAntes = detalhesProjeto.funcionarios;
-        const funcionariosDepois = [...funcionariosAntes, funcionarioSelecionado];
-        console.log(funcionariosDepois);
-
-        const q = query(collection(db, "projetos"), where("key", "==", key));
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
-            updateDoc(doc.ref, {
-                funcionarios: funcionariosDepois
+        const q = query(collection(db, "projetos"), where("nome", "==", key));
+        const querySnapshot = getDocs(q).then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                updateDoc(doc.ref, {
+                    funcionarios: arrayUnion(...funcionarioSelecionado)
+                });
             });
         });
 
         toast.current.show({severity:'success', summary: 'Sucesso', detail:'Funcionário adicionado com sucesso', life: 3000});
         setAdicionarFuncionario(false);
-        setDetalhesProjeto([]);
-        getProjectDetails();*/
-    }    
-
+        getProjectDetails();
+        
+    }
     useEffect(() => {
         getProjectDetails();
         getAllFuncionarios();
         getDespesas();
     }, [])
-
     const formatDate = (value) => {
         if (value) {
             let date = new Date(value.seconds * 1000);
@@ -242,7 +249,21 @@ function productDetails() {
                                 </div>
                             </div>
                         </div>
-                    </div>        
+                    </div>     
+                    <div className='financeiro-projeto'>   
+                        <div className='financeiro-projeto-title'>
+                            <h3>Dados Financeiros</h3>
+                        </div>
+                        <div className='financeiro-projeto-content'>
+                            <div className='financeiro-projeto-content-item'>
+                                <i className='pi pi-money-bill'></i>
+                                <div className='financeiro-item-text'>
+                                    <span>Total Despesas</span>
+                                    <p>{totalDespesas} €</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             

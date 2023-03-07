@@ -276,4 +276,59 @@
 }
 
 
+.page-content-details > .page-content-right-side > .financeiro-projeto{
+    margin-top: 20px;
+    width: 100%;
+    padding: 30px;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.page-content-details > .page-content-right-side > .financeiro-projeto > .financeiro-projeto-content > .financeiro-projeto-content-item{
+    margin: 20px 0;
+}
+
+.page-content-details > .page-content-right-side > .financeiro-projeto > .financeiro-projeto-content > .financeiro-projeto-content-item > .financeiro-item-text{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.page-content-details > .page-content-right-side > .financeiro-projeto > .financeiro-projeto-content > .financeiro-projeto-content-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.page-content-details > .page-content-right-side > .financeiro-projeto > .financeiro-projeto-content > .financeiro-projeto-content-item > i{
+    margin-right: 10px;
+    color: #695cfe;
+    border-radius: 50px;
+    background-color: #ececec;
+    padding: 15px;
+    font-size: 14px;
+}
+
+.page-content-details > .page-content-right-side > .financeiro-projeto > .financeiro-projeto-content > .financeiro-projeto-content-item> .financeiro-item-text{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.page-content-details > .page-content-right-side > .financeiro-projeto > .financeiro-projeto-content > .financeiro-projeto-content-item > .financeiro-item-text > span{
+    font-size: 13px;
+    color: #9e9e9e;
+}
+
+.page-content-details > .page-content-right-side > .financeiro-projeto > .financeiro-projeto-content > .financeiro-projeto-content-item > .financeiro-item-text > p{
+    font-size: 15px;
+    font-weight: 400;
+    color: #000;
+}
+
+
+
+
+
+
     

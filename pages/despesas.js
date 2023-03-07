@@ -81,20 +81,7 @@ function despesas() {
             despesas.push(doc.data());
         });
 
-        //map project id to project name
-        despesas.map((despesa) => {
-            projetos.map((projetos) => {
-                if(despesa.projetoId === projetos.key) {
-                    despesa.projetoId = projetos.nome;
-                }
-            })
-        })
-
         setDespesas(despesas);
-        console.log(despesas);
-
-        
-
 
         let totalDespesas = 0;
         //if despesa is approved add to total despesas
@@ -125,8 +112,6 @@ function despesas() {
         totalDespesasProfissionais = Math.round(totalDespesasProfissionais * 100) / 100;
         setDespesasProfissionais(totalDespesasProfissionais);
 
-        //new date with dataDespesa
-
     }
     //get user role from db
     const getUserRole = async () => {
@@ -154,7 +139,7 @@ function despesas() {
         const q = query(collection(db, "projetos"));
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
-            projetos.push({label: doc.data().nome, value: doc.data().key})
+            projetos.push({label: doc.data().nome, value: doc.data().nome})
         });
         setProjetos(projetos);
     }
