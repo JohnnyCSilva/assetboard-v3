@@ -45,7 +45,6 @@ import Clienteslist from '../components/ClientesConfig/ClientesList';
 
         setClientes([]);
 
-        //get clientes from database
         const querySnapshot = await getDocs(collection(db, "clientes"));
         querySnapshot.forEach((doc) => {
             setClientes((clientes) => [...clientes, doc.data()]);
@@ -73,7 +72,6 @@ import Clienteslist from '../components/ClientesConfig/ClientesList';
             
         });
 
-        //reset form
         setNome('');
         setMorada('');
         setEmail('');
@@ -83,7 +81,6 @@ import Clienteslist from '../components/ClientesConfig/ClientesList';
 
 
         setClientes([]);
-        //run getclientes function to update clientes state
         getClientes();
     }
 

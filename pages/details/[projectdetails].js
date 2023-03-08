@@ -50,7 +50,6 @@ function productDetails() {
     const getDespesas = async () => {
 
         //get all despesas from db with projectID = key
-        console.log(key);
         const despesas = [];
         const q = query(collection(db, "despesas"), where("projetoId", "==", key));
         const querySnapshot = await getDocs(q);
@@ -142,6 +141,25 @@ function productDetails() {
         
     };
 
+    //deleteAllFuncionarios
+
+    const deleteAllFuncionarios = async () => {
+
+        const q = query(collection(db, "projetos"), where("nome", "==", key));
+        const querySnapshot = getDocs(q).then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                updateDoc(doc.ref, {
+                    funcionarios: []
+                });
+            });
+        });
+
+        toast.current.show({severity:'success', summary: 'Sucesso', detail:'Funcionários removidos com sucesso', life: 3000});
+
+        getProjectDetails();
+
+    }
+
 
     return (
         <div>
@@ -168,19 +186,22 @@ function productDetails() {
                     <div className='funcionarios-projeto'>
                         <div className='funcionarios-projeto-title'>
                             <h2>Funcionários do Projeto</h2>
-                            <button className='button button-add' onClick={() => setAdicionarFuncionario(true)}><i className='pi pi-plus-circle'></i></button>
+                            <>
+                                <button className='button button-delete' onClick={deleteAllFuncionarios}><i className='pi pi-times'></i></button>
+                                <button className='button button-add' onClick={() => setAdicionarFuncionario(true)}><i className='pi pi-plus-circle'></i></button>
+                            </>
                         </div>
                         <div className='funcionarios-projeto-content'>
                         {
                             funcionariosProjeto && funcionariosProjeto.length > 0 ?
                             <div className='funcionarios-projeto-list'>
-                            {funcionariosProjeto.map((label) => (
-                                <FuncionariosProjeto
-                                funcionario={label}
-                                key={label}
-                                detalhesProjetoKey={detalhesProjeto.key}
-                              />
-                            ))}
+                                {funcionariosProjeto.map((label) => (
+                                    <FuncionariosProjeto
+                                    funcionario={label}
+                                    key={label}
+                                    detalhesProjetoKey={detalhesProjeto.key}
+                                />
+                                ))}
                             </div>
                         :
                             <p>Nenhum funcionário adicionado</p>
