@@ -26,6 +26,7 @@ function App({ Component, pageProps }) {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
+    
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         setUser(user);
@@ -34,9 +35,13 @@ function App({ Component, pageProps }) {
         setUser(null);
       }
     });
-
     return unsubscribe;
   }, []);
+
+  //signOut function
+  const signOut = () => {
+    auth.signOut();
+  };
 
 
   return (
@@ -45,7 +50,9 @@ function App({ Component, pageProps }) {
         <>  
           <Sidebar />
           <Navbar />
+          
           <div className='home-section'>
+            <p onClick={signOut}>Desligar Conta</p>
             <Component {...pageProps} />
           </div>
         </>

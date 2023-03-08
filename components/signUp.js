@@ -51,16 +51,14 @@ function signUp() {
         }
       
         try {
-          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-          console.log('User account created:', userCredential.user.uid);
-      
-          // Add a new user document to the Firestore "users" collection
+
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
             await addUser(userCredential.user);
       
-          // Automatically log in the new user
-          await signInWithEmailAndPassword(auth, email, password);
+            await signInWithEmailAndPassword(auth, email, password);
         } catch (err) {
-          setError(err.message);
+            setError(err.message);
         }
       };
 
@@ -71,6 +69,14 @@ function signUp() {
             const userRef = collection(db, 'users');
             const q = query(userRef, where("uid", "==", user.uid));
             const querySnapshot = await getDocs(q);
+            //if user photo is null set it to the default image
+            if (user.photoURL === null || user.photoURL === '' || user.photoURL === undefined) {
+                user.photoURL = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+            }
+            //get user display name in field if it is null
+            if (user.displayName === null || user.displayName === '' || user.displayName === undefined) {
+                user.displayName = displayName;
+            }
             if (querySnapshot.empty) {
                 await addDoc(userRef, {
                     displayName: user.displayName,
@@ -81,6 +87,7 @@ function signUp() {
                     userRole: 'funcionario',
                 });
             }
+            
            
         };
 
