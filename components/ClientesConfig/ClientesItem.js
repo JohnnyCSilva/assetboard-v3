@@ -2,12 +2,15 @@ import React from 'react'
 import { useState, useRef } from 'react';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
-import { collection, db, deleteDoc, query, where, getDocs } from 'firebase/firestore';
+import { collection, deleteDoc,db, query, where, getDocs } from 'firebase/firestore';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { InputNumber } from 'primereact/inputnumber';
 import { InputMask } from 'primereact/inputmask';
+
+
+
 
 function clientesitem(props) {
     const [clientes, setClientes] = useState([]);
@@ -45,37 +48,7 @@ function clientesitem(props) {
     }
 
 
-    const apagarCliente = (clientes) => {
-         
-        //show confirmation dialog
-        confirmDialog({
-            message: 'Tem a certeza que deseja apagar este cliente?',
-            header: 'Confirmação',
-            icon: 'pi pi-exclamation-triangle',
-            acceptClassName: 'p-button-danger',
-            accept: () => {
-                deleteCliente(clientes);
-            },
-        });
-    }
-
-  
-    //delete cliente from the database
-    const deleteCliente = async (clientes) => {
-        const clienteRef = collection(db, "clientes");
-        const q = query(clienteRef, where("key", "==", clientes.key));
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
-            deleteDoc(doc.ref).then(() => {
-                toast.current.show({severity:'success', summary: 'Apagado', detail:'Cliente apagado com sucesso.', life: 3000});
-
-            });
-        });
-        setClientes([]);
-        getClientes();
-    }
-
- 
+    
     
 
     //update cliente
@@ -113,7 +86,7 @@ function clientesitem(props) {
                     <img src="https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png" alt="Projeto" />
                     <div className="grid-card-project">
                         <h3>{props.clientes.nome}</h3>
-                        <p><i className="pi pi-user"></i><span>{props.clientes.email}</span></p>
+                        <p><i className="pi pi-at"></i><span>{props.clientes.email}</span></p>
                     </div>
                 </div>
               

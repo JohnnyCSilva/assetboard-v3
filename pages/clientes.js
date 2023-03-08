@@ -13,11 +13,14 @@ import { ConfirmDialog } from 'primereact/confirmdialog';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { InputMask } from 'primereact/inputmask';
 import Clienteslist from '../components/ClientesConfig/ClientesList';
+import ClientesItem from '@/components/ClientesConfig/ClientesItem';
+import { OverlayPanel } from 'primereact/overlaypanel';
+import { confirmDialog } from 'primereact/confirmdialog';
 
 
 
 
- function clientes() {
+ function clientes(props) {
 
     const { currentUser } = useContext(AuthContext);
     const [visible, setVisible] = useState(false);
@@ -32,7 +35,10 @@ import Clienteslist from '../components/ClientesConfig/ClientesList';
     const toast = useRef(null);
     const [ globalFilterValue, setGlobalFilterValue ] = useState('');
     const dt = useRef(null);
+     const op = useRef(null);
     const [ filters, setFilters ] = useState(null);
+    const [search, setSearch] = useState('');
+    
 
     const [ displayEdit, setDisplayEdit ] = useState(false);
     const [visibleInfo, setVisibleInfo] = useState(false);
@@ -49,13 +55,20 @@ import Clienteslist from '../components/ClientesConfig/ClientesList';
         const querySnapshot = await getDocs(collection(db, "clientes"));
         querySnapshot.forEach((doc) => {
             setClientes((clientes) => [...clientes, doc.data()]);
-
         });
     }
-   
+
 
 
     const registerCliente = () => {
+
+        if (!email.includes('@')) {
+            toast.current.show({severity:'error', summary: 'Erro', detail:'Email inválido.', life: 3000});
+            return;
+        }
+
+        
+
         addDoc(collection(db, "clientes"), {
             key: Math.random().toString(36),
             nome: nome,
@@ -87,41 +100,80 @@ import Clienteslist from '../components/ClientesConfig/ClientesList';
         getClientes();
     }
 
-    
-
-
-
-
-
 
     const [ cliente, setCliente ] = useState(false);
-
-
     
 
+                const apagarCliente = (clientes) => {
+         
+                    //show confirmation dialog
+                    confirmDialog({
+                        message: 'Tem a certeza que deseja apagar este cliente?',
+                        header: 'Confirmação',
+                        icon: 'pi pi-exclamation-triangle',
+                        acceptClassName: 'p-button-danger',
+                        accept: () => {
+                            deleteCliente(clientes);
+                        },
+                    });
+                }
 
-    
-   
+                
+                  const updateCliente = async (clientes) => {
+                    const clienteRef = collection(db, "clientes");
+                    const q = query(clienteRef, where("key", "==", clientes.key));
+                    const querySnapshot = await getDocs(q);
+                    querySnapshot.forEach((doc) => {
+                        updateDoc(doc.ref, {
+                            nome: nome || cliente.nome,
+                            morada: morada || cliente.morada,
+                            email: email || cliente.email,
+                            contacto: contacto || cliente.contacto,
+                            iban: iban || cliente.iban,
+                            nif: nif || cliente.nif,
+                        }).then(() => {
+                            toast.current.show({severity:'success', summary: 'Atualizado', detail:'Cliente atualizado com sucesso.', life: 3000});
+                            setVisible(false);
+            
+                        });
+                    });
+                    setClientes([]);
+                    getClientes();
+                    setDisplayEdit(false);
+                }
 
-    //search clientes by name and email and if the result doesnt match any of the above, show all clientes  
+                
 
-  
+                const deleteCliente = async (clientes) => {
 
-    const searchClientes = (e) => {
-        if (e.target.value === '') {
-            getClientes();
-            return;
-        }else{
-            const search = e.target.value;
-            const filteredClientes = clientes.filter(clientes => {
-                return clientes.nome.toLowerCase().includes(search.toLowerCase()) || clientes.email.toLowerCase().includes(search.toLowerCase());
-            })
-            setClientes(filteredClientes);
-                    }
-                }
-      
+                    // if cliente is in a project delete project from database  
+                    const projectRef = collection(db, "projetos");
+                    const getProject = query(projectRef, where("cliente", "==", clientes));
+                    const ProjectSnapShot = await getDocs(getProject);
+                    ProjectSnapShot.forEach((doc) => {
+                        console.log(doc.data());
+                        deleteDoc(doc.ref)
+                    });
 
-    
+                    
+                    const clienteRef = collection(db, "clientes");
+                    const q = query(clienteRef, where("nome", "==", clientes));
+                    const querySnapshot = await getDocs(q);
+                    querySnapshot.forEach((doc) => {
+                        deleteDoc(doc.ref).then(() => {
+
+                            toast.current.show({severity:'success', summary: 'Apagado', detail:'Cliente apagado com sucesso.', life: 3000});
+                            setVisible(false);
+
+                        });
+                    }); 
+                    setClientes([]);
+                    getClientes();
+                }
+
+
+
+
     return (
         <div>
             <Toast ref={toast} />
@@ -130,7 +182,7 @@ import Clienteslist from '../components/ClientesConfig/ClientesList';
                     <h1>Clientes</h1>    
                 </div>
                 <div className='title-right-side'>
-                <button className='button button-add' onClick={() => setClientesDialog(true)}><i className='pi pi-user'></i><span>Adicionar Cliente</span></button>
+                <button className='button button-add' onClick={() => setClientesDialog(true)}><i className='pi pi-plus-circle'></i><span>Adicionar Cliente</span></button>
                 </div>
             </div>
         
@@ -140,14 +192,14 @@ import Clienteslist from '../components/ClientesConfig/ClientesList';
          <Dialog header='Adicionar Cliente' visible={clientesDialog} onHide={() => setClientesDialog(false)}>
             <form className='form-dialog'>
           
-            <form className='form-dialog'>
+
             <div className='form-flex'>
                 <div className='form-group'>
                     <label htmlFor='nome'>Nome</label>
                     <InputText value={nome} onChange={(e) => setNome(e.target.value)} />
                 </div>  
                 </div>  
-                </form>
+
            
                 <div className='form-flex'>
                 <div className='form-group'>
@@ -159,7 +211,7 @@ import Clienteslist from '../components/ClientesConfig/ClientesList';
             <div className='form-flex'>
                 <div className='form-group'>
                     <label htmlFor='email'>Email</label>
-                    <InputText value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <InputText type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div> 
             </div>
             <div className='form-flex'>
@@ -181,14 +233,58 @@ import Clienteslist from '../components/ClientesConfig/ClientesList';
             </div>
             <div className='form-flex-buttons'>
                 <div className="form-buttons">
-                    <button type="button" className='button button-save' onClick={registerCliente}><i className='pi pi-plus'></i><span>Adicionar</span></button>
+                    <button type="button" onClick={registerCliente}  className='button button-save' ><i className='pi pi-plus-circle'></i><span>Adicionar</span></button>
                 </div>
             </div> 
-            
 
+
+        
             
         </form>
          </Dialog>
+         <Dialog header='Editar Cliente' visible={displayEdit} onHide={() => setDisplayEdit(false)}>
+            <form className='form-dialog'>
+                <div className='form-flex'>
+                    <div className='form-group'>
+                        <label htmlFor='nome'>Nome</label>
+                        <InputText value={clientes.nome} onChange={(e) => setCliente({...clientes, nome: e.target.value})} />
+                    </div>
+                </div>
+                <div className='form-flex'>
+                    <div className='form-group'>
+                        <label htmlFor='morada'>Morada</label>
+                        <InputTextarea autoResize  value={clientes.morada} onChange={(e) => setCliente({...clientes, morada: e.target.value})} rows={5} cols={30} />
+                    </div>
+                </div>
+                <div className='form-flex'>
+                    <div className='form-group'>
+                        <label htmlFor='email'>Email</label>
+                        <InputText type="email" value={clientes.email} onChange={(e) => setCliente({...clientes, email: e.target.value})} />
+                    </div>
+                </div>
+                <div className='form-flex'>
+                    <div className='form-group'>
+                        <label htmlFor='contacto'>Contacto</label>
+                        <InputNumber value={clientes.contacto} onValueChange={(e) => setCliente({...clientes, contacto: e.value})} />
+                    </div>
+                    <div className='form-group'>
+                        <label htmlFor='nif'>Nif</label>
+                        <InputNumber value={clientes.nif} onValueChange={(e) => setCliente({...clientes, nif: e.value})} />
+                    </div>
+                </div>
+                <div className='form-flex'>
+                    <div className='form-group'>
+                        <label htmlFor='iban'>Iban</label>
+                        <InputMask value={clientes.iban} onChange={(e) => setCliente({...clientes, iban: e.target.value})} mask="PT50-9999-9999-9999-9999-9999-9"/>
+                    </div>
+                </div>
+                <div className='form-flex-buttons'>
+                    <div className="form-buttons">
+                        <button type="button" className='button button-save' ><i className='pi pi-save'></i><span>Guardar</span></button>
+                    </div>
+                </div>
+            </form>
+        </Dialog>
         </div>
         
       
@@ -199,14 +295,51 @@ import Clienteslist from '../components/ClientesConfig/ClientesList';
         <div className='page-content'>
         <div className='search-box'>
             <i className='pi pi-search'></i>
-            <input type="text" placeholder='Pesquisar Cliente' onChange={searchClientes} />
+            <input type="text" placeholder='Pesquisar Cliente' onChange={(e) => setSearch(e.target.value)} />
+        </div> 
         </div>
         <div className="grid">
             <div className="grid-box">
-                <Clienteslist clientes={clientes} />
+                <div className='grid-template-column'>
+                {clientes
+                .filter((item) => {
+                    return search.toLowerCase() === ''
+                    ? item
+                    : item.nome.toLowerCase().includes(search)
+                    || item.email.toLowerCase().includes(search);
+                })
+                    .map((clientes, key) => (
+                        <div className="grid-template-card" key={key}>
+                        <div className="grid-template-card-top">
+                            <div className="grid-card-image-text">
+                                <img src="https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png" alt="Projeto" />
+                                <div className="grid-card-project">
+                                    <h3>{clientes.nome}</h3>
+                                    <p><i className="pi pi-at"></i><span>{clientes.email}</span></p>
+                                </div>
+                            </div>
+                            <div className='grid-card-actions'>
+                                <button type='button' className='button button-edit' onClick={() => updateCliente()}><i className='pi pi-pencil'></i></button>
+                                <button type='button' className="button button-delete" onClick={() => deleteCliente(clientes.nome)}><i className="pi pi-trash"></i></button>
+                            </div>
+                        </div>
+                        <div className="grid-template-card-middle">
+                            <div className="card-middle">
+                                <p><i className="pi pi-phone"></i><span>{clientes.contacto}</span></p>
+                                <p><i className="pi pi-id-card"></i><span>{clientes.nif}</span></p>
+                                <p><i className="pi pi-credit-card"></i><span>{clientes.iban}</span></p>
+                                <p><i className="pi pi-map-marker"></i><span>{clientes.morada}</span></p>
+                            </div>
+                        </div>
+                        </div>
+                ))}
+            
+
+                </div>
+           
             </div>
         </div>
-        </div>
+        
         </div>
         
 
