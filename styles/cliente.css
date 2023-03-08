@@ -55,14 +55,14 @@
     background-color: #2196F3;
     
 }
-.grid-template-column{
+.grid>.grid-box>.grid-template-column{
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 20px;
     width: 100%;
 }
 
-.grid-template-column > div > .grid-template-card{
+.grid>.grid-box>.grid-template-column  > .grid-template-card{
     background-color: #fff;
     border-radius: 10px;
     padding: 15px;
@@ -72,7 +72,7 @@
     justify-content: space-between;
 }
 
-.grid-template-column > div > .grid-template-card > .grid-template-card-top{
+.grid>.grid-box>.grid-template-column  > .grid-template-card > .grid-template-card-top{
     display: flex;
     justify-content: space-between;
     align-items: center; 
@@ -80,50 +80,51 @@
     padding: 10px;
     border-radius: 10px;
 }
-.grid-template-column > div > .grid-template-card > .grid-template-card-top > .grid-card-image-text{
+.grid>.grid-box>.grid-template-column  > .grid-template-card > .grid-template-card-top > .grid-card-image-text{
     display: flex;
     align-items: center; 
 }
-.grid-template-column > div > .grid-template-card > .grid-template-card-top > .grid-card-image-text > img{
+.grid>.grid-box>.grid-template-column >  .grid-template-card > .grid-template-card-top > .grid-card-image-text > img{
     width: 50px;
     height: 50px;
     border-radius: 50px;
     margin-right: 10px;
 }
 
-.grid-template-column > div > .grid-template-card > .grid-template-card-top > .grid-card-image-text > .grid-card-project > h3{
+.grid>.grid-box>.grid-template-column >  .grid-template-card > .grid-template-card-top > .grid-card-image-text > .grid-card-project > h3{
     font-size: 17px;
     font-weight: 500;
     color: #000;
 }
-.grid-template-column > div > .grid-template-card > .grid-template-card-top > .grid-card-image-text > .grid-card-project > p{
+.grid>.grid-box>.grid-template-column >  .grid-template-card > .grid-template-card-top > .grid-card-image-text > .grid-card-project > p{
     font-size: 14px;
     font-weight: 400;
     color: #9e9e9e;
 
 }
-.grid-template-column > div > .grid-template-card > .grid-template-card-top > .grid-card-image-text > .grid-card-project > p > span{
-    font-size: 13px;
+.grid>.grid-box>.grid-template-column >  .grid-template-card > .grid-template-card-top > .grid-card-image-text > .grid-card-project > p > span{
+    font-size: 15px;
     color: #9e9e9e;
 }
-.grid-template-column > div > .grid-template-card > .grid-template-card-top > .grid-card-image-text > .grid-card-project > p > i{
-    margin-right: 10px;
+.grid>.grid-box>.grid-template-column >  .grid-template-card > .grid-template-card-top > .grid-card-image-text > .grid-card-project > p > i{
+    margin-right: 5px;
     color: #695cfe;
+    font-size: 10px;
     
 }
 
-.grid-template-column > div > .grid-template-card > .grid-template-card-middle{
+.grid>.grid-box>.grid-template-column >  .grid-template-card > .grid-template-card-middle{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     height: 100%;
     padding: 10px;
 }
-.grid-template-column > div > .grid-template-card > .grid-template-card-middle > .card-middle > p{
+.grid>.grid-box>.grid-template-column >  .grid-template-card > .grid-template-card-middle > .card-middle > p{
     padding: 5px;
 }
 
-.grid-template-column > div > .grid-template-card > .grid-template-card-middle > .card-middle > p > i{
+.grid>.grid-box>.grid-template-column >  .grid-template-card > .grid-template-card-middle > .card-middle > p > i{
     padding: 10px;
     font-size: 12px;
     margin-right: 10px;
@@ -132,7 +133,7 @@
     border-radius: 50px;
 }
 
-.grid-template-column > div > .grid-template-card > .grid-template-card-middle > .card-middle > p > span{
+.grid>.grid-box>.grid-template-column > .grid-template-card > .grid-template-card-middle > .card-middle > p > span{
     font-size: 13px;
     color: #9e9e9e;
 }
@@ -153,4 +154,11 @@
     grid-gap: 10px;
     margin: 0 auto;
   
+}
+
+.grid-card-actions{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
