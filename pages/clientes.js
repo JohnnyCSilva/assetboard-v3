@@ -118,10 +118,12 @@ import { confirmDialog } from 'primereact/confirmdialog';
                     });
                 }
 
+
+                
                 
                   const updateCliente = async (clientes) => {
                     const clienteRef = collection(db, "clientes");
-                    const q = query(clienteRef, where("key", "==", clientes.key));
+                    const q = query(clienteRef, where("nome", "==", clientes));
                     const querySnapshot = await getDocs(q);
                     querySnapshot.forEach((doc) => {
                         updateDoc(doc.ref, {
@@ -171,6 +173,8 @@ import { confirmDialog } from 'primereact/confirmdialog';
                     getClientes();
                 }
 
+
+             
 
 
 
@@ -320,7 +324,7 @@ import { confirmDialog } from 'primereact/confirmdialog';
                             </div>
                             <div className='grid-card-actions'>
                                 <button type='button' className='button button-edit' onClick={() => updateCliente()}><i className='pi pi-pencil'></i></button>
-                                <button type='button' className="button button-delete" onClick={() => deleteCliente(clientes.nome)}><i className="pi pi-trash"></i></button>
+                                <button type='button' className="button button-delete" onClick={() => apagarCliente(clientes.nome)}><i className="pi pi-trash"></i></button>
                             </div>
                         </div>
                         <div className="grid-template-card-middle">
