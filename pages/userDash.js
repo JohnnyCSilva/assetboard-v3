@@ -84,20 +84,21 @@ function userDash() {
 
 
     useEffect(() => {
-        getFaltas();        
+        getFaltas();    
+        getUserData();    
     }, [])
 
-    useEffect(() => {
+    const getUserData = async () => {
         const q = query(collection(db, "users"));
         const querySnapshot = getDocs(q).then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
                 if (doc.data().uid === currentUser.uid) {
                     setUserData(doc.data());
+                    console.log(doc.data());
                 }
             });
         })
-        
-    }, [])
+    }   
 
     async function getFaltas() {
 
@@ -111,10 +112,7 @@ function userDash() {
         });
     }
 
-    // on handleSubmit update user data in database and show toast message
     const handleSubmit = () => {
-   
-        // Update userData with new values
         const newUserData = {
             ...userData,
             codPostal: codPostal || userData.codPostal,
@@ -141,11 +139,8 @@ function userDash() {
     
     }  
 
-
-    //set minDate to diasFalta 
     const minDate = new Date(diasFalta);
 
-    //max date is today date
     const maxDate = new Date();
 
     const registerFalta = () => {
@@ -231,7 +226,7 @@ function userDash() {
                         <div className='form-flex'>
                             <div className='form-group'>
                                 <label htmlFor='name'>Nome</label>
-                                <InputText id='name' type='text' className="inputText" defaultValue={userData.displayName} disabled/>
+                                <InputText id='name' type='text' className="inputText" defaultValue={userData.name || userData.displayName} disabled/>
                             </div>
                             <div className='form-group'>
                                 <label htmlFor='email'>Email</label>
@@ -251,7 +246,7 @@ function userDash() {
                         <div className='form-flex'>
                             <div className='form-group morada'>
                                 <label htmlFor='nacionalidade'>Nacionalidade</label>
-                                <InputText id='nacionalidade' type='nacionalidade' className="inputText"  defaultValue={userData.nacionalidade}  onChange={(e) => setNacionalidade(e.target.value)}/>
+                                <InputText id='nacionalidade' type='nacionalidade' className="inputText" defaultValue={userData.nacionalidade}  onChange={(e) => setNacionalidade(e.target.value)}/>
                             </div>
                             <div className='form-group morada'>
                                 <label htmlFor='nascimento'>Data de Nascimento</label>

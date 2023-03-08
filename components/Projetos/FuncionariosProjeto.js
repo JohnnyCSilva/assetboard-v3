@@ -16,8 +16,6 @@ function FuncionariosProjeto(props) {
     //Get funcionario details from db
     const getFuncionarioDetails = async () => {
 
-        console.log(props)
-
         const q = query(collection(db, "users"), where("uid", "==", funcionario));
 
         const querySnapshot = await getDocs(q);
@@ -50,6 +48,10 @@ function FuncionariosProjeto(props) {
         await updateDoc(docRef, {
             funcionarios: arrayRemove(funcionarioKey)
         });
+
+        //vai buscar o nome do documento em vez da chave do projeto para fazer o update
+
+        
 
     }
     

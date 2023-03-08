@@ -529,7 +529,7 @@ function despesas() {
                 className="table-pedidos"
                 filters={filters}
                 responsiveLayout="scroll"
-                globalFilterFields={['funcionario', 'projeto']}
+                globalFilterFields={['funcionario', 'projetoId']}
                 >   
                     <Column field="funcionario" header="Funcionário"/>
                     <Column field="projetoId" header="Projeto"/>
