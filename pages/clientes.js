@@ -63,45 +63,54 @@ function clientes(props) {
     });
   }
 
+ //check if cliente already exists in database and if exists dont let it to create a new one
+  const clienteExists = (nome) => {
+    let exists = false;
+    clientes.map((cliente) => {
+      if (cliente.nome === nome) {
+        exists = true;
+      }
+    });
+    return exists;
+    
+  };
+
+
   const registerCliente = () => {
 
-    // if nome already exists in database return error
-
-    const clienteRef = collection(db, "clientes");
-    const q = query(clienteRef, where("nome", "==", nome));
-    const querySnapshot = getDocs(q).then((querySnapshot) => {
-        if (querySnapshot.size > 0) {
-            toast.current.show({
-                severity: "error",
-                summary: "Erro",
-                detail: "Cliente já existe.",
-                life: 3000,
-            });
-            return;
-        }
-    });
-
     if (nome === "" || morada === "" || email === "" || contacto === "" || iban === "" || nif === "") {
-        toast.current.show({
-            severity: "error",
-            summary: "Erro",
-            detail: "Preencha todos os campos.",
-            life: 3000,
-        });
-        return;
-    }
+      toast.current.show({
+          severity: "error",
+          summary: "Erro",
+          detail: "Preencha todos os campos.",
+          life: 3000,
+      });
+      return;
+      
+  }
 
 
-    if (!email.includes("@")) {
+  if (!email.includes("@")) {
+    toast.current.show({
+      severity: "error",
+      summary: "Erro",
+      detail: "Email inválido.",
+      life: 3000,
+    });
+    return;
+  }
+  //if cliente already exists in database dont add it and show error message
+    if (clienteExists(nome)) {
       toast.current.show({
         severity: "error",
         summary: "Erro",
-        detail: "Email inválido.",
+        detail: "Cliente já existe.",
         life: 3000,
       });
       return;
     }
-
+     
+    // register cliente in database
     addDoc(collection(db, "clientes"), {
       key: Math.random().toString(36),
       nome: nome,
@@ -113,22 +122,16 @@ function clientes(props) {
     }).then(() => {
       toast.current.show({
         severity: "success",
-        summary: "Registado",
-        detail: "Cliente registado com sucesso.",
+        summary: "Sucesso",
+        detail: "Cliente adicionado com sucesso.",
         life: 3000,
       });
-      setVisible(false);
       setClientesDialog(false);
-    });
-
-    resetCliente();
-    setClientes([]);
-    getClientes();
-        
-
+      resetCliente();
+      getClientes([]);
+    }
+    );
   };
-
-
 
   const [cliente, setCliente] = useState(false);
 
@@ -140,65 +143,72 @@ function clientes(props) {
       acceptClassName: "p-button-danger",
       accept: () => {
         deleteCliente(clientes);
+        
+
       },
     });
   };
 
   const deleteCliente = async (clientes) => {
-    // if cliente is in a project delete project from database
-    const projectRef = collection(db, "projetos");
-    const getProject = query(projectRef, where("cliente", "==", clientes));
-    const ProjectSnapShot = await getDocs(getProject);
-    ProjectSnapShot.forEach((doc) => {
-      console.log(doc.data());
-      deleteDoc(doc.ref);
-    });
+    try{
+      deleteProjects(clientes);
 
-    const clienteRef = collection(db, "clientes");
-    const q = query(clienteRef, where("nome", "==", clientes));
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      deleteDoc(doc.ref).then(() => {
-        toast.current.show({
-          severity: "success",
-          summary: "Apagado",
-          detail: "Cliente apagado com sucesso.",
-          life: 3000,
+      const clienteRef = collection(db, "clientes");
+      const q = query(clienteRef, where("key", "==", clientes));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        deleteDoc(doc.ref).then(() => {
+          toast.current.show({
+            severity: "success",
+            summary: "Apagado",
+            detail: "Cliente apagado com sucesso.",
+            life: 3000,
+          });
+          setVisible(false);
         });
-        setVisible(false);
       });
-    });
-    setClientes([]);
-    getClientes();
+      getClientes();
+    }catch(error){
+      console.log(error)
+    }
+
   };
   // get clientes clicked and open dialog
 
-  const getClienteinfo = (clientes) => {
-    setCliente({ ...clientes });
+  const [ clienteInfoGet, setClienteInfoGet ] = useState([])
 
-    setNome(clientes.nome);
-    setMorada(clientes.morada);
-    setEmail(clientes.email);
-    setContacto(clientes.contacto);
-    setIban(clientes.iban);
-    setNif(clientes.nif);
-    setVisible(true);
+  const getClienteinfo = (clientes) => {
+
+    //alert(clientes)
     setDisplayEdit(true);
+    setClienteInfoGet([])
+
+    const clienteRef = collection(db, "clientes");
+    const q = query(clienteRef, where("key", "==", clientes));
+    const querySnapshot = getDocs(q)
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          setClienteInfoGet(doc.data());
+        });
+      })
+
+
+    
   };
 
   const handleSubmit = () => {
     const newcliente = {
       ...clientes,
-      morada: morada || getCliente.morada,
-      email: email || getCliente.email,
-      contacto: contacto || getCliente.contacto,
-      iban: iban || getCliente.iban,
-      nif: nif || getCliente.nif,
+      morada: morada || cliente.morada,
+      email: email || cliente.email,
+      contacto: contacto || cliente.contacto,
+      iban: iban || cliente.iban,
+      nif: nif || cliente.nif,
     };
 
     const q = query(
       collection(db, "clientes"),
-      where("key", "==", getCliente.key)
+      where("nome", "==", getCliente.nome)
     );
     const querySnapshot = getDocs(q)
       .then((querySnapshot) => {
@@ -218,7 +228,24 @@ function clientes(props) {
     setClientes([]);
     getClientes();
     setDisplayEdit(false);
+    
+
   };
+
+ //delete all projects from database that have the cliente that is being deleted
+  const deleteProjects = async (clientes) => {
+    const projectRef = collection(db, "projetos");
+    const getProject = query(projectRef, where("cliente", "==", clientes));
+    const ProjectSnapShot = await getDocs(getProject);
+    ProjectSnapShot.forEach((doc) => {
+      console.log(doc.data());
+       deleteDoc(doc.ref);
+    });
+  };
+
+
+
+
 
   return (
     <div>
@@ -328,8 +355,7 @@ function clientes(props) {
               <div className="form-group">
                 <label htmlFor="nome">Nome</label>
                 <InputText
-                  value={clientes.nome}
-                  defaultValue={getCliente.nome}
+                  defaultValue={clienteInfoGet.nome}
                   disabled
                 />
               </div>
@@ -339,8 +365,7 @@ function clientes(props) {
                 <label htmlFor="morada">Morada</label>
                 <InputTextarea
                   autoResize
-                  value={clientes.morada}
-                  defaultValue={getCliente.morada}
+                  defaultValue={clienteInfoGet.morada}
                   onChange={(e) => setMorada(e.target.value)}
                   rows={5}
                   cols={30}
@@ -352,8 +377,7 @@ function clientes(props) {
                 <label htmlFor="email">Email</label>
                 <InputText
                   type="email"
-                  value={clientes.email}
-                  defaultValue={getCliente.email}
+                  defaultValue={clienteInfoGet.email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
@@ -362,16 +386,16 @@ function clientes(props) {
               <div className="form-group">
                 <label htmlFor="contacto">Contacto</label>
                 <InputNumber
-                  value={clientes.contacto}
-                  defaultValue={getCliente.contacto}
+                  
+                  defaultValue={clienteInfoGet.contacto}
                   onValueChange={(e) => setContacto(e.value)}
                 />
               </div>
               <div className="form-group">
                 <label htmlFor="nif">Nif</label>
                 <InputNumber
-                  value={clientes.nif}
-                  defaultValue={getCliente.nif}
+                  
+                  defaultValue={clienteInfoGet.nif}
                   onValueChange={(e) => setNif(e.target.value)}
                 />
               </div>
@@ -380,8 +404,8 @@ function clientes(props) {
               <div className="form-group">
                 <label htmlFor="iban">Iban</label>
                 <InputMask
-                  value={clientes.iban}
-                  defaultValue={getCliente.iban}
+                  
+                  defaultValue={clienteInfoGet.iban}
                   onChange={(e) => setIban(e.value)}
                   mask="PT50-9999-9999-9999-9999-9999-9"
                 />
@@ -452,7 +476,7 @@ function clientes(props) {
                       <button
                         type="button"
                         className="button button-delete"
-                        onClick={() => apagarCliente(clientes.nome)}
+                        onClick={() => apagarCliente(clientes.key)}
                       >
                         <i className="pi pi-trash"></i>
                       </button>
