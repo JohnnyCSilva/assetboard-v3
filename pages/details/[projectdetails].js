@@ -93,7 +93,6 @@ function productDetails() {
     }
     const addFuncionarioToProject = async () => {
 
-
         const q = query(collection(db, "projetos"), where("nome", "==", key));
         const querySnapshot = getDocs(q).then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
@@ -106,7 +105,9 @@ function productDetails() {
         toast.current.show({severity:'success', summary: 'Sucesso', detail:'Funcionário adicionado com sucesso', life: 3000});
         setAdicionarFuncionario(false);
         getProjectDetails();
-        
+
+
+      
     }
     useEffect(() => {
         getProjectDetails();
@@ -141,25 +142,17 @@ function productDetails() {
         
     };
 
-    //deleteAllFuncionarios
+    //if funcionariosProjeto is not empty, map through it and return funcionariosProjeto component
 
-    const deleteAllFuncionarios = async () => {
-
-        const q = query(collection(db, "projetos"), where("nome", "==", key));
-        const querySnapshot = getDocs(q).then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                updateDoc(doc.ref, {
-                    funcionarios: []
-                });
-            });
-        });
-
-        toast.current.show({severity:'success', summary: 'Sucesso', detail:'Funcionários removidos com sucesso', life: 3000});
-
-        getProjectDetails();
-
-    }
-
+    const funcionariosProjetoMap = funcionariosProjeto?.map((label) => {
+        return (
+            <FuncionariosProjeto
+                funcionario={label}
+                key={label}
+                detalhesProjetoKey={detalhesProjeto.key}
+            />   
+            )
+        })
 
     return (
         <div>
@@ -186,27 +179,12 @@ function productDetails() {
                     <div className='funcionarios-projeto'>
                         <div className='funcionarios-projeto-title'>
                             <h2>Funcionários do Projeto</h2>
-                            <>
-                                <button className='button button-delete' onClick={deleteAllFuncionarios}><i className='pi pi-times'></i></button>
-                                <button className='button button-add' onClick={() => setAdicionarFuncionario(true)}><i className='pi pi-plus-circle'></i></button>
-                            </>
+                            <button className='button button-add' onClick={() => setAdicionarFuncionario(true)}><i className='pi pi-plus-circle'></i></button>
                         </div>
                         <div className='funcionarios-projeto-content'>
-                        {
-                            funcionariosProjeto && funcionariosProjeto.length > 0 ?
                             <div className='funcionarios-projeto-list'>
-                                {funcionariosProjeto.map((label) => (
-                                    <FuncionariosProjeto
-                                    funcionario={label}
-                                    key={label}
-                                    detalhesProjetoKey={detalhesProjeto.key}
-                                />
-                                ))}
+                                {funcionariosProjetoMap}
                             </div>
-                        :
-                            <p>Nenhum funcionário adicionado</p>
-                        }
-
                         </div>
                     </div>
                     <div className='despesas-projeto'>

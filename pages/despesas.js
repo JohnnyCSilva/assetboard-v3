@@ -38,16 +38,12 @@ function despesas() {
     
     const maxDate = new Date();
 
-    // if tipoDespesa === Pessoal values of dropdown "combustivel, alimentacao, etc"
-    
     const despesasPessoais = [
         {label: 'Alojamento', value: 'alojamento'},
         {label: 'Alimentação', value: 'alimentacao'},
         {label: 'Saude', value: 'saude'},
         {label: 'Outros', value: 'outros'},
     ]
-
-    // if tipoDespesa === Profissional values of dropdown "combustivel, alimentacao, etc"
     const despesasProfissionais = [
         {label: 'Combustivel', value: 'combustivel'},
         {label: 'Alimentação', value: 'alimentacao'},
@@ -56,7 +52,6 @@ function despesas() {
         {label: 'Material', value: 'material'},
         {label: 'Outros', value: 'outros'},
     ]
-
     const estados = [
         { name: 'Aprovado', code: 'Aprovado' },
         { name: 'Rejeitado', code: 'Rejeitado' },
@@ -304,13 +299,6 @@ function despesas() {
             return day + '/' + month + '/' + year;
         }
     };
-    const formatDate2 = (value) => {
-        return value.toLocaleDateString('en-US', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric'
-        });
-    };
     const dateBodyTemplate = (rowData) => {
         return formatDate(rowData.dataDespesa);
     };
@@ -322,6 +310,7 @@ function despesas() {
     const [ displayFuncionarioAdd , setDisplayFuncionarioAdd ] = useState(false)
     const [ despesasIndividuais , setDespesasIndividuais ] = useState([]);
     const [ editDespesaIndividual , setEditDespesaIndividual ] = useState(false);
+    const [ projetosCurrentUser , setProjetosCurrentUser ] = useState([]);
 
     const [ despesasIndividualPessoais, setDespesasIndividualPessoais ] = useState(0);
     const [ despesasIndividualProfissionais, setDespesasIndividualProfissionais ] = useState(0);
@@ -363,7 +352,23 @@ function despesas() {
     }
     useEffect(() => {
         getDespesasIndividuais();
+        getProjetosUser();
     }, [])
+
+    //get projetos where user is in
+    const getProjetosUser = async () => {
+        const projetos = [];
+        const q = query(collection(db, "projetos"), where("funcionarios", "array-contains", currentUser.uid));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            projetos.push({label: doc.data().nome, value: doc.data().nome})
+        });
+
+        setProjetosCurrentUser(projetos);
+    }
+
+
+
     const addDespesaFuncionario = async () => {
 
         //if fields are empty show error
@@ -453,7 +458,7 @@ function despesas() {
 
     if (role === 'admin') {
 
-  return (
+    return (
     <div>
         <Toast ref={toast} />
 
@@ -751,7 +756,7 @@ function despesas() {
                     responsiveLayout="scroll"
                     globalFilterFields={['projeto', 'dataDespesa']}
                     >   
-                        <Column field="projeto" header="Projeto"/>
+                        <Column field="projetoId" header="Projeto"/>
                         <Column field="tipoDespesa" header="Tipo de Despesa"/>
                         <Column field="selectedDespesa" header="Despesa"/>
                         <Column field="valor" header="Valor" body={priceBodyTemplate} sortable/>
@@ -794,7 +799,7 @@ function despesas() {
 
                             <div className='form-group'>
                                 <label>Projeto</label>
-                                <Dropdown optionLabel="label" optionValue="value" value={selectedProjeto} options={projetos} onChange={(e) => setSelectedProjeto(e.value)} placeholder="Selecione o Projeto" required/>
+                                <Dropdown optionLabel="label" optionValue="value" value={selectedProjeto} options={projetosCurrentUser} onChange={(e) => setSelectedProjeto(e.value)} placeholder="Selecione o Projeto" required/>
                             </div>
                         </div>
 
