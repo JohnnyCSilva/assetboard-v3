@@ -11,6 +11,7 @@ function FuncionariosProjeto(props) {
 
     const [ funcionarioDetails, setFuncionarioDetails ] = useState([]);
     const [ detalhesProjeto, setDetalhesProjeto ] = useState([]);
+    const [ docId, setDocId ] = useState([]);
 
 
     //Get funcionario details from db
@@ -38,21 +39,29 @@ function FuncionariosProjeto(props) {
     useEffect (() => {
         getFuncionarioDetails();
         getProjectDetails();
+        getDocName();
     }, [])
 
-    const deleteFuncionarioFromProject = async (funcionarioKey) => {
-        
-        console.log(funcionarioKey) //get funcionario key from db to delete from project
+    //get current document Name from db
+    const getDocName = async () => {
+        const q = query(collection(db, "projetos"), where("key", "==", detalhesProjetoKey));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            const docName = doc.id;
+            setDocId(docName);
+        });
+    }
 
-        const docRef = doc(db, "projetos", detalhesProjetoKey);
+
+
+    const deleteFuncionarioFromProject = async (funcionarioKey) => {
+
+        const docRef = doc(db, "projetos", docId);
         await updateDoc(docRef, {
             funcionarios: arrayRemove(funcionarioKey)
         });
 
-        //vai buscar o nome do documento em vez da chave do projeto para fazer o update
-
-        
-
+        window.location.reload();
     }
     
       
