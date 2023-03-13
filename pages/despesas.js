@@ -66,7 +66,6 @@ function despesas() {
     const [ despesasTotal, setDespesasTotal ] = useState(0);
     const [ despesa, setDespesa ] = useState(false);
 
-    //get all despesas from db
     const getDespesas = async () => {
         //get despesas from db and map project id to project name
         const despesas = [];
@@ -108,7 +107,6 @@ function despesas() {
         setDespesasProfissionais(totalDespesasProfissionais);
 
     }
-    //get user role from db
     const getUserRole = async () => {
         const q = query(collection(db, "users"), where("email", "==", currentUser.email));
         const querySnapshot = await getDocs(q);
@@ -116,7 +114,6 @@ function despesas() {
             setRole(doc.data().userRole);
         });
     }
-    //get all funcionarios from db that are not admin
     const getFuncionarios = async () => {
         const funcionarios = [];
         const q = query(collection(db, "users"));
@@ -128,7 +125,6 @@ function despesas() {
         });
         setFuncionarios(funcionarios);
     }
-    //get all projetos from db
     const getProjetos = async () => {
         const projetos = [];
         const q = query(collection(db, "projetos"));
@@ -275,7 +271,6 @@ function despesas() {
 
         getDespesas();
     }
-
     const deletePedido = async (rowData) => {
         const despesaRef = collection(db, "despesas");
         const q = query(despesaRef, where("key", "==", rowData.key));
@@ -316,6 +311,9 @@ function despesas() {
     const [ despesasIndividualProfissionais, setDespesasIndividualProfissionais ] = useState(0);
 
     const getDespesasIndividuais = async () => {
+
+        setDespesasIndividuais([]);
+
         const despesaRef = collection(db, "despesas");
         const q = query(despesaRef, where("funcionarioUid", "==", currentUser.uid, orderBy("dataDespesa", "desc")));
         const querySnapshot = await getDocs(q);
@@ -366,9 +364,6 @@ function despesas() {
 
         setProjetosCurrentUser(projetos);
     }
-
-
-
     const addDespesaFuncionario = async () => {
 
         //if fields are empty show error
@@ -379,13 +374,13 @@ function despesas() {
        
         const despesa = {
             key: Math.random().toString(36),
-            funcionario: currentUser.displayName,
+            funcionario: currentUser.displayName || currentUser.name ,
             funcionarioUid: currentUser.uid,
             tipoDespesa: tipoDespesa,
             selectedDespesa: selectedDespesa,
             outroSelected: description,
             valor: valor,
-            projeto: selectedProjeto,
+            projetoId: selectedProjeto,
             estado: 'Pendente',
             dataDespesa: dataDespesa,
         }
@@ -451,11 +446,72 @@ function despesas() {
             },
         });
 
+        
         getDespesasIndividuais();
+
     }
 
+    // role === "gestor"
 
-
+    const [projetosFromGestor, setProjetosFromGestor] = useState([]);
+    const [despesasFromProjeto, setDespesasFromProjeto] = useState([]);
+    const [despesasGestor, setDespesasGestor] = useState([]);
+    const [despesasJoin, setDespesasJoin] = useState([]);
+    
+    
+    useEffect(() => {
+        const fetchData = async () => {
+          const projetos = await getProjetosGestor();
+          const despesasFromProjeto = await getDespesasFromProjeto(projetos);
+          const despesasGestor = await getDespesasGestor();
+          joinDespesas(despesasFromProjeto, despesasGestor);
+        };
+        fetchData();
+      }, []);
+      
+      const getProjetosGestor = async () => {
+        const projetos = [];
+        const q = query(collection(db, "projetos"), where("gestor", "==", currentUser.uid));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          projetos.push({ label: doc.data().nome, value: doc.data().nome });
+        });
+        setProjetosFromGestor(projetos);
+        return projetos;
+      };
+      
+      const getDespesasFromProjeto = async (projetosFromGestor) => {
+        if (!projetosFromGestor || !projetosFromGestor.nome) {
+            return;
+        }
+        const despesas = [];
+        const q = query(collection(db, "despesas"), where("projetoId", "==", projetosFromGestor.nome));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          despesas.push(doc.data());
+        });
+        setDespesasFromProjeto(despesas);
+        return despesas;
+      };
+      
+      const getDespesasGestor = async () => {
+        const despesas = [];
+        const q = query(collection(db, "despesas"), where("funcionarioUid", "==", currentUser.uid));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          despesas.push(doc.data());
+        });
+        setDespesasGestor(despesas);
+        return despesas;
+      };
+      
+      const joinDespesas = () => {
+        if (despesasFromProjeto && despesasGestor) {
+          const despesas = despesasFromProjeto.concat(despesasGestor);
+          setDespesasJoin(despesas);
+        }
+      };
+      
     if (role === 'admin') {
 
     return (
@@ -689,7 +745,6 @@ function despesas() {
     </div>
     )
     } else if (role === 'funcionario'){
-        // retorna campos para funcionario
         return (
 
             <div>
@@ -894,7 +949,236 @@ function despesas() {
         )
 
     } else if (role === 'gestor'){
-        alert('gestor');
+        return (
+            <div>
+                <Toast ref={toast} />
+        
+                <div className='page-title'>
+                    <div className='title-left-side'>
+                        <h1>Despesas</h1>    
+                    </div>
+                    <div className='title-right-side'>
+                        <button className='button button-excel' onClick={exportExcel}><i className='pi pi-file-excel'></i><span>Exportar</span></button>
+                        <button className='button button-see' onClick={toggleInsightBox}><i className='pi pi-eye-slash' id="eye-box"></i></button>
+                        <button className='button button-add' onClick={() => setDisplayBasic(true)}><i className='pi pi-plus-circle'></i><span>Adicionar Despesa</span></button>
+                    </div>
+                </div>
+        
+                <div className='page-insight' id="insight-box">
+                    <div className='page-insight-left'>
+                        <div className='insight-box'>
+                            <div className='insight-box-left'>
+                                <h3>Despesas Pessoais</h3>
+                                <h1>{depesasPessoais}€</h1>
+                            </div>
+                            <div className='insight-box-right'>
+                                <div className="icon-box">
+                                    <i className="pi pi-shopping-cart"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='page-insight-center'>
+                        <div className='insight-box'>
+                            <div className='insight-box-left'>
+                                <h3>Despesas Profissionais</h3>
+                                <h1>{depesasProfissionais}€</h1>
+                            </div>
+                            <div className='insight-box-right'>
+                                <div className="icon-box">
+                                    <i className="pi pi-wrench"></i>
+                                </div>
+                            </div>
+                           
+                        </div>
+                    </div>
+                    <div className='page-insight-right'>
+                        <div className='insight-box'>
+                            <div className='insight-box-left'>
+                                <h3>Total de Despesas</h3>
+                                <h1>{despesasTotal}€</h1>
+                            </div>
+                            <div className='insight-box-right'>
+                                <div className="icon-box">
+                                    <i className="pi pi-money-bill"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <div className='page-content'>
+        
+                    <div className='search-box'>
+                        <i className='pi pi-search'></i>
+                        <input type="text" placeholder='Pesquisar Funcionario ou Projeto' value={globalFilterValue} onChange={onGlobalFilterChange} />
+                    </div>
+        
+                    <div className='table-box'>
+                        <DataTable 
+                        ref={dt}
+                        value={despesasJoin} 
+                        paginator 
+                        rows={10} 
+                        rowsPerPageOptions={[10,20,50]} 
+                        emptyMessage="Sem dados para mostrar" 
+                        className="table-pedidos"
+                        filters={filters}
+                        responsiveLayout="scroll"
+                        globalFilterFields={['funcionario', 'projetoId']}
+                        >   
+                            <Column field="funcionario" header="Funcionário"/>
+                            <Column field="projetoId" header="Projeto"/>
+                            <Column field="tipoDespesa" header="Tipo de Despesa"/>
+                            <Column field="selectedDespesa" header="Despesa"/>
+                            <Column field="valor" header="Valor" body={priceBodyTemplate} sortable/>
+                            <Column field="estado" header="Estado" body={statusBodyTemplate}/>
+                            <Column field="dataDespesa" header="Data da Despesa" body={dateBodyTemplate} filterField="date" dataType="date" filter filterElement={dateFilterTemplate}/>
+                            <Column body={actionBodyTemplate} exportable={false} style={{ maxWidth: '5rem'}}></Column>
+                        </DataTable>
+                    </div>
+                    
+                </div>
+        
+                <Dialog header="Adicionar Despesa" visible={displayBasic} className='dialog-faltas' onHide={() => setDisplayBasic(false)}>
+                    <form className='form-dialog'>
+                        <label>Tipo de Despesa</label>
+                        <div className='form-flex'>
+                            <div className='form-group-radio'>
+                                <RadioButton inputId="despesa1" name="tipoDespesa" value="Pessoal" onChange={(e) => setTipoDespesa(e.value)} checked={tipoDespesa === 'Pessoal'} />
+                                <p htmlFor="despesa1">Pessoal</p>
+                            </div>
+                            <div className='form-group-radio'>
+                                <RadioButton inputId="despesa2" name="tipoDespesa" value="Profissional" onChange={(e) => setTipoDespesa(e.value)} checked={tipoDespesa === 'Profissional'}  />
+                                <p htmlFor="despesa2">Profissional</p>
+                            </div>
+                        </div>
+                        <div className='form-flex'>
+                        {
+                         // if tipoDespesa === Pessoal values of dropdown "combustivel, alimentacao, etc"
+                            tipoDespesa === 'Pessoal' ? (
+                                    <div className='form-group'>
+                                        <label>Tipo de Despesa Pessoal</label>
+                                        <Dropdown optionLabel="label" optionValue="value" value={selectedDespesa} options={despesasPessoais} onChange={(e) => setSelectedDespesa(e.value)} placeholder="Selecione a Despesa" />
+                                    </div>
+                            ) : (
+                                    <div className='form-group'>
+                                        <label>Tipo de Despesa Profissional</label>
+                                        <Dropdown optionLabel="label" optionValue="value" value={selectedDespesa} options={despesasProfissionais} onChange={(e) => setSelectedDespesa(e.value)} placeholder="Selecione a Despesa" />
+                                    </div>
+                                
+                            )
+                        }
+        
+                            <div className='form-group'>
+                                <label>Projeto</label>
+                                <Dropdown optionLabel="label" optionValue="value" value={selectedProjeto} options={projetos} onChange={(e) => setSelectedProjeto(e.value)} placeholder="Selecione o Projeto" required/>
+                            </div>
+                        </div>
+        
+                        {
+        
+                            //if despesa === outros show input text
+        
+                            selectedDespesa === 'outros' ? (
+                                <div className='form-flex'>
+                                    <div className='form-group'>
+                                        <label>Descrição</label>
+                                        <InputText id='desc' type='text' className="inputText" value={description} onChange={(e) => setDescription (e.target.value)} />
+                                    </div>
+                                </div>
+                            ) : (
+                                <></>
+                            )
+        
+                        }
+                        <div className='form-flex'>
+                            <div className='form-group'>
+                                <label>Dia da Despesa</label>
+                                <Calendar value={date} dateFormat="dd/mm/yy" maxDate={maxDate} onChange={(e) => setDataDespesa(e.value)} showIcon />
+                            </div>
+                        </div>
+                        
+                        <div className='form-flex'>
+                            <div className='form-group'>
+                                <label>Funcionário</label>
+                                <Dropdown optionLabel="label" optionValue="value" value={selectedFuncionario} options={funcionarios} onChange={(e) => setSelectedFuncionario(e.value)} placeholder="Selecione o Funcionário" />
+                            </div>
+                            <div className='form-group'>
+                                <label>Valor da Despesa</label>
+                                <InputNumber id="valor" value={valor} onValueChange={(e) => setValor(e.value)} mode="currency" currency="EUR" locale="de-DE" />
+                            </div>
+                        </div>
+        
+                        <div className='form-flex-buttons'>
+                            <div className="form-buttons">
+                                <button type="button" className='button button-save' onClick={addDespesa}><i className='pi pi-check-circle'></i><span>Registar</span></button>
+                            </div>
+                        </div>
+                    </form>
+                </Dialog> 
+        
+                <ConfirmDialog />
+        
+                <Dialog header="Editar Despesa" visible={displayEdit} className='dialog-faltas' onHide={() => setDisplayEdit(false)}>
+                    <form className='form-dialog'>
+                        <div className='form-flex'>
+                            <div className='form-group'>
+                                <label>Tipo de Despesa</label>
+                                <InputText id='prjeto' type='text' className="inputText" defaultValue={despesa.tipoDespesa} disabled/>
+                            </div>
+                            <div className='form-group'>
+                                <label>Despesa</label>
+                                <InputText id='projeto' type='text' className="inputText" defaultValue={despesa.selectedDespesa} disabled/>
+                            </div>
+                        </div>
+                        <div className='form-flex'>
+                            <div className='form-group'>
+                                <label>Projeto</label>
+                                <InputText id='projeto' type='text' className="inputText" defaultValue={despesa.projeto} disabled/>
+                            </div>
+                            <div className='form-group'>
+                                <label>Funcionário</label>
+                                <InputText id='projeto' type='text' className="inputText" defaultValue={despesa.funcionario} disabled/>
+                            </div>
+                        </div>
+                        <div className='form-flex'>
+                            <div className='form-group'>
+                                <label>Valor da Despesa</label>
+                                <InputText id='projeto' typeo='text' className="inputText" defaultValue={despesa.valor} disabled/>
+                            </div>
+                            <div className='form-group'>
+                                <label>Dia da Despesa</label>
+                                <InputText id='projeto' type='text' className="inputText" defaultValue={despesa.dataDespesa} disabled/>
+                            </div>
+                        </div>
+                        {
+                            despesa.despesa != '' ? (
+                                <div className='form-flex'>
+                                    <div className='form-group'>
+                                        <label>Observações</label>
+                                        <InputText id='projeto' type='text' className="inputText" defaultValue={despesa.despesa} disabled/>
+                                    </div>
+                                </div>
+                            ) : (	
+                                <></>
+                            )
+                        }
+                        <div className='form-flex'>
+                            <div className='form-group'>
+                                <label>Estado</label>
+                                <Dropdown optionLabel="name" optionValue="code" value={selectedEstado} options={estados} onChange={(e) => setSelectedEstado(e.value)} placeholder="Selecione o Estado" />
+                            </div>
+                        </div>
+                        <div className='form-flex-buttons'>
+                            <div className="form-buttons">
+                                <button type="button" className='button button-save' onClick={updateDespesa}><i className='pi pi-check-circle'></i><span>Atualizar</span></button>
+                            </div>
+                        </div>
+                    </form>
+                </Dialog>
+            </div>
+            )
     } 
 }
 
