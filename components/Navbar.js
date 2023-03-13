@@ -226,7 +226,64 @@ function Navbar() {
             </nav>
         )
     } else if (currentUserInfo.userRole === 'gestor'){
-        alert('gestor');
+        <nav className='navbar' id="navbar">
+
+                <Toast ref={toast} />
+
+                <div className='header-navbar'>
+                    <i className='pi pi-bars' id="menu_show" onClick={() => toggleNavbar()}></i>
+                    <h1>{pageTitle}</h1>
+                    <img src={currentUserInfo.photo} alt="" onClick={() => window.location = "/userDash"}/>
+                </div>
+                <div className='container-navbar'>
+                    <ul className="list-menu">
+                        <li>
+                            <a href="/dashboard" >
+                                    
+                                <i className='pi pi-home'></i>
+                                <p className="name-link">Dashboard</p>
+                                    
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="/projetos" >
+                                
+                                <i className='pi pi-folder-open'></i>
+                                <p className="name-link">Projetos</p>
+                                
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="/tarefas">
+                                
+                                <i className='pi pi-calendar-times'></i>
+                                <p className="name-link">Tarefas</p>
+                                
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="/despesas">
+                                
+                                <i className='pi pi-calculator'></i>
+                                <p className="name-link">Despesas</p>
+                                
+                            </a>
+                        </li>
+
+                        <li>
+                            <a onClick={SignOutUser} >
+                                
+                                <i className='pi pi-sign-out'></i>
+                                <p className="name-link">Sair da Conta</p>
+                                
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
 
     } 
 }

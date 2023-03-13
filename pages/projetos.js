@@ -16,6 +16,7 @@ import ProjetoList from '../components/Projetos/ProjetoList'
 function projetos() {
 
     const { currentUser } = useContext(AuthContext);
+    const [ userRole, setUserRole ] = useState('');
     const [ displayAddProjeto, setDisplayAddProjeto ] = useState(false);
     const [ projetos, setProjetos ] = useState([]);
     const [ clientes, setClientes ] = useState([]);
@@ -31,6 +32,14 @@ function projetos() {
 
     const minDate = dataInicio;
 
+    //get currentUser role from db
+    const getUserRole = async () => {
+        const q = query(collection(db, "users"), where("email", "==", currentUser.email));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            setUserRole(doc.data());
+        });
+    }
 
     //get all projetos from db
     const getProjetos = async () => {
@@ -69,6 +78,9 @@ function projetos() {
         getProjetos();
         getClientes();
         getGestores();	
+        getUserRole();
+        getProjetosFuncionario();
+        getProjetosGestor();
     }, [])
 
     const registarProjeto = async () => {
@@ -88,8 +100,6 @@ function projetos() {
         setDisplayAddProjeto(false);
         getProjetos();
     }
-
-    //search for projetos, if search input is empty, show all projetos
     const searchProjetos = (e) => {
         if (e.target.value === '') {
             getProjetos();
@@ -103,81 +113,165 @@ function projetos() {
         }
     }
 
-    
+    //userRole === funcionario
 
-  return (
-    <div>
+    const [ projetosFuncionarios, setProjetosFuncionarios ] = useState([]);
 
-        <Toast ref={toast} />
-        <div className='page-title'>
-            <div className='title-left-side'>
-                <h1>Projetos</h1>    
-            </div>
-            <div className='title-right-side'>
-                <button className='button button-add' onClick={() => setDisplayAddProjeto(true)}><i className='pi pi-plus-circle'></i><span>Adicionar Projeto</span></button>
-            </div>
-        </div>
+    const getProjetosFuncionario = async () => {
+        const projetos = [];
+        const q = query(collection(db, "projetos"), where("funcionarios", "array-contains", currentUser.uid));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            projetos.push({ ...doc.data(), id: doc.id });
+        });
 
-        <div className='page-content'>
+        setProjetosFuncionarios(projetos);
+    }
 
-            <div className='search-box'>
-                <i className='pi pi-search'></i>
-                <input type="text" placeholder='Pesquisar' id='search-box' onChange={searchProjetos}/>
-            </div>
+    //userRole === gestor
 
-            <div className='page-grid-template'>
-                <ProjetoList projetos={projetos} />
-            </div>
-        </div>
+    const [ projetosGestor, setProjetosGestor ] = useState([]);
 
-        <Dialog header="Adicionar Projeto" className='dialog-faltas' visible={displayAddProjeto} onHide={() => setDisplayAddProjeto(false)}>
-            <form className='form-dialog'>
-                <div className='form-flex'>
-                    <div className='form-group'>
-                        <label htmlFor="name">Nome do Projeto</label>
-                        <InputText className="inputTextEdit" id="name" onChange={(e) => setNomeProjeto(e.target.value)} />
-                    </div>
-                    <div className='form-group'>
-                        <label htmlFor="name">Cliente</label>
-                        <Dropdown optionLabel="label" optionValue="value" value={selectedCliente} options={clientes} onChange={(e) => setSelectedCliente(e.value)} placeholder="Selecione o Cliente" />
-                    </div>
-                </div>
+    const getProjetosGestor = async () => {
 
-                <div className='form-flex'>
-                    <div className='form-group'>
-                        <label htmlFor="name">Data Inicio</label>
-                        <Calendar value={dataInicio} dateFormat="dd/mm/yy" onChange={(e) => setDataInicio(e.value)} showIcon />
-                    </div>
-                    <div className='form-group'>
-                        <label htmlFor="name">Previsão de Entrega</label>
-                        <Calendar value={previsaoEntrega} minDate={minDate} dateFormat="dd/mm/yy" onChange={(e) => setPrevisaoEntrega(e.value)} showIcon />
-                    </div>
-                </div>
-
-                <div className='form-flex'>
-                    <div className='form-group'>
-                        <label htmlFor="name">Gestor do Projeto</label>
-                        <Dropdown optionLabel="label" optionValue="value" value={selectedGestor} options={gestores} onChange={(e) => setSelectedGestor(e.value)} placeholder="Selecione o Gestor do Projeto" />
-                    </div>
-                </div>
-
-                <div className='form-flex'>
-                    <div className='form-group'>
-                        <label htmlFor="name">Observações</label>
-                        <InputTextarea autoResize  value={obs} onChange={(e) => setObs(e.target.value)} rows={5} cols={30} />
-                    </div>
-                </div>
-
-                <div className='form-flex-buttons'>
-                    <div className="form-buttons">
-                        <button type="button" className='button button-save' onClick={registarProjeto}><i className='pi pi-check-circle'></i><span>Registar</span></button>
-                    </div>
-                </div>
-            </form>
-        </Dialog>
+        const projetos = [];
+            const q = query(collection(db, "projetos"), where("gestor", "==", currentUser.displayName || currentUser.name));
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                projetos.push({ ...doc.data(), id: doc.id });
+            });
+        console.log("Projetos Gestor: " + projetos);
+        setProjetosGestor(projetos);
         
-    </div>
-  )
+    }
+   
+    if (userRole.userRole === 'admin') {
+        return (
+            <div>
+
+                <Toast ref={toast} />
+                <div className='page-title'>
+                    <div className='title-left-side'>
+                        <h1>Projetos</h1>    
+                    </div>
+                    <div className='title-right-side'>
+                        <button className='button button-add' onClick={() => setDisplayAddProjeto(true)}><i className='pi pi-plus-circle'></i><span>Adicionar Projeto</span></button>
+                    </div>
+                </div>
+
+                <div className='page-content'>
+
+                    <div className='search-box'>
+                        <i className='pi pi-search'></i>
+                        <input type="text" placeholder='Pesquisar' id='search-box' onChange={searchProjetos}/>
+                    </div>
+
+                    <div className='page-grid-template'>
+                        <ProjetoList projetos={projetos} />
+                    </div>
+                </div>
+
+                <Dialog header="Adicionar Projeto" className='dialog-faltas' visible={displayAddProjeto} onHide={() => setDisplayAddProjeto(false)}>
+                    <form className='form-dialog'>
+                        <div className='form-flex'>
+                            <div className='form-group'>
+                                <label htmlFor="name">Nome do Projeto</label>
+                                <InputText className="inputTextEdit" id="name" onChange={(e) => setNomeProjeto(e.target.value)} />
+                            </div>
+                            <div className='form-group'>
+                                <label htmlFor="name">Cliente</label>
+                                <Dropdown optionLabel="label" optionValue="value" value={selectedCliente} options={clientes} onChange={(e) => setSelectedCliente(e.value)} placeholder="Selecione o Cliente" />
+                            </div>
+                        </div>
+
+                        <div className='form-flex'>
+                            <div className='form-group'>
+                                <label htmlFor="name">Data Inicio</label>
+                                <Calendar value={dataInicio} dateFormat="dd/mm/yy" onChange={(e) => setDataInicio(e.value)} showIcon />
+                            </div>
+                            <div className='form-group'>
+                                <label htmlFor="name">Previsão de Entrega</label>
+                                <Calendar value={previsaoEntrega} minDate={minDate} dateFormat="dd/mm/yy" onChange={(e) => setPrevisaoEntrega(e.value)} showIcon />
+                            </div>
+                        </div>
+
+                        <div className='form-flex'>
+                            <div className='form-group'>
+                                <label htmlFor="name">Gestor do Projeto</label>
+                                <Dropdown optionLabel="label" optionValue="value" value={selectedGestor} options={gestores} onChange={(e) => setSelectedGestor(e.value)} placeholder="Selecione o Gestor do Projeto" />
+                            </div>
+                        </div>
+
+                        <div className='form-flex'>
+                            <div className='form-group'>
+                                <label htmlFor="name">Observações</label>
+                                <InputTextarea autoResize  value={obs} onChange={(e) => setObs(e.target.value)} rows={5} cols={30} />
+                            </div>
+                        </div>
+
+                        <div className='form-flex-buttons'>
+                            <div className="form-buttons">
+                                <button type="button" className='button button-save' onClick={registarProjeto}><i className='pi pi-check-circle'></i><span>Registar</span></button>
+                            </div>
+                        </div>
+                    </form>
+                </Dialog>
+                
+            </div>
+        )
+
+    } else if (userRole.userRole === 'funcionario') {
+
+        return (
+            <div>
+                <Toast ref={toast} />
+                    <div className='page-title'>
+                        <div className='title-left-side'>
+                            <h1>Projetos</h1>    
+                        </div>
+                    </div>
+
+                    <div className='page-content'>
+
+                        <div className='search-box'>
+                            <i className='pi pi-search'></i>
+                            <input type="text" placeholder='Pesquisar' id='search-box' onChange={searchProjetos}/>
+                        </div>
+
+                        <div className='page-grid-template'>
+                            <ProjetoList projetos={projetosFuncionarios} />
+                        </div>
+                    </div>
+
+            </div>
+        )
+    } else if (userRole.userRole === 'gestor') {
+
+        return (
+            <div>
+                <Toast ref={toast} />
+                    <div className='page-title'>
+                        <div className='title-left-side'>
+                            <h1>Projetos</h1>    
+                        </div>
+                    </div>
+
+                    <div className='page-content'>
+
+                        <div className='search-box'>
+                            <i className='pi pi-search'></i>
+                            <input type="text" placeholder='Pesquisar' id='search-box' onChange={searchProjetos}/>
+                        </div>
+
+                        <div className='page-grid-template'>
+                            <ProjetoList projetos={projetosGestor} />
+                        </div>
+                    </div>
+
+            </div>
+        )
+       
+    }
 }
 
 export default projetos

@@ -234,8 +234,70 @@ function Sidebar() {
             </nav>
         )
     }   else if (currentUserInfo.userRole === 'gestor'){
-        alert('gestor');
-
+        return (
+        <nav className='sidebar' id="sidebar">
+        
+            <Toast ref={toast} />
+        
+                <div className="header-sidebar">
+                    <i className='pi pi-bars' id="menu" onClick={() => toggleSidebar()}></i>
+                    <h1>AssetBoard</h1>
+                </div>
+                <div className="container-sidebar" id="container-sidebar">
+                    <ul className="menu-list">
+                        <li>
+                            <Link href="/dashboard" >
+                                
+                                <i className='pi pi-th-large'></i>
+                                <p className="links_name">Dashboard</p>
+                                
+                            </Link>
+                            <span className="tooltip">Dashboard</span>
+                        </li>
+                        <li>
+                            <Link href="/projetos" >
+                                
+                                <i className='pi pi-folder-open'></i>
+                                <p className="links_name">Projetos</p>
+                                
+                            </Link>
+                            <span className="tooltip">Projetos</span>
+                        </li>
+                        <li>
+                            <Link href='/tarefas' >
+                                
+                                <i className='pi pi-calendar-times'></i>
+                                <p className="links_name">Tarefas</p>
+                                
+                            </Link>
+                            <span className="tooltip">Tarefas</span>
+                        </li>
+                        <li>
+                            <Link href="/despesas" >
+                                
+                                <i className='pi pi-calculator'></i>
+                                <p className="links_name">Despesas</p>
+                                
+                            </Link>
+                            <span className="tooltip">Despesas</span>
+                        </li>
+                    </ul>
+                </div>
+                <div className="footer-sidebar" id="footer-sidebar" >
+                    <Link href='/userDash'>
+                    <img src={currentUserInfo.photo || currentUserInfo.photoURL} alt=""/>
+                    <div className="user-role">
+                        {currentUser && ( <>
+                            <h2>{currentUserInfo.name || currentUserInfo.displayName}</h2>
+                            <p>{currentUserInfo.userRole}</p>
+                        </>
+                        )}
+                    </div>
+                    </Link>
+                    <i className='pi pi-sign-out' id="log_out" onClick={() => SignOutUser()} ></i>
+                </div>
+            </nav>
+        )
     } 
 
 

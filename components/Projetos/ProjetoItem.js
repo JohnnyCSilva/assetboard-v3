@@ -1,27 +1,57 @@
-import React from 'react'
+import React, { useRef, useState, useEffect, useContext } from 'react'
 import { ProgressBar } from 'primereact/progressbar';
 import Router from 'next/router';
+import { db } from '../../config/Firebase'
+import { Toast } from 'primereact/toast';
+import { AuthContext } from '../../config/AuthContext';
+import { collection, query, getDocs, updateDoc, where, addDoc, orderBy, deleteDoc } from "firebase/firestore";
 
 function ProjetoItem(props) {
 
+    const toast = useRef();
+    const [userRole, setUserRole] = useState('');
+    const { currentUser } = useContext(AuthContext);
 
-    //open new page with project details
+    const [dataInicioProjeto, setDataInicioProjeto] = useState('');
+    const [dataPrevisaoEntrega, setDataPrevisaoEntrega] = useState('');
+    const [nrTarefasRealizadas, setNrTarefasRealizadas] = useState('');
+    const [nrTarefasTotais, setNrTarefasTotais] = useState('');
+    const [valueProgressBar, setValueProgressBar] = useState('');
+
+
+    const getUserRole = async () => {
+        const q = query(collection(db, "users"), where("email", "==", currentUser.email));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            setUserRole(doc.data());
+        });
+    }
+
     const openProjectDetails = () => {
         //alert(props.projetos.key);
         Router.push('/details/' + props.projetos.nome);
     }
 
-    const dataInicioProjeto = new Date(props.projetos.dataInicio.seconds * 1000).toLocaleDateString('pt-PT');
-    const dataPrevisaoEntrega = new Date(props.projetos.previsaoEntrega.seconds * 1000).toLocaleDateString('pt-PT');
+    useEffect(() => {
+
+        getUserRole();
+        getValoresToTarefas();
+
+    }, []);
+
+    const getValoresToTarefas = async () => {
+        setDataInicioProjeto(new Date(props.projetos.dataInicio.seconds * 1000).toLocaleDateString('pt-PT'));
+        setDataPrevisaoEntrega(new Date(props.projetos.previsaoEntrega.seconds * 1000).toLocaleDateString('pt-PT'));
+        
+        const nrTarefasMax = Math.floor(Math.random() * 10) + 1;
+        setNrTarefasTotais(nrTarefasMax);
+        
+        const nrTarefaFeita = Math.floor(Math.random() * nrTarefasMax);
+        setNrTarefasRealizadas(nrTarefaFeita);
     
+        setValueProgressBar(((nrTarefaFeita / nrTarefasMax) * 100).toFixed(0));
 
-    //nrTarefasTotais is random number between 1 and 10
-    const nrTarefasTotais = Math.floor(Math.random() * 10) + 1; //max = 6
-
-    //nrTarefasRealizadas is random number between 0 and nrTarefasTotais
-    const nrTarefasRealizadas = Math.floor(Math.random() * nrTarefasTotais); //decorrer = 1
-
-    const valueProgressBar = ((nrTarefasRealizadas / nrTarefasTotais) * 100).toFixed(0);
+    }
 
 
     const contactProjectOwner = () => {
@@ -33,11 +63,17 @@ function ProjetoItem(props) {
         + props.projetos.nome + ' que está a decorrer.';
     }
 
-    
+    const deleteProjetoFromDB = async () => {
+        await deleteDoc(doc(db, "projetos", props.projetos.id));
+        toast.current.show({ severity: 'success', summary: 'Sucesso', detail: 'Projeto eliminado com sucesso', life: 3000 });
+
+        window.location.reload();
+    }   
 
 
   return (
     <div>
+        <Toast ref={toast} />
         <div className="grid-template-card">
             <div className="grid-template-card-top">
                 <div className="grid-card-image-text">
@@ -46,8 +82,12 @@ function ProjetoItem(props) {
                         <h3>{props.projetos.nome}</h3>
                         <p onClick={contactProjectOwner}>{props.projetos.cliente}</p>
                     </div>
-                </div>
-                <button className="button button-actions"><i className="pi pi-ellipsis-v"></i></button>
+                </div> 
+                {
+                    userRole.userRole === 'admin' ? 
+                    <button className="button button-edit" onClick={openProjectDetails}><i className="pi pi-pencil"></i></button>
+                    : null
+                }
             </div>
             <div className="grid-template-card-middle">
                 <div className="card-middle">
