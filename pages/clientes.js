@@ -151,7 +151,7 @@ function clientes(props) {
 
   const deleteCliente = async (clientes) => {
     try{
-      deleteProjects(clientes);
+      await deleteProjects(clientes);
 
       const clienteRef = collection(db, "clientes");
       const q = query(clienteRef, where("key", "==", clientes));
@@ -232,18 +232,32 @@ function clientes(props) {
 
   };
 
- //delete all projects from database that have the cliente that is being deleted
+ //delete all projects from cliente that is deleted from database
   const deleteProjects = async (clientes) => {
-    const projectRef = collection(db, "projetos");
-    const getProject = query(projectRef, where("cliente", "==", clientes));
-    const ProjectSnapShot = await getDocs(getProject);
-    ProjectSnapShot.forEach((doc) => {
-      console.log(doc.data());
-       deleteDoc(doc.ref);
-    });
+    try{
+      const clienteRef = collection(db, "projetos");
+
+      const q = query(clienteRef, where("cliente", "==", clientes));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        deleteDoc(doc.ref).then(() => {
+          toast.current.show({
+            severity: "success",
+            summary: "Apagado",
+            detail: "Projetos apagados com sucesso.",
+            life: 3000,
+          });
+        });
+      });
+    }catch(error){
+      console.log(error)
+    }
+
   };
 
+  
 
+ 
 
 
 
